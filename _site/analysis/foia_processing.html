@@ -1,0 +1,2136 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Tina Lasisi">
+<meta name="dcterms.date" content="2025-07-21">
+
+<title>FOIA Document OCR Processing – PODFRIDGE‑Databases</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-c1fac2584b48ed01fb6e278e36375074.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">PODFRIDGE‑Databases</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../site/index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../site/about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-analyses" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Analyses</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-analyses">    
+        <li>
+    <a class="dropdown-item" href="../analysis/ndis_scraping.html">
+ <span class="dropdown-text">NDIS analysis</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../analysis/foia_processing.html">
+ <span class="dropdown-text">FOIA processing</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a></li>
+  <li><a href="#data-sources" id="toc-data-sources" class="nav-link" data-scroll-target="#data-sources">Data Sources</a>
+  <ul class="collapse">
+  <li><a href="#raw-foia-responses" id="toc-raw-foia-responses" class="nav-link" data-scroll-target="#raw-foia-responses">Raw FOIA Responses</a></li>
+  </ul></li>
+  <li><a href="#file-structure-and-contents" id="toc-file-structure-and-contents" class="nav-link" data-scroll-target="#file-structure-and-contents">File Structure and Contents</a>
+  <ul class="collapse">
+  <li><a href="#raw-data-file-foia_raw.csv" id="toc-raw-data-file-foia_raw.csv" class="nav-link" data-scroll-target="#raw-data-file-foia_raw.csv">1. Raw Data File: <code>foia_raw.csv</code></a></li>
+  <li><a href="#state-specific-files-per_statestate_foia_data.csv" id="toc-state-specific-files-per_statestate_foia_data.csv" class="nav-link" data-scroll-target="#state-specific-files-per_statestate_foia_data.csv">2. State-Specific Files: <code>per_state/[state]_foia_data.csv</code></a></li>
+  <li><a href="#metadata-file-state_reporting_metadata.csv" id="toc-metadata-file-state_reporting_metadata.csv" class="nav-link" data-scroll-target="#metadata-file-state_reporting_metadata.csv">3. Metadata File: <code>state_reporting_metadata.csv</code></a></li>
+  <li><a href="#data-dictionary-foia_data_dictionary.csv" id="toc-data-dictionary-foia_data_dictionary.csv" class="nav-link" data-scroll-target="#data-dictionary-foia_data_dictionary.csv">4. Data Dictionary: <code>foia_data_dictionary.csv</code></a></li>
+  </ul></li>
+  <li><a href="#data-processing-steps" id="toc-data-processing-steps" class="nav-link" data-scroll-target="#data-processing-steps">Data Processing Steps</a>
+  <ul class="collapse">
+  <li><a href="#step-1-states-with-both-counts-and-percentages" id="toc-step-1-states-with-both-counts-and-percentages" class="nav-link" data-scroll-target="#step-1-states-with-both-counts-and-percentages">Step 1: States with Both Counts AND Percentages</a></li>
+  <li><a href="#step-2-states-with-only-counts" id="toc-step-2-states-with-only-counts" class="nav-link" data-scroll-target="#step-2-states-with-only-counts">Step 2: States with Only Counts</a></li>
+  <li><a href="#step-3-states-with-only-percentages" id="toc-step-3-states-with-only-percentages" class="nav-link" data-scroll-target="#step-3-states-with-only-percentages">Step 3: States with Only Percentages</a></li>
+  <li><a href="#step-4-nevada-special-case" id="toc-step-4-nevada-special-case" class="nav-link" data-scroll-target="#step-4-nevada-special-case">Step 4: Nevada Special Case</a></li>
+  </ul></li>
+  <li><a href="#summary-of-calculations-needed" id="toc-summary-of-calculations-needed" class="nav-link" data-scroll-target="#summary-of-calculations-needed">Summary of Calculations Needed</a>
+  <ul class="collapse">
+  <li><a href="#verification-results-states-with-both" id="toc-verification-results-states-with-both" class="nav-link" data-scroll-target="#verification-results-states-with-both">1. Verification Results (States with Both)</a></li>
+  <li><a href="#states-requiring-percentage-calculations" id="toc-states-requiring-percentage-calculations" class="nav-link" data-scroll-target="#states-requiring-percentage-calculations">2. States Requiring Percentage Calculations</a></li>
+  <li><a href="#states-requiring-count-calculations" id="toc-states-requiring-count-calculations" class="nav-link" data-scroll-target="#states-requiring-count-calculations">3. States Requiring Count Calculations</a></li>
+  <li><a href="#mixed-reporting" id="toc-mixed-reporting" class="nav-link" data-scroll-target="#mixed-reporting">4. Mixed Reporting</a></li>
+  </ul></li>
+  <li><a href="#data-quality-issues-summary" id="toc-data-quality-issues-summary" class="nav-link" data-scroll-target="#data-quality-issues-summary">Data Quality Issues Summary</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">FOIA Document OCR Processing</h1>
+<p class="subtitle lead">Processing Murphy &amp; Tong FOIA Documents about State DNA Database Racial Composition</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Tina Lasisi </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">July 21, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="overview" class="level2">
+<h2 class="anchored" data-anchor-id="overview">Overview</h2>
+<p>This document details the processing of Freedom of Information Act (FOIA) responses from seven U.S. states regarding the demographic composition of their State DNA Index System (SDIS) databases. These responses were obtained by Professor Erin Murphy (NYU Law) in 2018 as part of research on racial disparities in DNA databases.</p>
+</section>
+<section id="data-sources" class="level2">
+<h2 class="anchored" data-anchor-id="data-sources">Data Sources</h2>
+<section id="raw-foia-responses" class="level3">
+<h3 class="anchored" data-anchor-id="raw-foia-responses">Raw FOIA Responses</h3>
+<p>The original FOIA responses are stored in two formats:</p>
+<ul>
+<li><strong>PDFs</strong>: <code>raw/foia_pdfs/</code> - Original scanned documents</li>
+<li><strong>HTML</strong>: <code>raw/foia_html/</code> - OCR’d versions for easier extraction</li>
+</ul>
+<p>States included:</p>
+<ul>
+<li>California</li>
+<li>Florida<br>
+</li>
+<li>Indiana</li>
+<li>Maine</li>
+<li>Nevada</li>
+<li>South Dakota</li>
+<li>Texas</li>
+</ul>
+</section>
+</section>
+<section id="file-structure-and-contents" class="level2">
+<h2 class="anchored" data-anchor-id="file-structure-and-contents">File Structure and Contents</h2>
+<section id="raw-data-file-foia_raw.csv" class="level3">
+<h3 class="anchored" data-anchor-id="raw-data-file-foia_raw.csv">1. Raw Data File: <code>foia_raw.csv</code></h3>
+<p><strong>Purpose</strong>: Contains exactly what was reported in each FOIA response with zero calculations or modifications.</p>
+<p><strong>Structure</strong>: Long format with columns:</p>
+<ul>
+<li><code>state</code>: State name</li>
+<li><code>offender_type</code>: Category of individuals (Convicted Offender, Arrestee, Combined, etc.)</li>
+<li><code>variable_category</code>: Type of data (total, gender, race, gender_race)</li>
+<li><code>variable_detailed</code>: Specific value (e.g., Male, Female, African American)</li>
+<li><code>value</code>: The reported number or percentage</li>
+<li><code>value_type</code>: Whether value is a “count” or “percentage”</li>
+<li><code>date</code>: Date of data snapshot</li>
+</ul>
+</section>
+<section id="state-specific-files-per_statestate_foia_data.csv" class="level3">
+<h3 class="anchored" data-anchor-id="state-specific-files-per_statestate_foia_data.csv">2. State-Specific Files: <code>per_state/[state]_foia_data.csv</code></h3>
+<p><strong>Purpose</strong>: Individual files for each state containing only their reported data.</p>
+</section>
+<section id="metadata-file-state_reporting_metadata.csv" class="level3">
+<h3 class="anchored" data-anchor-id="metadata-file-state_reporting_metadata.csv">3. Metadata File: <code>state_reporting_metadata.csv</code></h3>
+<p><strong>Purpose</strong>: Documents what each state provided and their reporting quirks.</p>
+</section>
+<section id="data-dictionary-foia_data_dictionary.csv" class="level3">
+<h3 class="anchored" data-anchor-id="data-dictionary-foia_data_dictionary.csv">4. Data Dictionary: <code>foia_data_dictionary.csv</code></h3>
+<p><strong>Purpose</strong>: Defines all column names and their possible values.</p>
+</section>
+</section>
+<section id="data-processing-steps" class="level2">
+<h2 class="anchored" data-anchor-id="data-processing-steps">Data Processing Steps</h2>
+<div id="setup" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> display, Markdown, HTML</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Set display options for better formatting</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>pd.options.display.max_columns <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>pd.options.display.width <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>pd.options.display.max_colwidth <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Set up paths - assuming we're running from analysis/ directory</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>base_dir <span class="op">=</span> Path(<span class="st">".."</span>) </span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>output_dir <span class="op">=</span> base_dir <span class="op">/</span> <span class="st">"output"</span> <span class="op">/</span> <span class="st">"foia"</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the raw FOIA data</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>foia_raw <span class="op">=</span> pd.read_csv(output_dir <span class="op">/</span> <span class="st">"foia_raw.csv"</span>)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>metadata <span class="op">=</span> pd.read_csv(output_dir <span class="op">/</span> <span class="st">"state_reporting_metadata.csv"</span>)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Loaded </span><span class="sc">{</span><span class="bu">len</span>(foia_raw)<span class="sc">}</span><span class="ss"> rows of FOIA data from </span><span class="sc">{</span>foia_raw[<span class="st">'state'</span>]<span class="sc">.</span>nunique()<span class="sc">}</span><span class="ss"> states"</span>)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">States included:"</span>, <span class="st">', '</span>.join(foia_raw[<span class="st">'state'</span>].unique()))</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Check for any non-numeric values in 'value' column</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>non_numeric <span class="op">=</span> foia_raw[pd.to_numeric(foia_raw[<span class="st">'value'</span>], errors<span class="op">=</span><span class="st">'coerce'</span>).isna()][<span class="st">'value'</span>].unique()</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">len</span>(non_numeric) <span class="op">&gt;</span> <span class="dv">0</span>:</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Note: Found non-numeric value(s): </span><span class="sc">{</span>non_numeric<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert value column, handling special cases</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>foia_raw[<span class="st">'value_numeric'</span>] <span class="op">=</span> foia_raw[<span class="st">'value'</span>].<span class="bu">apply</span>(</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    <span class="kw">lambda</span> x: <span class="fl">0.5</span> <span class="cf">if</span> <span class="bu">str</span>(x) <span class="op">==</span> <span class="st">'&lt;1'</span> <span class="cf">else</span> pd.to_numeric(x, errors<span class="op">=</span><span class="st">'coerce'</span>)</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Show metadata summary</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>display(Markdown(<span class="st">"### State Reporting Summary"</span>))</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>display(HTML(metadata[[<span class="st">'state'</span>, <span class="st">'separates_offender_types'</span>, <span class="st">'reports_counts'</span>, <span class="st">'reports_percentages'</span>]].to_html(index<span class="op">=</span><span class="va">False</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Loaded 143 rows of FOIA data from 7 states
+
+States included: California, Florida, Indiana, Maine, Nevada, South Dakota, Texas
+
+Note: Found non-numeric value(s): ['&lt;1']</code></pre>
+</div>
+<div id="setup-1" class="cell-output cell-output-display cell-output-markdown">
+<section id="state-reporting-summary" class="level3">
+<h3 class="anchored" data-anchor-id="state-reporting-summary">State Reporting Summary</h3>
+</section>
+</div>
+<div id="setup-2" class="cell-output cell-output-display">
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">state</th>
+<th data-quarto-table-cell-role="th">separates_offender_types</th>
+<th data-quarto-table-cell-role="th">reports_counts</th>
+<th data-quarto-table-cell-role="th">reports_percentages</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>California</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr class="even">
+<td>Florida</td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr class="odd">
+<td>Indiana</td>
+<td>Totals only</td>
+<td>Totals only</td>
+<td>Demographics only</td>
+</tr>
+<tr class="even">
+<td>Maine</td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr class="odd">
+<td>Nevada</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Some percentages</td>
+</tr>
+<tr class="even">
+<td>South Dakota</td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr class="odd">
+<td>Texas</td>
+<td>Yes</td>
+<td>Yes (partial)</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<section id="step-1-states-with-both-counts-and-percentages" class="level3">
+<h3 class="anchored" data-anchor-id="step-1-states-with-both-counts-and-percentages">Step 1: States with Both Counts AND Percentages</h3>
+<p>These states provided both counts and percentages, allowing us to verify their calculations.</p>
+<section id="florida-complete-count-and-percentage-data" class="level4">
+<h4 class="anchored" data-anchor-id="florida-complete-count-and-percentage-data">Florida: Complete Count and Percentage Data</h4>
+<div id="check-florida" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Florida provides both counts and percentages</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>florida_data <span class="op">=</span> foia_raw[foia_raw[<span class="st">'state'</span>] <span class="op">==</span> <span class="st">'Florida'</span>].copy()</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Pivot to get counts and percentages side by side</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>florida_wide <span class="op">=</span> florida_data.pivot_table(</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span>[<span class="st">'offender_type'</span>, <span class="st">'variable_category'</span>, <span class="st">'variable_detailed'</span>],</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    columns<span class="op">=</span><span class="st">'value_type'</span>,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    values<span class="op">=</span><span class="st">'value_numeric'</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    aggfunc<span class="op">=</span><span class="st">'first'</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>).reset_index()</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate percentages from counts and compare</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="st">'count'</span> <span class="kw">in</span> florida_wide.columns <span class="kw">and</span> <span class="st">'percentage'</span> <span class="kw">in</span> florida_wide.columns:</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    florida_check <span class="op">=</span> florida_wide[florida_wide[<span class="st">'count'</span>].notna()].copy()</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    total_profiles <span class="op">=</span> <span class="dv">1175391</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    florida_check[<span class="st">'calc_percentage'</span>] <span class="op">=</span> np.where(</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>        florida_check[<span class="st">'variable_detailed'</span>] <span class="op">==</span> <span class="st">'total_profiles'</span>,</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>        <span class="fl">100.0</span>,</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>        <span class="bu">round</span>(florida_check[<span class="st">'count'</span>] <span class="op">/</span> total_profiles <span class="op">*</span> <span class="dv">100</span>, <span class="dv">2</span>)</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    florida_check[<span class="st">'diff'</span>] <span class="op">=</span> florida_check[<span class="st">'calc_percentage'</span>] <span class="op">-</span> florida_check[<span class="st">'percentage'</span>]</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    display(Markdown(<span class="st">"**Florida: Comparing reported vs calculated percentages**"</span>))</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create summary table</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    summary_df <span class="op">=</span> florida_check[[<span class="st">'variable_category'</span>, <span class="st">'variable_detailed'</span>, <span class="st">'count'</span>, </span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>                               <span class="st">'percentage'</span>, <span class="st">'calc_percentage'</span>, <span class="st">'diff'</span>]]</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    summary_df.columns <span class="op">=</span> [<span class="st">'Category'</span>, <span class="st">'Detail'</span>, <span class="st">'Count'</span>, <span class="st">'Reported %'</span>, <span class="st">'Calculated %'</span>, <span class="st">'Difference'</span>]</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Format numbers nicely</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    summary_df[<span class="st">'Count'</span>] <span class="op">=</span> summary_df[<span class="st">'Count'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="ss">f"</span><span class="sc">{</span>x<span class="sc">:,.0f}</span><span class="ss">"</span>)</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    summary_df[<span class="st">'Reported %'</span>] <span class="op">=</span> summary_df[<span class="st">'Reported %'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="ss">f"</span><span class="sc">{</span>x<span class="sc">:.2f}</span><span class="ss">%"</span>)</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>    summary_df[<span class="st">'Calculated %'</span>] <span class="op">=</span> summary_df[<span class="st">'Calculated %'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="ss">f"</span><span class="sc">{</span>x<span class="sc">:.2f}</span><span class="ss">%"</span>)</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    summary_df[<span class="st">'Difference'</span>] <span class="op">=</span> summary_df[<span class="st">'Difference'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="ss">f"</span><span class="sc">{</span>x<span class="sc">:+.2f}</span><span class="ss">"</span> <span class="cf">if</span> pd.notna(x) <span class="cf">else</span> <span class="st">""</span>)</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>    display(HTML(summary_df.to_html(index<span class="op">=</span><span class="va">False</span>, classes<span class="op">=</span><span class="st">'table table-striped table-hover'</span>)))</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Check if percentages sum to 100</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>    florida_pct_sum <span class="op">=</span> florida_check.groupby(<span class="st">'variable_category'</span>)[<span class="st">'percentage'</span>].<span class="bu">sum</span>()</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>    display(Markdown(<span class="st">"</span><span class="ch">\n</span><span class="st">**Florida percentage totals by category:**"</span>))</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>    totals_df <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Category'</span>: florida_pct_sum[florida_pct_sum.index <span class="op">!=</span> <span class="st">'total'</span>].index,</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Total %'</span>: [<span class="ss">f"</span><span class="sc">{</span>x<span class="sc">:.2f}</span><span class="ss">%"</span> <span class="cf">for</span> x <span class="kw">in</span> florida_pct_sum[florida_pct_sum.index <span class="op">!=</span> <span class="st">'total'</span>].values]</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>    display(HTML(totals_df.to_html(index<span class="op">=</span><span class="va">False</span>, classes<span class="op">=</span><span class="st">'table table-striped'</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="check-florida-1" class="cell-output cell-output-display cell-output-markdown">
+<p><strong>Florida: Comparing reported vs calculated percentages</strong></p>
+</div>
+<div id="check-florida-2" class="cell-output cell-output-display">
+<table class="dataframe table table-striped table-hover caption-top table-sm small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">Category</th>
+<th data-quarto-table-cell-role="th">Detail</th>
+<th data-quarto-table-cell-role="th">Count</th>
+<th data-quarto-table-cell-role="th">Reported %</th>
+<th data-quarto-table-cell-role="th">Calculated %</th>
+<th data-quarto-table-cell-role="th">Difference</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>gender</td>
+<td>Female</td>
+<td>260,885</td>
+<td>22.20%</td>
+<td>22.20%</td>
+<td>+0.00</td>
+</tr>
+<tr class="even">
+<td>gender</td>
+<td>Male</td>
+<td>901,126</td>
+<td>76.67%</td>
+<td>76.67%</td>
+<td>+0.00</td>
+</tr>
+<tr class="odd">
+<td>gender</td>
+<td>Unknown</td>
+<td>13,380</td>
+<td>1.14%</td>
+<td>1.14%</td>
+<td>+0.00</td>
+</tr>
+<tr class="even">
+<td>race</td>
+<td>African American</td>
+<td>413,733</td>
+<td>35.20%</td>
+<td>35.20%</td>
+<td>+0.00</td>
+</tr>
+<tr class="odd">
+<td>race</td>
+<td>Asian</td>
+<td>2,659</td>
+<td>0.23%</td>
+<td>0.23%</td>
+<td>+0.00</td>
+</tr>
+<tr class="even">
+<td>race</td>
+<td>Caucasian</td>
+<td>721,485</td>
+<td>61.38%</td>
+<td>61.38%</td>
+<td>+0.00</td>
+</tr>
+<tr class="odd">
+<td>race</td>
+<td>Hispanic</td>
+<td>28,452</td>
+<td>2.42%</td>
+<td>2.42%</td>
+<td>+0.00</td>
+</tr>
+<tr class="even">
+<td>race</td>
+<td>Native American</td>
+<td>667</td>
+<td>0.06%</td>
+<td>0.06%</td>
+<td>+0.00</td>
+</tr>
+<tr class="odd">
+<td>race</td>
+<td>Other</td>
+<td>1,176</td>
+<td>0.10%</td>
+<td>0.10%</td>
+<td>+0.00</td>
+</tr>
+<tr class="even">
+<td>race</td>
+<td>Unknown</td>
+<td>7,219</td>
+<td>0.61%</td>
+<td>0.61%</td>
+<td>+0.00</td>
+</tr>
+<tr class="odd">
+<td>total</td>
+<td>total_profiles</td>
+<td>1,175,391</td>
+<td>100.00%</td>
+<td>100.00%</td>
+<td>+0.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="check-florida-3" class="cell-output cell-output-display cell-output-markdown">
+<p><strong>Florida percentage totals by category:</strong></p>
+</div>
+<div id="check-florida-4" class="cell-output cell-output-display">
+<table class="dataframe table table-striped caption-top table-sm small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">Category</th>
+<th data-quarto-table-cell-role="th">Total %</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>gender</td>
+<td>100.01%</td>
+</tr>
+<tr class="even">
+<td>race</td>
+<td>100.00%</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="maine-count-and-percentage-verification" class="level4">
+<h4 class="anchored" data-anchor-id="maine-count-and-percentage-verification">Maine: Count and Percentage Verification</h4>
+<div id="check-maine" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Maine provides both counts and percentages</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>maine_data <span class="op">=</span> foia_raw[foia_raw[<span class="st">'state'</span>] <span class="op">==</span> <span class="st">'Maine'</span>].copy()</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>maine_wide <span class="op">=</span> maine_data.pivot_table(</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span>[<span class="st">'offender_type'</span>, <span class="st">'variable_category'</span>, <span class="st">'variable_detailed'</span>],</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    columns<span class="op">=</span><span class="st">'value_type'</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    values<span class="op">=</span><span class="st">'value_numeric'</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    aggfunc<span class="op">=</span><span class="st">'first'</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>).reset_index()</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="st">'count'</span> <span class="kw">in</span> maine_wide.columns <span class="kw">and</span> <span class="st">'percentage'</span> <span class="kw">in</span> maine_wide.columns:</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    maine_check <span class="op">=</span> maine_wide[maine_wide[<span class="st">'count'</span>].notna()].copy()</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    total_maine <span class="op">=</span> <span class="dv">33711</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    maine_check[<span class="st">'calc_percentage'</span>] <span class="op">=</span> <span class="bu">round</span>(maine_check[<span class="st">'count'</span>] <span class="op">/</span> total_maine <span class="op">*</span> <span class="dv">100</span>, <span class="dv">1</span>)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    maine_check[<span class="st">'diff'</span>] <span class="op">=</span> maine_check[<span class="st">'calc_percentage'</span>] <span class="op">-</span> maine_check[<span class="st">'percentage'</span>]</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    display(Markdown(<span class="st">"**Maine: Comparing reported vs calculated percentages**"</span>))</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    summary_df <span class="op">=</span> maine_check[maine_check[<span class="st">'variable_category'</span>] <span class="op">!=</span> <span class="st">'total'</span>][</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>        [<span class="st">'variable_category'</span>, <span class="st">'variable_detailed'</span>, <span class="st">'count'</span>, <span class="st">'percentage'</span>, <span class="st">'calc_percentage'</span>, <span class="st">'diff'</span>]</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    ].copy()</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    summary_df.columns <span class="op">=</span> [<span class="st">'Category'</span>, <span class="st">'Detail'</span>, <span class="st">'Count'</span>, <span class="st">'Reported %'</span>, <span class="st">'Calculated %'</span>, <span class="st">'Difference'</span>]</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Format for display</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>    summary_df[<span class="st">'Count'</span>] <span class="op">=</span> summary_df[<span class="st">'Count'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="ss">f"</span><span class="sc">{</span>x<span class="sc">:,.0f}</span><span class="ss">"</span>)</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>    summary_df[<span class="st">'Reported %'</span>] <span class="op">=</span> summary_df[<span class="st">'Reported %'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="ss">f"</span><span class="sc">{</span>x<span class="sc">:.1f}</span><span class="ss">%"</span>)</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    summary_df[<span class="st">'Calculated %'</span>] <span class="op">=</span> summary_df[<span class="st">'Calculated %'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="ss">f"</span><span class="sc">{</span>x<span class="sc">:.1f}</span><span class="ss">%"</span>)</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    summary_df[<span class="st">'Difference'</span>] <span class="op">=</span> summary_df[<span class="st">'Difference'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="ss">f"</span><span class="sc">{</span>x<span class="sc">:+.1f}</span><span class="ss">"</span>)</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>    display(HTML(summary_df.to_html(index<span class="op">=</span><span class="va">False</span>, classes<span class="op">=</span><span class="st">'table table-striped table-hover'</span>)))</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Check sums</span></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>    maine_pct_sum <span class="op">=</span> maine_check.groupby(<span class="st">'variable_category'</span>)[<span class="st">'percentage'</span>].<span class="bu">sum</span>()</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>    display(Markdown(<span class="st">"</span><span class="ch">\n</span><span class="st">**Maine percentage totals by category:**"</span>))</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>    totals_df <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Category'</span>: maine_pct_sum[maine_pct_sum.index <span class="op">!=</span> <span class="st">'total'</span>].index,</span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Total %'</span>: [<span class="ss">f"</span><span class="sc">{</span>x<span class="sc">:.1f}</span><span class="ss">%"</span> <span class="cf">for</span> x <span class="kw">in</span> maine_pct_sum[maine_pct_sum.index <span class="op">!=</span> <span class="st">'total'</span>].values]</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>    display(HTML(totals_df.to_html(index<span class="op">=</span><span class="va">False</span>, classes<span class="op">=</span><span class="st">'table table-striped'</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="check-maine-1" class="cell-output cell-output-display cell-output-markdown">
+<p><strong>Maine: Comparing reported vs calculated percentages</strong></p>
+</div>
+<div id="check-maine-2" class="cell-output cell-output-display">
+<table class="dataframe table table-striped table-hover caption-top table-sm small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">Category</th>
+<th data-quarto-table-cell-role="th">Detail</th>
+<th data-quarto-table-cell-role="th">Count</th>
+<th data-quarto-table-cell-role="th">Reported %</th>
+<th data-quarto-table-cell-role="th">Calculated %</th>
+<th data-quarto-table-cell-role="th">Difference</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>gender</td>
+<td>Female</td>
+<td>5,734</td>
+<td>17.0%</td>
+<td>17.0%</td>
+<td>+0.0</td>
+</tr>
+<tr class="even">
+<td>gender</td>
+<td>Male</td>
+<td>27,694</td>
+<td>82.7%</td>
+<td>82.2%</td>
+<td>-0.5</td>
+</tr>
+<tr class="odd">
+<td>gender</td>
+<td>Unknown</td>
+<td>83</td>
+<td>0.2%</td>
+<td>0.2%</td>
+<td>+0.0</td>
+</tr>
+<tr class="even">
+<td>race</td>
+<td>Asian</td>
+<td>128</td>
+<td>0.4%</td>
+<td>0.4%</td>
+<td>+0.0</td>
+</tr>
+<tr class="odd">
+<td>race</td>
+<td>Black</td>
+<td>1,299</td>
+<td>3.9%</td>
+<td>3.9%</td>
+<td>+0.0</td>
+</tr>
+<tr class="even">
+<td>race</td>
+<td>Hispanic</td>
+<td>171</td>
+<td>0.5%</td>
+<td>0.5%</td>
+<td>+0.0</td>
+</tr>
+<tr class="odd">
+<td>race</td>
+<td>Native American</td>
+<td>345</td>
+<td>1.0%</td>
+<td>1.0%</td>
+<td>+0.0</td>
+</tr>
+<tr class="even">
+<td>race</td>
+<td>Unknown</td>
+<td>470</td>
+<td>1.4%</td>
+<td>1.4%</td>
+<td>+0.0</td>
+</tr>
+<tr class="odd">
+<td>race</td>
+<td>White</td>
+<td>31,298</td>
+<td>92.8%</td>
+<td>92.8%</td>
+<td>+0.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="check-maine-3" class="cell-output cell-output-display cell-output-markdown">
+<p><strong>Maine percentage totals by category:</strong></p>
+</div>
+<div id="check-maine-4" class="cell-output cell-output-display">
+<table class="dataframe table table-striped caption-top table-sm small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">Category</th>
+<th data-quarto-table-cell-role="th">Total %</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>gender</td>
+<td>99.9%</td>
+</tr>
+<tr class="even">
+<td>race</td>
+<td>100.0%</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="south-dakota-count-and-percentage-verification" class="level4">
+<h4 class="anchored" data-anchor-id="south-dakota-count-and-percentage-verification">South Dakota: Count and Percentage Verification</h4>
+<div id="check-south-dakota" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># South Dakota - check main categories (not intersections)</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>sd_data <span class="op">=</span> foia_raw[</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    (foia_raw[<span class="st">'state'</span>] <span class="op">==</span> <span class="st">'South Dakota'</span>) <span class="op">&amp;</span> </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    (foia_raw[<span class="st">'variable_category'</span>].isin([<span class="st">'total'</span>, <span class="st">'gender'</span>, <span class="st">'race'</span>]))</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>].copy()</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>sd_wide <span class="op">=</span> sd_data.pivot_table(</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span>[<span class="st">'offender_type'</span>, <span class="st">'variable_category'</span>, <span class="st">'variable_detailed'</span>],</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    columns<span class="op">=</span><span class="st">'value_type'</span>,</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    values<span class="op">=</span><span class="st">'value_numeric'</span>,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    aggfunc<span class="op">=</span><span class="st">'first'</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>).reset_index()</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>sd_check <span class="op">=</span> sd_wide[sd_wide[<span class="st">'count'</span>].notna()].copy()</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>total_sd <span class="op">=</span> <span class="dv">67753</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>sd_check[<span class="st">'calc_percentage'</span>] <span class="op">=</span> np.where(</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    sd_check[<span class="st">'variable_detailed'</span>] <span class="op">==</span> <span class="st">'total_profiles'</span>,</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    <span class="fl">100.0</span>,</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    <span class="bu">round</span>(sd_check[<span class="st">'count'</span>] <span class="op">/</span> total_sd <span class="op">*</span> <span class="dv">100</span>, <span class="dv">2</span>)</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>sd_check[<span class="st">'diff'</span>] <span class="op">=</span> sd_check[<span class="st">'calc_percentage'</span>] <span class="op">-</span> sd_check[<span class="st">'percentage'</span>]</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>display(Markdown(<span class="st">"**South Dakota: Comparing reported vs calculated percentages**"</span>))</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>summary_df <span class="op">=</span> sd_check[sd_check[<span class="st">'variable_category'</span>] <span class="op">!=</span> <span class="st">'total'</span>][</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    [<span class="st">'variable_category'</span>, <span class="st">'variable_detailed'</span>, <span class="st">'count'</span>, <span class="st">'percentage'</span>, <span class="st">'calc_percentage'</span>, <span class="st">'diff'</span>]</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>].copy()</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>summary_df.columns <span class="op">=</span> [<span class="st">'Category'</span>, <span class="st">'Detail'</span>, <span class="st">'Count'</span>, <span class="st">'Reported %'</span>, <span class="st">'Calculated %'</span>, <span class="st">'Difference'</span>]</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Format for display</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>summary_df[<span class="st">'Count'</span>] <span class="op">=</span> summary_df[<span class="st">'Count'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="ss">f"</span><span class="sc">{</span>x<span class="sc">:,.0f}</span><span class="ss">"</span>)</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>summary_df[<span class="st">'Reported %'</span>] <span class="op">=</span> summary_df[<span class="st">'Reported %'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="ss">f"</span><span class="sc">{</span>x<span class="sc">:.2f}</span><span class="ss">%"</span>)</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>summary_df[<span class="st">'Calculated %'</span>] <span class="op">=</span> summary_df[<span class="st">'Calculated %'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="ss">f"</span><span class="sc">{</span>x<span class="sc">:.2f}</span><span class="ss">%"</span>)</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>summary_df[<span class="st">'Difference'</span>] <span class="op">=</span> summary_df[<span class="st">'Difference'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="ss">f"</span><span class="sc">{</span>x<span class="sc">:+.2f}</span><span class="ss">"</span>)</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>display(HTML(summary_df.to_html(index<span class="op">=</span><span class="va">False</span>, classes<span class="op">=</span><span class="st">'table table-striped table-hover'</span>)))</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Check sums</span></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>sd_pct_sum <span class="op">=</span> sd_check.groupby(<span class="st">'variable_category'</span>)[<span class="st">'percentage'</span>].<span class="bu">sum</span>()</span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>display(Markdown(<span class="st">"</span><span class="ch">\n</span><span class="st">**South Dakota percentage totals by category:**"</span>))</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>totals_df <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Category'</span>: sd_pct_sum[sd_pct_sum.index <span class="op">!=</span> <span class="st">'total'</span>].index,</span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Total %'</span>: [<span class="ss">f"</span><span class="sc">{</span>x<span class="sc">:.2f}</span><span class="ss">%"</span> <span class="cf">for</span> x <span class="kw">in</span> sd_pct_sum[sd_pct_sum.index <span class="op">!=</span> <span class="st">'total'</span>].values]</span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>display(HTML(totals_df.to_html(index<span class="op">=</span><span class="va">False</span>, classes<span class="op">=</span><span class="st">'table table-striped'</span>)))</span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>display(Markdown(<span class="st">"</span><span class="ch">\n</span><span class="st">*Note: South Dakota uniquely provides race×gender intersection data (24 additional rows not shown here)*"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="check-south-dakota-1" class="cell-output cell-output-display cell-output-markdown">
+<p><strong>South Dakota: Comparing reported vs calculated percentages</strong></p>
+</div>
+<div id="check-south-dakota-2" class="cell-output cell-output-display">
+<table class="dataframe table table-striped table-hover caption-top table-sm small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">Category</th>
+<th data-quarto-table-cell-role="th">Detail</th>
+<th data-quarto-table-cell-role="th">Count</th>
+<th data-quarto-table-cell-role="th">Reported %</th>
+<th data-quarto-table-cell-role="th">Calculated %</th>
+<th data-quarto-table-cell-role="th">Difference</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>gender</td>
+<td>Female</td>
+<td>16,556</td>
+<td>24.44%</td>
+<td>24.44%</td>
+<td>+0.00</td>
+</tr>
+<tr class="even">
+<td>gender</td>
+<td>Male</td>
+<td>51,197</td>
+<td>75.56%</td>
+<td>75.56%</td>
+<td>+0.00</td>
+</tr>
+<tr class="odd">
+<td>race</td>
+<td>Asian</td>
+<td>5</td>
+<td>0.08%</td>
+<td>0.01%</td>
+<td>-0.07</td>
+</tr>
+<tr class="even">
+<td>race</td>
+<td>Black</td>
+<td>4,041</td>
+<td>5.96%</td>
+<td>5.96%</td>
+<td>+0.00</td>
+</tr>
+<tr class="odd">
+<td>race</td>
+<td>Hispanic</td>
+<td>2,949</td>
+<td>4.35%</td>
+<td>4.35%</td>
+<td>+0.00</td>
+</tr>
+<tr class="even">
+<td>race</td>
+<td>Native American</td>
+<td>14,593</td>
+<td>21.54%</td>
+<td>21.54%</td>
+<td>+0.00</td>
+</tr>
+<tr class="odd">
+<td>race</td>
+<td>Other/Unknown</td>
+<td>891</td>
+<td>1.32%</td>
+<td>1.32%</td>
+<td>+0.00</td>
+</tr>
+<tr class="even">
+<td>race</td>
+<td>White/Caucasian</td>
+<td>45,223</td>
+<td>66.75%</td>
+<td>66.75%</td>
+<td>+0.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="check-south-dakota-3" class="cell-output cell-output-display cell-output-markdown">
+<p><strong>South Dakota percentage totals by category:</strong></p>
+</div>
+<div id="check-south-dakota-4" class="cell-output cell-output-display">
+<table class="dataframe table table-striped caption-top table-sm small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">Category</th>
+<th data-quarto-table-cell-role="th">Total %</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>gender</td>
+<td>100.00%</td>
+</tr>
+<tr class="even">
+<td>race</td>
+<td>100.00%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="check-south-dakota-5" class="cell-output cell-output-display cell-output-markdown">
+<p><em>Note: South Dakota uniquely provides race×gender intersection data (24 additional rows not shown here)</em></p>
+</div>
+</div>
+</section>
+</section>
+<section id="step-2-states-with-only-counts" class="level3">
+<h3 class="anchored" data-anchor-id="step-2-states-with-only-counts">Step 2: States with Only Counts</h3>
+<p>These states need percentages calculated.</p>
+<section id="california-calculate-percentages" class="level4">
+<h4 class="anchored" data-anchor-id="california-calculate-percentages">California: Calculate Percentages</h4>
+<div id="california-percentages" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># California only provided counts</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>california_data <span class="op">=</span> foia_raw[foia_raw[<span class="st">'state'</span>] <span class="op">==</span> <span class="st">'California'</span>].copy()</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Get totals for each offender type</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>ca_totals <span class="op">=</span> california_data[california_data[<span class="st">'variable_category'</span>] <span class="op">==</span> <span class="st">'total'</span>].set_index(<span class="st">'offender_type'</span>)[<span class="st">'value_numeric'</span>].to_dict()</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate percentages</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>ca_with_pct <span class="op">=</span> california_data[california_data[<span class="st">'value_type'</span>] <span class="op">==</span> <span class="st">'count'</span>].copy()</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_total(row):</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> row[<span class="st">'variable_category'</span>] <span class="op">==</span> <span class="st">'total'</span>:</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> row[<span class="st">'value_numeric'</span>]</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> ca_totals.get(row[<span class="st">'offender_type'</span>], <span class="dv">0</span>)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>ca_with_pct[<span class="st">'total'</span>] <span class="op">=</span> ca_with_pct.<span class="bu">apply</span>(get_total, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>ca_with_pct[<span class="st">'percentage'</span>] <span class="op">=</span> <span class="bu">round</span>(ca_with_pct[<span class="st">'value_numeric'</span>] <span class="op">/</span> ca_with_pct[<span class="st">'total'</span>] <span class="op">*</span> <span class="dv">100</span>, <span class="dv">2</span>)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>display(Markdown(<span class="st">"**California: Calculated percentages**"</span>))</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Show sample by offender type</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> offender_type <span class="kw">in</span> [<span class="st">'Convicted Offender'</span>, <span class="st">'Arrestee'</span>]:</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    subset <span class="op">=</span> ca_with_pct[</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>        (ca_with_pct[<span class="st">'offender_type'</span>] <span class="op">==</span> offender_type) <span class="op">&amp;</span> </span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>        (ca_with_pct[<span class="st">'variable_category'</span>] <span class="op">!=</span> <span class="st">'total'</span>)</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    ].copy()</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>    display(Markdown(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">*</span><span class="sc">{</span>offender_type<span class="sc">}</span><span class="ss">:*"</span>))</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>    summary_df <span class="op">=</span> subset[[<span class="st">'variable_category'</span>, <span class="st">'variable_detailed'</span>, <span class="st">'value_numeric'</span>, <span class="st">'percentage'</span>]]</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    summary_df.columns <span class="op">=</span> [<span class="st">'Category'</span>, <span class="st">'Detail'</span>, <span class="st">'Count'</span>, <span class="st">'Calculated %'</span>]</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>    summary_df[<span class="st">'Count'</span>] <span class="op">=</span> summary_df[<span class="st">'Count'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="ss">f"</span><span class="sc">{</span>x<span class="sc">:,.0f}</span><span class="ss">"</span>)</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>    summary_df[<span class="st">'Calculated %'</span>] <span class="op">=</span> summary_df[<span class="st">'Calculated %'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="ss">f"</span><span class="sc">{</span>x<span class="sc">:.2f}</span><span class="ss">%"</span>)</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>    display(HTML(summary_df.to_html(index<span class="op">=</span><span class="va">False</span>, classes<span class="op">=</span><span class="st">'table table-striped table-hover'</span>)))</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Check if percentages sum to 100%</span></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>ca_pct_check <span class="op">=</span> ca_with_pct[ca_with_pct[<span class="st">'variable_category'</span>] <span class="op">!=</span> <span class="st">'total'</span>].groupby(</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>    [<span class="st">'offender_type'</span>, <span class="st">'variable_category'</span>]</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>)[<span class="st">'percentage'</span>].<span class="bu">sum</span>().reset_index()</span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>display(Markdown(<span class="st">"</span><span class="ch">\n</span><span class="st">**California: Percentage totals by category**"</span>))</span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>ca_pct_check.columns <span class="op">=</span> [<span class="st">'Offender Type'</span>, <span class="st">'Category'</span>, <span class="st">'Total %'</span>]</span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>ca_pct_check[<span class="st">'Total %'</span>] <span class="op">=</span> ca_pct_check[<span class="st">'Total %'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="ss">f"</span><span class="sc">{</span>x<span class="sc">:.2f}</span><span class="ss">%"</span>)</span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>display(HTML(ca_pct_check.to_html(index<span class="op">=</span><span class="va">False</span>, classes<span class="op">=</span><span class="st">'table table-striped'</span>)))</span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>display(Markdown(<span class="st">"</span><span class="ch">\n</span><span class="st">⚠️ **Warning**: California race percentages don't sum to 100%, indicating missing categories"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="california-percentages-1" class="cell-output cell-output-display cell-output-markdown">
+<p><strong>California: Calculated percentages</strong></p>
+</div>
+<div id="california-percentages-2" class="cell-output cell-output-display cell-output-markdown">
+<p><em>Convicted Offender:</em></p>
+</div>
+<div id="california-percentages-3" class="cell-output cell-output-display">
+<table class="dataframe table table-striped table-hover caption-top table-sm small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">Category</th>
+<th data-quarto-table-cell-role="th">Detail</th>
+<th data-quarto-table-cell-role="th">Count</th>
+<th data-quarto-table-cell-role="th">Calculated %</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>gender</td>
+<td>Female</td>
+<td>309,827</td>
+<td>15.34%</td>
+</tr>
+<tr class="even">
+<td>gender</td>
+<td>Male</td>
+<td>1,603,222</td>
+<td>79.37%</td>
+</tr>
+<tr class="odd">
+<td>gender</td>
+<td>Unknown</td>
+<td>106,850</td>
+<td>5.29%</td>
+</tr>
+<tr class="even">
+<td>race</td>
+<td>African American</td>
+<td>368,952</td>
+<td>18.27%</td>
+</tr>
+<tr class="odd">
+<td>race</td>
+<td>Caucasian</td>
+<td>588,555</td>
+<td>29.14%</td>
+</tr>
+<tr class="even">
+<td>race</td>
+<td>Hispanic</td>
+<td>652,121</td>
+<td>32.28%</td>
+</tr>
+<tr class="odd">
+<td>race</td>
+<td>Asian</td>
+<td>16,384</td>
+<td>0.81%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="california-percentages-4" class="cell-output cell-output-display cell-output-markdown">
+<p><em>Arrestee:</em></p>
+</div>
+<div id="california-percentages-5" class="cell-output cell-output-display">
+<table class="dataframe table table-striped table-hover caption-top table-sm small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">Category</th>
+<th data-quarto-table-cell-role="th">Detail</th>
+<th data-quarto-table-cell-role="th">Count</th>
+<th data-quarto-table-cell-role="th">Calculated %</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>gender</td>
+<td>Female</td>
+<td>208,225</td>
+<td>27.70%</td>
+</tr>
+<tr class="even">
+<td>gender</td>
+<td>Male</td>
+<td>524,231</td>
+<td>69.73%</td>
+</tr>
+<tr class="odd">
+<td>gender</td>
+<td>Unknown</td>
+<td>19,366</td>
+<td>2.58%</td>
+</tr>
+<tr class="even">
+<td>race</td>
+<td>African American</td>
+<td>104,741</td>
+<td>13.93%</td>
+</tr>
+<tr class="odd">
+<td>race</td>
+<td>Caucasian</td>
+<td>231,313</td>
+<td>30.77%</td>
+</tr>
+<tr class="even">
+<td>race</td>
+<td>Hispanic</td>
+<td>308,450</td>
+<td>41.03%</td>
+</tr>
+<tr class="odd">
+<td>race</td>
+<td>Asian</td>
+<td>11,191</td>
+<td>1.49%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="california-percentages-6" class="cell-output cell-output-display cell-output-markdown">
+<p><strong>California: Percentage totals by category</strong></p>
+</div>
+<div id="california-percentages-7" class="cell-output cell-output-display">
+<table class="dataframe table table-striped caption-top table-sm small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">Offender Type</th>
+<th data-quarto-table-cell-role="th">Category</th>
+<th data-quarto-table-cell-role="th">Total %</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Arrestee</td>
+<td>gender</td>
+<td>100.01%</td>
+</tr>
+<tr class="even">
+<td>Arrestee</td>
+<td>race</td>
+<td>87.22%</td>
+</tr>
+<tr class="odd">
+<td>Convicted Offender</td>
+<td>gender</td>
+<td>100.00%</td>
+</tr>
+<tr class="even">
+<td>Convicted Offender</td>
+<td>race</td>
+<td>80.50%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="california-percentages-8" class="cell-output cell-output-display cell-output-markdown">
+<p>⚠️ <strong>Warning</strong>: California race percentages don’t sum to 100%, indicating missing categories</p>
+</div>
+</div>
+</section>
+<section id="texas-calculate-percentages-and-identify-missing-data" class="level4">
+<h4 class="anchored" data-anchor-id="texas-calculate-percentages-and-identify-missing-data">Texas: Calculate Percentages and Identify Missing Data</h4>
+<div id="texas-analysis" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Texas only provided counts (and only female counts for gender)</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>texas_data <span class="op">=</span> foia_raw[foia_raw[<span class="st">'state'</span>] <span class="op">==</span> <span class="st">'Texas'</span>].copy()</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># First, check if race counts sum to totals</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>texas_totals <span class="op">=</span> texas_data[texas_data[<span class="st">'variable_category'</span>] <span class="op">==</span> <span class="st">'total'</span>].set_index(<span class="st">'offender_type'</span>)[<span class="st">'value_numeric'</span>].to_dict()</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>texas_race_sums <span class="op">=</span> texas_data[texas_data[<span class="st">'variable_category'</span>] <span class="op">==</span> <span class="st">'race'</span>].groupby(<span class="st">'offender_type'</span>)[<span class="st">'value_numeric'</span>].<span class="bu">sum</span>()</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>display(Markdown(<span class="st">"**Texas: Missing race data (Unknown category)**"</span>))</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>missing_data <span class="op">=</span> []</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> offender_type, total <span class="kw">in</span> texas_totals.items():</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> offender_type <span class="kw">in</span> texas_race_sums.index:</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        race_sum <span class="op">=</span> texas_race_sums[offender_type]</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        missing <span class="op">=</span> total <span class="op">-</span> race_sum</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>        missing_data.append({</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>            <span class="st">'Offender Type'</span>: offender_type,</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>            <span class="st">'Total'</span>: <span class="ss">f"</span><span class="sc">{</span><span class="bu">int</span>(total)<span class="sc">:,}</span><span class="ss">"</span>,</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>            <span class="st">'Race Sum'</span>: <span class="ss">f"</span><span class="sc">{</span><span class="bu">int</span>(race_sum)<span class="sc">:,}</span><span class="ss">"</span>,</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>            <span class="st">'Missing'</span>: <span class="ss">f"</span><span class="sc">{</span><span class="bu">int</span>(missing)<span class="sc">:,}</span><span class="ss">"</span>,</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>            <span class="st">'Missing %'</span>: <span class="ss">f"</span><span class="sc">{</span>missing<span class="op">/</span>total <span class="op">*</span> <span class="dv">100</span><span class="sc">:.2f}</span><span class="ss">%"</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>        })</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>missing_df <span class="op">=</span> pd.DataFrame(missing_data)</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>display(HTML(missing_df.to_html(index<span class="op">=</span><span class="va">False</span>, classes<span class="op">=</span><span class="st">'table table-striped table-hover'</span>)))</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate percentages for available data</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>texas_with_pct <span class="op">=</span> texas_data[</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>    (texas_data[<span class="st">'value_type'</span>] <span class="op">==</span> <span class="st">'count'</span>) <span class="op">&amp;</span> </span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>    (texas_data[<span class="st">'variable_category'</span>] <span class="op">!=</span> <span class="st">'total'</span>)</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>].copy()</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>texas_with_pct[<span class="st">'total'</span>] <span class="op">=</span> texas_with_pct[<span class="st">'offender_type'</span>].<span class="bu">map</span>(texas_totals)</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>texas_with_pct[<span class="st">'percentage'</span>] <span class="op">=</span> <span class="bu">round</span>(texas_with_pct[<span class="st">'value_numeric'</span>] <span class="op">/</span> texas_with_pct[<span class="st">'total'</span>] <span class="op">*</span> <span class="dv">100</span>, <span class="dv">2</span>)</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>display(Markdown(<span class="st">"</span><span class="ch">\n</span><span class="st">**Texas: Gender data (only female counts provided)**"</span>))</span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>gender_df <span class="op">=</span> texas_with_pct[texas_with_pct[<span class="st">'variable_category'</span>] <span class="op">==</span> <span class="st">'gender'</span>][</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>    [<span class="st">'offender_type'</span>, <span class="st">'variable_detailed'</span>, <span class="st">'value_numeric'</span>, <span class="st">'percentage'</span>]</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>].copy()</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>gender_df.columns <span class="op">=</span> [<span class="st">'Offender Type'</span>, <span class="st">'Gender'</span>, <span class="st">'Count'</span>, <span class="st">'Percentage'</span>]</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>gender_df[<span class="st">'Count'</span>] <span class="op">=</span> gender_df[<span class="st">'Count'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="ss">f"</span><span class="sc">{</span>x<span class="sc">:,.0f}</span><span class="ss">"</span>)</span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>gender_df[<span class="st">'Percentage'</span>] <span class="op">=</span> gender_df[<span class="st">'Percentage'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="ss">f"</span><span class="sc">{</span>x<span class="sc">:.2f}</span><span class="ss">%"</span>)</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>display(HTML(gender_df.to_html(index<span class="op">=</span><span class="va">False</span>, classes<span class="op">=</span><span class="st">'table table-striped table-hover'</span>)))</span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate male counts</span></span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>display(Markdown(<span class="st">"</span><span class="ch">\n</span><span class="st">**Calculated Male/Other counts:**"</span>))</span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>male_data <span class="op">=</span> []</span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> offender_type <span class="kw">in</span> [<span class="st">'Offenders'</span>, <span class="st">'Arrestee'</span>]:</span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>    total <span class="op">=</span> texas_totals[offender_type]</span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>    female <span class="op">=</span> texas_with_pct[(texas_with_pct[<span class="st">'offender_type'</span>] <span class="op">==</span> offender_type) <span class="op">&amp;</span> </span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>                           (texas_with_pct[<span class="st">'variable_category'</span>] <span class="op">==</span> <span class="st">'gender'</span>)][<span class="st">'value_numeric'</span>].iloc[<span class="dv">0</span>]</span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>    male <span class="op">=</span> total <span class="op">-</span> female</span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>    male_data.append({</span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Offender Type'</span>: offender_type,</span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Male/Other Count'</span>: <span class="ss">f"</span><span class="sc">{</span><span class="bu">int</span>(male)<span class="sc">:,}</span><span class="ss">"</span>,</span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Male/Other %'</span>: <span class="ss">f"</span><span class="sc">{</span>male<span class="op">/</span>total <span class="op">*</span> <span class="dv">100</span><span class="sc">:.2f}</span><span class="ss">%"</span></span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>male_df <span class="op">=</span> pd.DataFrame(male_data)</span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>display(HTML(male_df.to_html(index<span class="op">=</span><span class="va">False</span>, classes<span class="op">=</span><span class="st">'table table-striped'</span>)))</span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>display(Markdown(<span class="st">"</span><span class="ch">\n</span><span class="st">⚠️ **Note**: Texas only reported female counts. Male/Other counts must be calculated by subtraction."</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="texas-analysis-1" class="cell-output cell-output-display cell-output-markdown">
+<p><strong>Texas: Missing race data (Unknown category)</strong></p>
+</div>
+<div id="texas-analysis-2" class="cell-output cell-output-display">
+<table class="dataframe table table-striped table-hover caption-top table-sm small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">Offender Type</th>
+<th data-quarto-table-cell-role="th">Total</th>
+<th data-quarto-table-cell-role="th">Race Sum</th>
+<th data-quarto-table-cell-role="th">Missing</th>
+<th data-quarto-table-cell-role="th">Missing %</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Offenders</td>
+<td>845,322</td>
+<td>845,293</td>
+<td>29</td>
+<td>0.00%</td>
+</tr>
+<tr class="even">
+<td>Arrestee</td>
+<td>73,631</td>
+<td>71,470</td>
+<td>2,161</td>
+<td>2.93%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="texas-analysis-3" class="cell-output cell-output-display cell-output-markdown">
+<p><strong>Texas: Gender data (only female counts provided)</strong></p>
+</div>
+<div id="texas-analysis-4" class="cell-output cell-output-display">
+<table class="dataframe table table-striped table-hover caption-top table-sm small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">Offender Type</th>
+<th data-quarto-table-cell-role="th">Gender</th>
+<th data-quarto-table-cell-role="th">Count</th>
+<th data-quarto-table-cell-role="th">Percentage</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Offenders</td>
+<td>Female</td>
+<td>121,434</td>
+<td>14.37%</td>
+</tr>
+<tr class="even">
+<td>Arrestee</td>
+<td>Female</td>
+<td>18,721</td>
+<td>25.43%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="texas-analysis-5" class="cell-output cell-output-display cell-output-markdown">
+<p><strong>Calculated Male/Other counts:</strong></p>
+</div>
+<div id="texas-analysis-6" class="cell-output cell-output-display">
+<table class="dataframe table table-striped caption-top table-sm small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">Offender Type</th>
+<th data-quarto-table-cell-role="th">Male/Other Count</th>
+<th data-quarto-table-cell-role="th">Male/Other %</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Offenders</td>
+<td>723,888</td>
+<td>85.63%</td>
+</tr>
+<tr class="even">
+<td>Arrestee</td>
+<td>54,910</td>
+<td>74.57%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="texas-analysis-7" class="cell-output cell-output-display cell-output-markdown">
+<p>⚠️ <strong>Note</strong>: Texas only reported female counts. Male/Other counts must be calculated by subtraction.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="step-3-states-with-only-percentages" class="level3">
+<h3 class="anchored" data-anchor-id="step-3-states-with-only-percentages">Step 3: States with Only Percentages</h3>
+<p>Indiana requires special handling as they only provided percentages for demographics.</p>
+<section id="indiana-verify-percentages-sum-to-100" class="level4">
+<h4 class="anchored" data-anchor-id="indiana-verify-percentages-sum-to-100">Indiana: Verify Percentages Sum to 100%</h4>
+<div id="indiana-percentages" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Indiana only provided percentages for demographics</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>indiana_pct <span class="op">=</span> foia_raw[</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    (foia_raw[<span class="st">'state'</span>] <span class="op">==</span> <span class="st">'Indiana'</span>) <span class="op">&amp;</span> </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    (foia_raw[<span class="st">'value_type'</span>] <span class="op">==</span> <span class="st">'percentage'</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>].copy()</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Check if percentages sum to 100%</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>indiana_pct_check <span class="op">=</span> indiana_pct.groupby(<span class="st">'variable_category'</span>).agg({</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">'value_numeric'</span>: <span class="st">'sum'</span>,</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">'variable_detailed'</span>: <span class="kw">lambda</span> x: <span class="st">', '</span>.join(x)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>}).rename(columns<span class="op">=</span>{<span class="st">'value_numeric'</span>: <span class="st">'total_percentage'</span>})</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>display(Markdown(<span class="st">"**Indiana: Checking if percentages sum to 100%**"</span>))</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>check_df <span class="op">=</span> indiana_pct_check.reset_index()</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>check_df.columns <span class="op">=</span> [<span class="st">'Category'</span>, <span class="st">'Total %'</span>, <span class="st">'Values'</span>]</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>check_df[<span class="st">'Total %'</span>] <span class="op">=</span> check_df[<span class="st">'Total %'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="ss">f"</span><span class="sc">{</span>x<span class="sc">:.1f}</span><span class="ss">%"</span>)</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>display(HTML(check_df.to_html(index<span class="op">=</span><span class="va">False</span>, classes<span class="op">=</span><span class="st">'table table-striped table-hover'</span>)))</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Get totals for calculating counts</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>indiana_totals <span class="op">=</span> foia_raw[</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    (foia_raw[<span class="st">'state'</span>] <span class="op">==</span> <span class="st">'Indiana'</span>) <span class="op">&amp;</span> </span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    (foia_raw[<span class="st">'variable_category'</span>] <span class="op">==</span> <span class="st">'total'</span>)</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>convicted <span class="op">=</span> indiana_totals[indiana_totals[<span class="st">'offender_type'</span>] <span class="op">==</span> <span class="st">'Convicted Offender'</span>][<span class="st">'value_numeric'</span>].iloc[<span class="dv">0</span>]</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>arrestee <span class="op">=</span> indiana_totals[indiana_totals[<span class="st">'offender_type'</span>] <span class="op">==</span> <span class="st">'Arrestee'</span>][<span class="st">'value_numeric'</span>].iloc[<span class="dv">0</span>]</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>combined <span class="op">=</span> convicted <span class="op">+</span> arrestee</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>display(Markdown(<span class="st">"</span><span class="ch">\n</span><span class="st">**Indiana totals for calculating counts:**"</span>))</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>totals_data <span class="op">=</span> [</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>    [<span class="st">'Convicted'</span>, <span class="ss">f"</span><span class="sc">{</span><span class="bu">int</span>(convicted)<span class="sc">:,}</span><span class="ss">"</span>],</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>    [<span class="st">'Arrestee'</span>, <span class="ss">f"</span><span class="sc">{</span><span class="bu">int</span>(arrestee)<span class="sc">:,}</span><span class="ss">"</span>],</span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>    [<span class="st">'Combined'</span>, <span class="ss">f"</span><span class="sc">{</span><span class="bu">int</span>(combined)<span class="sc">:,}</span><span class="ss">"</span>]</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>totals_df <span class="op">=</span> pd.DataFrame(totals_data, columns<span class="op">=</span>[<span class="st">'Type'</span>, <span class="st">'Count'</span>])</span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>display(HTML(totals_df.to_html(index<span class="op">=</span><span class="va">False</span>, classes<span class="op">=</span><span class="st">'table table-striped'</span>)))</span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate counts from percentages</span></span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>display(Markdown(<span class="st">"</span><span class="ch">\n</span><span class="st">**Calculated counts from percentages:**"</span>))</span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>calculated_counts <span class="op">=</span> []</span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _, row <span class="kw">in</span> indiana_pct.iterrows():</span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>    count <span class="op">=</span> <span class="bu">round</span>(combined <span class="op">*</span> row[<span class="st">'value_numeric'</span>] <span class="op">/</span> <span class="dv">100</span>)</span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>    calculated_counts.append({</span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Category'</span>: row[<span class="st">'variable_category'</span>],</span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Detail'</span>: row[<span class="st">'variable_detailed'</span>],</span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Percentage'</span>: <span class="ss">f"</span><span class="sc">{</span>row[<span class="st">'value_numeric'</span>]<span class="sc">}</span><span class="ss">%"</span>,</span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Calculated Count'</span>: <span class="ss">f"</span><span class="sc">{</span><span class="bu">int</span>(count)<span class="sc">:,}</span><span class="ss">"</span></span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>calc_df <span class="op">=</span> pd.DataFrame(calculated_counts)</span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>display(HTML(calc_df.to_html(index<span class="op">=</span><span class="va">False</span>, classes<span class="op">=</span><span class="st">'table table-striped table-hover'</span>)))</span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>display(Markdown(<span class="st">"</span><span class="ch">\n</span><span class="st">⚠️ **Note**: Indiana's race percentages sum to 100.5</span><span class="sc">% d</span><span class="st">ue to '&lt;1%' being interpreted as 0.5%"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="indiana-percentages-1" class="cell-output cell-output-display cell-output-markdown">
+<p><strong>Indiana: Checking if percentages sum to 100%</strong></p>
+</div>
+<div id="indiana-percentages-2" class="cell-output cell-output-display">
+<table class="dataframe table table-striped table-hover caption-top table-sm small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">Category</th>
+<th data-quarto-table-cell-role="th">Total %</th>
+<th data-quarto-table-cell-role="th">Values</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>gender</td>
+<td>100.0%</td>
+<td>Female, Male</td>
+</tr>
+<tr class="even">
+<td>race</td>
+<td>100.5%</td>
+<td>Caucasian, Black, Hispanic, Other</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="indiana-percentages-3" class="cell-output cell-output-display cell-output-markdown">
+<p><strong>Indiana totals for calculating counts:</strong></p>
+</div>
+<div id="indiana-percentages-4" class="cell-output cell-output-display">
+<table class="dataframe table table-striped caption-top table-sm small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">Type</th>
+<th data-quarto-table-cell-role="th">Count</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Convicted</td>
+<td>279,654</td>
+</tr>
+<tr class="even">
+<td>Arrestee</td>
+<td>21,087</td>
+</tr>
+<tr class="odd">
+<td>Combined</td>
+<td>300,741</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="indiana-percentages-5" class="cell-output cell-output-display cell-output-markdown">
+<p><strong>Calculated counts from percentages:</strong></p>
+</div>
+<div id="indiana-percentages-6" class="cell-output cell-output-display">
+<table class="dataframe table table-striped table-hover caption-top table-sm small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">Category</th>
+<th data-quarto-table-cell-role="th">Detail</th>
+<th data-quarto-table-cell-role="th">Percentage</th>
+<th data-quarto-table-cell-role="th">Calculated Count</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>gender</td>
+<td>Female</td>
+<td>20.0%</td>
+<td>60,148</td>
+</tr>
+<tr class="even">
+<td>gender</td>
+<td>Male</td>
+<td>80.0%</td>
+<td>240,593</td>
+</tr>
+<tr class="odd">
+<td>race</td>
+<td>Caucasian</td>
+<td>70.0%</td>
+<td>210,519</td>
+</tr>
+<tr class="even">
+<td>race</td>
+<td>Black</td>
+<td>26.0%</td>
+<td>78,193</td>
+</tr>
+<tr class="odd">
+<td>race</td>
+<td>Hispanic</td>
+<td>4.0%</td>
+<td>12,030</td>
+</tr>
+<tr class="even">
+<td>race</td>
+<td>Other</td>
+<td>0.5%</td>
+<td>1,504</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="indiana-percentages-7" class="cell-output cell-output-display cell-output-markdown">
+<p>⚠️ <strong>Note</strong>: Indiana’s race percentages sum to 100.5% due to ‘&lt;1%’ being interpreted as 0.5%</p>
+</div>
+</div>
+</section>
+</section>
+<section id="step-4-nevada-special-case" class="level3">
+<h3 class="anchored" data-anchor-id="step-4-nevada-special-case">Step 4: Nevada Special Case</h3>
+<p>Nevada provides counts for all data but only some percentages.</p>
+<div id="nevada-analysis" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Nevada has counts for everything, percentages for some</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>nevada_data <span class="op">=</span> foia_raw[foia_raw[<span class="st">'state'</span>] <span class="op">==</span> <span class="st">'Nevada'</span>].copy()</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>nevada_wide <span class="op">=</span> nevada_data.pivot_table(</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span>[<span class="st">'offender_type'</span>, <span class="st">'variable_category'</span>, <span class="st">'variable_detailed'</span>],</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    columns<span class="op">=</span><span class="st">'value_type'</span>,</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    values<span class="op">=</span><span class="st">'value_numeric'</span>,</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    aggfunc<span class="op">=</span><span class="st">'first'</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>).reset_index()</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>display(Markdown(<span class="st">"**Nevada: Data with provided percentages**"</span>))</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>with_pct <span class="op">=</span> nevada_wide[nevada_wide[<span class="st">'percentage'</span>].notna()].copy()</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>summary_df <span class="op">=</span> with_pct[[<span class="st">'offender_type'</span>, <span class="st">'variable_category'</span>, <span class="st">'variable_detailed'</span>, <span class="st">'count'</span>, <span class="st">'percentage'</span>]]</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>summary_df.columns <span class="op">=</span> [<span class="st">'Offender Type'</span>, <span class="st">'Category'</span>, <span class="st">'Detail'</span>, <span class="st">'Count'</span>, <span class="st">'Percentage'</span>]</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>summary_df[<span class="st">'Count'</span>] <span class="op">=</span> summary_df[<span class="st">'Count'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="ss">f"</span><span class="sc">{</span>x<span class="sc">:,.0f}</span><span class="ss">"</span>)</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>summary_df[<span class="st">'Percentage'</span>] <span class="op">=</span> summary_df[<span class="st">'Percentage'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="ss">f"</span><span class="sc">{</span>x<span class="sc">:.4f}</span><span class="ss">%"</span>)</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>display(HTML(summary_df.to_html(index<span class="op">=</span><span class="va">False</span>, classes<span class="op">=</span><span class="st">'table table-striped table-hover'</span>)))</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate missing percentages</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>total_flags <span class="op">=</span> <span class="dv">344097</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>nevada_calc <span class="op">=</span> nevada_wide[nevada_wide[<span class="st">'percentage'</span>].isna() <span class="op">&amp;</span> nevada_wide[<span class="st">'count'</span>].notna()].copy()</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>nevada_calc[<span class="st">'calc_percentage'</span>] <span class="op">=</span> <span class="bu">round</span>(nevada_calc[<span class="st">'count'</span>] <span class="op">/</span> total_flags <span class="op">*</span> <span class="dv">100</span>, <span class="dv">3</span>)</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>display(Markdown(<span class="st">"</span><span class="ch">\n</span><span class="st">**Nevada: Calculated percentages for missing data**"</span>))</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>calc_df <span class="op">=</span> nevada_calc[[<span class="st">'offender_type'</span>, <span class="st">'variable_category'</span>, <span class="st">'variable_detailed'</span>, <span class="st">'count'</span>, <span class="st">'calc_percentage'</span>]].copy()</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>calc_df.columns <span class="op">=</span> [<span class="st">'Offender Type'</span>, <span class="st">'Category'</span>, <span class="st">'Detail'</span>, <span class="st">'Count'</span>, <span class="st">'Calculated %'</span>]</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>calc_df[<span class="st">'Count'</span>] <span class="op">=</span> calc_df[<span class="st">'Count'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="ss">f"</span><span class="sc">{</span>x<span class="sc">:,.0f}</span><span class="ss">"</span>)</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>calc_df[<span class="st">'Calculated %'</span>] <span class="op">=</span> calc_df[<span class="st">'Calculated %'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="ss">f"</span><span class="sc">{</span>x<span class="sc">:.3f}</span><span class="ss">%"</span>)</span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>display(HTML(calc_df.to_html(index<span class="op">=</span><span class="va">False</span>, classes<span class="op">=</span><span class="st">'table table-striped table-hover'</span>)))</span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>display(Markdown(<span class="st">"</span><span class="ch">\n</span><span class="st">⚠️ **Note**: Nevada uses 'flags' instead of 'profiles' terminology"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="nevada-analysis-1" class="cell-output cell-output-display cell-output-markdown">
+<p><strong>Nevada: Data with provided percentages</strong></p>
+</div>
+<div id="nevada-analysis-2" class="cell-output cell-output-display">
+<table class="dataframe table table-striped table-hover caption-top table-sm small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">Offender Type</th>
+<th data-quarto-table-cell-role="th">Category</th>
+<th data-quarto-table-cell-role="th">Detail</th>
+<th data-quarto-table-cell-role="th">Count</th>
+<th data-quarto-table-cell-role="th">Percentage</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Arrested offender</td>
+<td>total</td>
+<td>total_profiles</td>
+<td>185,074</td>
+<td>53.7850%</td>
+</tr>
+<tr class="even">
+<td>Combined</td>
+<td>gender</td>
+<td>Female</td>
+<td>63,287</td>
+<td>18.3920%</td>
+</tr>
+<tr class="odd">
+<td>Combined</td>
+<td>gender</td>
+<td>Male</td>
+<td>280,738</td>
+<td>81.5870%</td>
+</tr>
+<tr class="even">
+<td>Combined</td>
+<td>gender</td>
+<td>Unknown</td>
+<td>72</td>
+<td>0.0209%</td>
+</tr>
+<tr class="odd">
+<td>Combined</td>
+<td>race</td>
+<td>American Indian</td>
+<td>5,710</td>
+<td>1.6590%</td>
+</tr>
+<tr class="even">
+<td>Combined</td>
+<td>race</td>
+<td>Asian</td>
+<td>7,999</td>
+<td>2.3460%</td>
+</tr>
+<tr class="odd">
+<td>Combined</td>
+<td>race</td>
+<td>Black</td>
+<td>88,174</td>
+<td>25.6250%</td>
+</tr>
+<tr class="even">
+<td>Combined</td>
+<td>race</td>
+<td>Unknown</td>
+<td>3,491</td>
+<td>1.0150%</td>
+</tr>
+<tr class="odd">
+<td>Combined</td>
+<td>race</td>
+<td>White</td>
+<td>238,723</td>
+<td>69.3770%</td>
+</tr>
+<tr class="even">
+<td>Convicted offenders</td>
+<td>total</td>
+<td>total_profiles</td>
+<td>159,023</td>
+<td>46.2150%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="nevada-analysis-3" class="cell-output cell-output-display cell-output-markdown">
+<p><strong>Nevada: Calculated percentages for missing data</strong></p>
+</div>
+<div id="nevada-analysis-4" class="cell-output cell-output-display">
+<table class="dataframe table table-striped table-hover caption-top table-sm small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">Offender Type</th>
+<th data-quarto-table-cell-role="th">Category</th>
+<th data-quarto-table-cell-role="th">Detail</th>
+<th data-quarto-table-cell-role="th">Count</th>
+<th data-quarto-table-cell-role="th">Calculated %</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>All</td>
+<td>total</td>
+<td>total_flags</td>
+<td>344,097</td>
+<td>100.000%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="nevada-analysis-5" class="cell-output cell-output-display cell-output-markdown">
+<p>⚠️ <strong>Note</strong>: Nevada uses ‘flags’ instead of ‘profiles’ terminology</p>
+</div>
+</div>
+</section>
+</section>
+<section id="summary-of-calculations-needed" class="level2">
+<h2 class="anchored" data-anchor-id="summary-of-calculations-needed">Summary of Calculations Needed</h2>
+<section id="verification-results-states-with-both" class="level3">
+<h3 class="anchored" data-anchor-id="verification-results-states-with-both">1. Verification Results (States with Both)</h3>
+<p>✅ <strong>All states with both counts and percentages show excellent agreement:</strong></p>
+<ul>
+<li><strong>Florida</strong>: Perfect match - all differences are 0.00</li>
+<li><strong>Maine</strong>: Only 0.5% difference for Male due to rounding<br>
+</li>
+<li><strong>South Dakota</strong>: Only 0.07% difference for Asian due to rounding</li>
+</ul>
+</section>
+<section id="states-requiring-percentage-calculations" class="level3">
+<h3 class="anchored" data-anchor-id="states-requiring-percentage-calculations">2. States Requiring Percentage Calculations</h3>
+<p>⚠️ <strong>Critical issues found:</strong></p>
+<ul>
+<li><strong>California</strong>:
+<ul>
+<li>All percentages need calculation</li>
+<li>Race percentages don’t sum to 100% (Convicted: 80.50%, Arrestee: 87.22%)</li>
+</ul></li>
+<li><strong>Texas</strong>:
+<ul>
+<li>All percentages need calculation</li>
+<li>Only female gender counts provided</li>
+<li>Race counts missing Unknown category</li>
+</ul></li>
+</ul>
+</section>
+<section id="states-requiring-count-calculations" class="level3">
+<h3 class="anchored" data-anchor-id="states-requiring-count-calculations">3. States Requiring Count Calculations</h3>
+<ul>
+<li><strong>Indiana</strong>:
+<ul>
+<li>Gender percentages sum to 100% ✓</li>
+<li>Race percentages sum to 100.5% (due to “&lt;1%” → 0.5%)</li>
+<li>Use combined total of 300,741 for calculations</li>
+</ul></li>
+</ul>
+</section>
+<section id="mixed-reporting" class="level3">
+<h3 class="anchored" data-anchor-id="mixed-reporting">4. Mixed Reporting</h3>
+<ul>
+<li><strong>Nevada</strong>:
+<ul>
+<li>Has counts for all data</li>
+<li>Missing some percentages (need calculation)</li>
+<li>Uses “flags” terminology instead of “profiles”</li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="data-quality-issues-summary" class="level2">
+<h2 class="anchored" data-anchor-id="data-quality-issues-summary">Data Quality Issues Summary</h2>
+<div id="cell-quality-summary" class="cell" data-execution_count="9">
+<div id="quality-summary" class="cell-output cell-output-display">
+<style type="text/css">
+#T_567ed_row0_col0, #T_567ed_row0_col1, #T_567ed_row0_col2, #T_567ed_row0_col3, #T_567ed_row1_col0, #T_567ed_row1_col1, #T_567ed_row1_col2, #T_567ed_row1_col3 {
+  background-color: #ffcccc;
+}
+#T_567ed_row2_col0, #T_567ed_row2_col1, #T_567ed_row2_col2, #T_567ed_row2_col3 {
+  background-color: #ffe6cc;
+}
+#T_567ed_row3_col0, #T_567ed_row3_col1, #T_567ed_row3_col2, #T_567ed_row3_col3, #T_567ed_row4_col0, #T_567ed_row4_col1, #T_567ed_row4_col2, #T_567ed_row4_col3 {
+  background-color: #ffffcc;
+}
+</style>
+
+<table id="T_567ed" class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
+<th id="T_567ed_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">State</th>
+<th id="T_567ed_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">Issue Type</th>
+<th id="T_567ed_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">Severity</th>
+<th id="T_567ed_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td id="T_567ed_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">0</td>
+<td id="T_567ed_row0_col0" class="data row0 col0">Texas</td>
+<td id="T_567ed_row0_col1" class="data row0 col1">Gender</td>
+<td id="T_567ed_row0_col2" class="data row0 col2">Critical</td>
+<td id="T_567ed_row0_col3" class="data row0 col3">Only female counts provided; male counts must be calculated</td>
+</tr>
+<tr class="even">
+<td id="T_567ed_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">1</td>
+<td id="T_567ed_row1_col0" class="data row1 col0">Texas</td>
+<td id="T_567ed_row1_col1" class="data row1 col1">Race</td>
+<td id="T_567ed_row1_col2" class="data row1 col2">Critical</td>
+<td id="T_567ed_row1_col3" class="data row1 col3">Totals don't match sum; 29 Offenders and 2,161 Arrestees missing</td>
+</tr>
+<tr class="odd">
+<td id="T_567ed_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">2</td>
+<td id="T_567ed_row2_col0" class="data row2 col0">California</td>
+<td id="T_567ed_row2_col1" class="data row2 col1">Race</td>
+<td id="T_567ed_row2_col2" class="data row2 col2">Major</td>
+<td id="T_567ed_row2_col3" class="data row2 col3">Convicted: 80.50% total; Arrestee: 87.22% total</td>
+</tr>
+<tr class="even">
+<td id="T_567ed_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">3</td>
+<td id="T_567ed_row3_col0" class="data row3 col0">Indiana</td>
+<td id="T_567ed_row3_col1" class="data row3 col1">Race</td>
+<td id="T_567ed_row3_col2" class="data row3 col2">Minor</td>
+<td id="T_567ed_row3_col3" class="data row3 col3">'&lt;1%' for Other race requires interpretation</td>
+</tr>
+<tr class="odd">
+<td id="T_567ed_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">4</td>
+<td id="T_567ed_row4_col0" class="data row4 col0">Florida</td>
+<td id="T_567ed_row4_col1" class="data row4 col1">Gender</td>
+<td id="T_567ed_row4_col2" class="data row4 col2">Minor</td>
+<td id="T_567ed_row4_col3" class="data row4 col3">Percentages sum to 100.01% (rounding)</td>
+</tr>
+<tr class="even">
+<td id="T_567ed_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">5</td>
+<td id="T_567ed_row5_col0" class="data row5 col0">Nevada</td>
+<td id="T_567ed_row5_col1" class="data row5 col1">Terminology</td>
+<td id="T_567ed_row5_col2" class="data row5 col2">Note</td>
+<td id="T_567ed_row5_col3" class="data row5 col3">Uses 'flags' instead of 'profiles'</td>
+</tr>
+<tr class="odd">
+<td id="T_567ed_level0_row6" class="row_heading level0 row6" data-quarto-table-cell-role="th">6</td>
+<td id="T_567ed_row6_col0" class="data row6 col0">South Dakota</td>
+<td id="T_567ed_row6_col1" class="data row6 col1">Complexity</td>
+<td id="T_567ed_row6_col2" class="data row6 col2">Note</td>
+<td id="T_567ed_row6_col3" class="data row6 col3">Provides race×gender intersections (unique among states)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

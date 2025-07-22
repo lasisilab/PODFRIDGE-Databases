@@ -1,0 +1,806 @@
+---
+title: "NDIS Database Analysis"
+subtitle: "Parsing FBI National DNA Index System Statistics from Wayback Machine"
+author: "Tina Lasisi"
+date: today
+format:
+  html:
+    code-fold: false
+    toc: true
+    toc-depth: 3
+execute:
+  echo: true
+  warning: false
+  freeze: auto  # prevents re-execution unless code changes
+---
+## Introduction
+
+This analysis processes NDIS (National DNA Index System) statistics from archived FBI web pages. We parse 300+ HTML snapshots from the Wayback Machine to track how the DNA database has grown from 2010 to 2025.
+
+## Setup and Configuration
+
+```{python}
+#| echo: false
+import subprocess
+import sys
+
+# List of required packages
+required_packages = ['requests', 'beautifulsoup4', 'lxml', 'pandas', 'matplotlib', 'tqdm', 'numpy']
+
+# Install packages if not already installed
+for package in required_packages:
+    try:
+        __import__(package)
+    except ImportError:
+        print(f"Installing {package}...")
+        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+```
+
+```{python}
+from pathlib import Path
+import re, json, requests, time
+from datetime import datetime
+import pandas as pd
+from bs4 import BeautifulSoup
+from tqdm.auto import tqdm
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Configuration
+# Path setup - using current directory as base
+# This assumes you run the notebook from the project root (PODFRIDGE-Databases)
+BASE_DIR = Path("..")  # Current working directory
+HTML_DIR = BASE_DIR / "raw" / "wayback_html"
+META_DIR = BASE_DIR / "raw" / "wayback_meta"
+OUTPUT_DIR = BASE_DIR / "output" / "ndis"
+
+# Create directories if they don't exist
+HTML_DIR.mkdir(parents=True, exist_ok=True)
+META_DIR.mkdir(parents=True, exist_ok=True)
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+# Jurisdiction name standardization mapping
+JURISDICTION_NAME_MAP = {
+    'D.C./FBI Lab': 'DC/FBI Lab',
+    'US Army': 'U.S. Army'
+}
+
+# Known data typos to fix
+KNOWN_TYPOS = [
+    {
+        'timestamp': '20250105164014',
+        'jurisdiction': 'California', 
+        'field': 'investigations_aided',
+        'wrong_value': '1304657',  # How it parses
+        'correct_value': '130465'   # What it should be
+    },
+    {
+        'timestamp': '20250116205311',
+        'jurisdiction': 'California',
+        'field': 'investigations_aided', 
+        'wrong_value': '1304657',
+        'correct_value': '130465'
+    }
+]
+
+print(f"Working directory: {BASE_DIR.resolve()}")
+print(f"HTML directory: {HTML_DIR}")
+print(f"Meta directory: {META_DIR}")
+print(f"Output directory: {OUTPUT_DIR}")
+```
+
+## Wayback Machine Functions
+
+```{python}
+def make_request_with_retry(params, max_retries=3, initial_delay=5):
+    """Make a request with exponential backoff retry logic"""
+    base = "https://web.archive.org/cdx/search/cdx"
+    
+    for attempt in range(max_retries):
+        try:
+            r = requests.get(base, params=params, timeout=30)
+            if r.status_code == 200:
+                return r
+            elif r.status_code == 429:  # Rate limited
+                wait_time = initial_delay * (2 ** attempt)
+                print(f"    Rate limited. Waiting {wait_time} seconds...")
+                time.sleep(wait_time)
+            else:
+                return r
+        except requests.exceptions.ConnectionError as e:
+            wait_time = initial_delay * (2 ** attempt)
+            print(f"    Connection error. Waiting {wait_time} seconds before retry {attempt + 1}/{max_retries}")
+            time.sleep(wait_time)
+        except Exception as e:
+            print(f"    Unexpected error: {e}")
+            return None
+    return None
+```
+
+## Search for All NDIS Snapshots
+
+```{python}
+#| code-fold: true
+#| code-summary: "Show search function code"
+def search_all_ndis_snapshots():
+    """Search for NDIS snapshots across all known URL variations"""
+    
+    # Search for both http and https variants
+    protocols = ["http://", "https://"]
+    subdomains = ["www", "le", "*"]  # Known subdomains plus wildcard
+    
+    all_rows = []
+    seen_timestamps = set()
+    
+    # First, try broad searches with protocol wildcards
+    print("Starting wildcard searches...")
+    for protocol in protocols:
+        for subdomain in subdomains:
+            pattern = f"{protocol}{subdomain}.fbi.gov/*ndis-statistics*"
+            print(f"\nSearching: {pattern}")
+            
+            params = {
+                "url":         pattern,
+                "matchType":   "wildcard",
+                "output":      "json",
+                "fl":          "timestamp,original,mimetype,statuscode",
+                "filter":      ["statuscode:200", "mimetype:text/html"],
+                "limit":       "10000",
+            }
+            
+            r = make_request_with_retry(params)
+            if r and r.status_code == 200:
+                data = json.loads(r.text)
+                if len(data) > 1:
+                    new_rows = 0
+                    for row in data[1:]:
+                        if row[0] not in seen_timestamps:
+                            all_rows.append(row)
+                            seen_timestamps.add(row[0])
+                            new_rows += 1
+                    print(f"  → Found {new_rows} new snapshots")
+                else:
+                    print(f"  → No results")
+            else:
+                print(f"  → Failed after retries")
+            
+            # Always wait between requests to avoid rate limiting
+            time.sleep(2)
+    
+    # Also search your specific known URLs with both protocols
+    known_paths = [
+        "www.fbi.gov/about-us/lab/codis/ndis-statistics",
+        "www.fbi.gov/about-us/laboratory/biometric-analysis/codis/ndis-statistics", 
+        "www.fbi.gov/services/laboratory/biometric-analysis/codis/ndis-statistics",
+        "le.fbi.gov/science-and-lab/biometrics-and-fingerprints/codis/codis-ndis-statistics",
+    ]
+    
+    print("\n\nStarting exact URL searches...")
+    for path in known_paths:
+        for protocol in protocols:
+            url = f"{protocol}{path}"
+            print(f"\nSearching: {url}")
+            
+            params = {
+                "url":         url,
+                "matchType":   "exact",
+                "output":      "json",
+                "fl":          "timestamp,original,mimetype,statuscode",
+                "filter":      ["statuscode:200", "mimetype:text/html"],
+                "limit":       "10000",
+            }
+            
+            r = make_request_with_retry(params)
+            if r and r.status_code == 200:
+                data = json.loads(r.text)
+                if len(data) > 1:
+                    new_rows = 0
+                    for row in data[1:]:
+                        if row[0] not in seen_timestamps:
+                            all_rows.append(row)
+                            seen_timestamps.add(row[0])
+                            new_rows += 1
+                    print(f"  → Found {new_rows} new snapshots")
+                else:
+                    print(f"  → No results")
+            else:
+                print(f"  → Failed after retries")
+            
+            # Always wait between requests
+            time.sleep(2)
+    
+    # Create DataFrame
+    snap_df = (pd.DataFrame(
+                    all_rows,
+                    columns=["timestamp", "original", "mimetype", "status"])
+               .sort_values("timestamp")
+               .reset_index(drop=True))
+    
+    return snap_df
+
+# Check if we already have snapshot data or need to search
+snapshot_csv = META_DIR / 'snapshots_found.csv'
+if snapshot_csv.exists():
+    print("Loading existing snapshot list...")
+    snap_df = pd.read_csv(snapshot_csv)
+    print(f"Loaded {len(snap_df)} snapshots")
+else:
+    print("Searching for all NDIS snapshots...")
+    snap_df = search_all_ndis_snapshots()
+    if len(snap_df) > 0:
+        snap_df.to_csv(snapshot_csv, index=False)
+        print(f"\nSaved {len(snap_df)} snapshots to {snapshot_csv}")
+
+if len(snap_df) > 0:
+    print(f"\nTotal unique snapshots found: {len(snap_df):,}")
+    print(f"Unique URLs found: {snap_df['original'].nunique()}")
+    print("\nUnique URL patterns found:")
+    for url in sorted(snap_df['original'].unique()):
+        print(f"  {url}")
+```
+
+## Download Functions
+
+```{python}
+def download_with_retry(url, max_retries=3, initial_delay=5, consecutive_failures=0):
+    """Download with adaptive retry logic based on consecutive failures"""
+    if consecutive_failures > 0:
+        extra_wait = consecutive_failures * 10
+        print(f"\n    Adding {extra_wait}s cooldown due to {consecutive_failures} consecutive failures...")
+        time.sleep(extra_wait)
+    
+    for attempt in range(max_retries):
+        try:
+            response = requests.get(url, timeout=30)
+            response.raise_for_status()
+            return response, True
+        except requests.exceptions.ConnectionError as e:
+            wait_time = initial_delay * (2 ** attempt)
+            print(f"\n    Connection error. Waiting {wait_time} seconds before retry {attempt + 1}/{max_retries}")
+            time.sleep(wait_time)
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 429:
+                wait_time = initial_delay * (2 ** attempt) * 2
+                print(f"\n    Rate limited (429). Waiting {wait_time} seconds...")
+                time.sleep(wait_time)
+            else:
+                print(f"\n    HTTP Error: {e}")
+                return None, False
+        except Exception as e:
+            print(f"\n    Unexpected error: {e}")
+            return None, False
+    return None, False
+
+def download_missing_snapshots(snap_df, output_folder):
+    """Download HTML snapshots with resume capability and detailed logging"""
+    
+    # Create run-specific log file
+    run_timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    run_log_file = META_DIR / f"download_log_{run_timestamp}.txt"
+    
+    # Check what we already have
+    existing_files = list(output_folder.glob("*.html"))
+    existing_timestamps = {f.stem for f in existing_files}
+    print(f"\nFiles already downloaded: {len(existing_files)}")
+    
+    # Check what needs to be downloaded
+    to_download = []
+    for _, row in snap_df.iterrows():
+        timestamp = row['timestamp']
+        url = row['original']
+        filename = output_folder / f"{timestamp}.html"
+        
+        if timestamp not in existing_timestamps and not filename.exists():
+            to_download.append((timestamp, url, filename))
+    
+    print(f"Files to download: {len(to_download)}")
+    
+    # Initialize log file
+    with open(run_log_file, "w") as log:
+        log.write(f"Download run started: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+        log.write(f"Total snapshots in list: {len(snap_df)}\n")
+        log.write(f"Already downloaded: {len(existing_files)}\n")
+        log.write(f"To download: {len(to_download)}\n")
+        log.write(f"{'='*60}\n\n")
+    
+    if len(to_download) == 0:
+        print("\n✓ All files already downloaded! Nothing to do.")
+        with open(run_log_file, "a") as log:
+            log.write("All files already downloaded. No action needed.\n")
+        return
+    
+    # Download configuration
+    BATCH_SIZE = 15
+    PAUSE_BETWEEN_DOWNLOADS = 3
+    PAUSE_BETWEEN_BATCHES = 45
+    PAUSE_AFTER_FAILURE = 60
+    
+    # Track statistics
+    successful_downloads = 0
+    failed_downloads = []
+    consecutive_failures = 0
+    
+    # Download in batches
+    for i in range(0, len(to_download), BATCH_SIZE):
+        batch = to_download[i:i + BATCH_SIZE]
+        batch_num = (i // BATCH_SIZE) + 1
+        total_batches = (len(to_download) + BATCH_SIZE - 1) // BATCH_SIZE
+        
+        print(f"\n{'='*60}")
+        print(f"Batch {batch_num}/{total_batches} ({len(batch)} files)")
+        print(f"Overall progress: {len(existing_timestamps) + successful_downloads}/{len(snap_df)} total files")
+        print(f"{'='*60}")
+        
+        with open(run_log_file, "a") as log:
+            log.write(f"\nBatch {batch_num}/{total_batches} started at {datetime.now().strftime('%H:%M:%S')}\n")
+        
+        for j, (timestamp, url, filename) in enumerate(batch, 1):
+            # Double-check file doesn't exist
+            if filename.exists():
+                print(f"\n[{j}/{len(batch)}] {timestamp} - Already exists, skipping...")
+                with open(run_log_file, "a") as log:
+                    log.write(f"{timestamp}  ⚡ already exists\n")
+                continue
+                
+            wayback_url = f"https://web.archive.org/web/{timestamp}/{url}"
+            
+            print(f"\n[{j}/{len(batch)}] Downloading {timestamp}...", end="")
+            
+            response, success = download_with_retry(wayback_url, consecutive_failures=consecutive_failures)
+            
+            if response and response.status_code == 200:
+                try:
+                    with open(filename, 'w', encoding='utf-8') as f:
+                        f.write(response.text)
+                    
+                    print(" ✓ Success")
+                    successful_downloads += 1
+                    consecutive_failures = 0
+                    
+                    with open(run_log_file, "a") as log:
+                        log.write(f"{timestamp}  ✓ downloaded\n")
+                    
+                except Exception as e:
+                    print(f" ✗ Error saving file: {e}")
+                    failed_downloads.append((timestamp, url, str(e)))
+                    consecutive_failures += 1
+                    
+                    with open(run_log_file, "a") as log:
+                        log.write(f"{timestamp}  ✗ failed: {str(e)}\n")
+            else:
+                print(" ✗ Failed after retries")
+                failed_downloads.append((timestamp, url, "Download failed"))
+                consecutive_failures += 1
+                
+                with open(run_log_file, "a") as log:
+                    log.write(f"{timestamp}  ✗ failed: Download failed after retries\n")
+                
+                if j < len(batch):
+                    print(f"    Taking {PAUSE_AFTER_FAILURE}s break after failure...")
+                    time.sleep(PAUSE_AFTER_FAILURE)
+                    continue
+            
+            if j < len(batch) and consecutive_failures == 0:
+                print(f"    Waiting {PAUSE_BETWEEN_DOWNLOADS} seconds...")
+                time.sleep(PAUSE_BETWEEN_DOWNLOADS)
+        
+        if i + BATCH_SIZE < len(to_download):
+            print(f"\nBatch complete. Pausing {PAUSE_BETWEEN_BATCHES} seconds...")
+            print(f"This session: {successful_downloads} downloaded, {len(failed_downloads)} failed")
+            time.sleep(PAUSE_BETWEEN_BATCHES)
+    
+    # Final summary
+    print(f"\n{'='*60}")
+    print(f"Download session complete!")
+    print(f"  Successfully downloaded: {successful_downloads}")
+    print(f"  Failed downloads: {len(failed_downloads)}")
+    
+    # Write final summary to log
+    with open(run_log_file, "a") as log:
+        log.write(f"\n{'='*60}\n")
+        log.write(f"Download run completed: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+        log.write(f"Successfully downloaded: {successful_downloads}\n")
+        log.write(f"Failed downloads: {len(failed_downloads)}\n")
+        
+        if failed_downloads:
+            log.write(f"\nFailed downloads detail:\n")
+            for timestamp, url, error in failed_downloads:
+                log.write(f"  {timestamp}: {error}\n")
+    
+    if failed_downloads:
+        print(f"\nFailed downloads:")
+        for timestamp, url, error in failed_downloads[:10]:
+            print(f"  {timestamp}: {error}")
+        if len(failed_downloads) > 10:
+            print(f"  ... and {len(failed_downloads) - 10} more")
+    
+    print(f"\nDownload log saved to: {run_log_file}")
+
+# Download missing files
+if len(snap_df) > 0:
+    download_missing_snapshots(snap_df, HTML_DIR)
+```
+
+## Download Status Check Functions
+
+```{python}
+def get_latest_log():
+    """Find and read the most recent download log"""
+    log_files = sorted(META_DIR.glob("download_log_*.txt"))
+    if not log_files:
+        print("No download logs found.")
+        return None
+    
+    latest_log = log_files[-1]
+    print(f"Latest log: {latest_log.name}")
+    return latest_log
+
+def analyze_download_status():
+    """Analyze the current download status and latest run results"""
+    
+    # Check what we have
+    html_files = list(HTML_DIR.glob("*.html"))
+    downloaded_timestamps = {f.stem for f in html_files}
+    
+    # Check what we should have
+    snapshot_csv = META_DIR / 'snapshots_found.csv'
+    if snapshot_csv.exists():
+        snap_df = pd.read_csv(snapshot_csv)
+        expected_timestamps = set(snap_df['timestamp'].astype(str))
+    else:
+        print("No snapshot list found. Run search first.")
+        return None
+    
+    # Calculate missing
+    missing_timestamps = expected_timestamps - downloaded_timestamps
+    
+    # Parse latest log for failures
+    latest_log = get_latest_log()
+    failed_in_last_run = []
+    
+    if latest_log:
+        with open(latest_log, 'r') as f:
+            for line in f:
+                if '✗ failed:' in line:
+                    timestamp = line.split()[0]
+                    if timestamp.isdigit() and len(timestamp) == 14:
+                        failed_in_last_run.append(timestamp)
+    
+    # Create summary
+    print(f"\n{'='*60}")
+    print("DOWNLOAD STATUS SUMMARY")
+    print(f"{'='*60}")
+    print(f"Expected snapshots: {len(expected_timestamps)}")
+    print(f"Downloaded: {len(downloaded_timestamps)} ({len(downloaded_timestamps)/len(expected_timestamps)*100:.1f}%)")
+    print(f"Missing: {len(missing_timestamps)}")
+    
+    if latest_log:
+        print(f"\nLatest run ({latest_log.name}):")
+        print(f"  Failed downloads: {len(failed_in_last_run)}")
+        if failed_in_last_run:
+            print(f"  Failed timestamps: {', '.join(failed_in_last_run[:5])}")
+            if len(failed_in_last_run) > 5:
+                print(f"  ... and {len(failed_in_last_run) - 5} more")
+    
+    print(f"\nTotal still needed: {len(missing_timestamps)}")
+    
+    return {
+        'missing': missing_timestamps,
+        'failed_last_run': failed_in_last_run,
+        'downloaded': downloaded_timestamps,
+        'expected': expected_timestamps
+    }
+
+def create_retry_list(status_info, retry_only_failed=True):
+    """Create a list of files to retry downloading"""
+    if not status_info:
+        return None
+    
+    if retry_only_failed and status_info['failed_last_run']:
+        retry_timestamps = set(status_info['failed_last_run'])
+        print(f"\nWill retry {len(retry_timestamps)} failed downloads from last run")
+    else:
+        retry_timestamps = status_info['missing']
+        print(f"\nWill retry all {len(retry_timestamps)} missing files")
+    
+    snapshot_csv = META_DIR / 'snapshots_found.csv'
+    snap_df = pd.read_csv(snapshot_csv)
+    retry_df = snap_df[snap_df['timestamp'].astype(str).isin(retry_timestamps)]
+    
+    return retry_df
+```
+
+## Parser Functions
+
+```{python}
+def clean_jurisdiction_name(name):
+    """Clean up jurisdiction names by removing common prefixes"""
+    name = re.sub(r'^.*?Back to top\s*', '', name)
+    name = re.sub(r'^.*?Tables by NDIS Participant\s*', '', name)
+    name = re.sub(r'^.*?ation\.\s*', '', name)
+    name = name.strip()
+    return name
+
+def standardize_jurisdiction_name(name):
+    """Standardize jurisdiction names to handle variations"""
+    name = clean_jurisdiction_name(name)
+    if name in JURISDICTION_NAME_MAP:
+        return JURISDICTION_NAME_MAP[name]
+    return name
+
+def extract_data_date(html_content):
+    """Extract the 'Statistics as of' date from HTML content"""
+    match = re.search(r'Statistics as of (\w+ \d{4})', html_content, re.IGNORECASE)
+    if match:
+        date_str = match.group(1)
+        try:
+            # Convert "October 2024" to datetime
+            return datetime.strptime(date_str, "%B %Y")
+        except:
+            pass
+    return None
+
+def parse_ndis_snapshot(html_file):
+    """Parse a single NDIS snapshot file"""
+    timestamp = html_file.stem
+    year = int(timestamp[:4])
+    
+    html_content = html_file.read_text('utf-8', errors='ignore')
+    soup = BeautifulSoup(html_content, 'lxml')
+    text = soup.get_text(' ', strip=True)
+    
+    # Extract the "as of" date
+    data_date = extract_data_date(html_content)
+    
+    # Normalize whitespace
+    text = re.sub(r'\s+', ' ', text)
+    
+    records = []
+    
+    # Pattern for 2010 (no arrestee data)
+    if year <= 2010:
+        pattern = re.compile(
+            r'([A-Z][a-zA-Z\s\.\-\'/&()]{2,50}?)\s+Statistical Information\s+'
+            r'.*?Offender Profiles\s+([\d,]+)\s+'
+            r'.*?Forensic Samples\s+([\d,]+)\s+'
+            r'.*?NDIS Participating Labs\s+(\d+)\s+'
+            r'.*?Investigations Aided\s+([\d,]+)',
+            re.I
+        )
+        
+        for match in pattern.finditer(text):
+            jurisdiction_raw, offender, forensic, labs, investigations = match.groups()
+            jurisdiction = standardize_jurisdiction_name(jurisdiction_raw)
+            
+            records.append({
+                'timestamp': timestamp,
+                'jurisdiction': jurisdiction,
+                'offender_profiles': offender.replace(',', ''),
+                'arrestee': '0',
+                'forensic_profiles': forensic.replace(',', ''),
+                'ndis_labs': labs,
+                'investigations_aided': investigations.replace(',', ''),
+                'data_as_of_date': data_date
+            })
+    else:
+        # Pattern for 2011+ (includes arrestee data)
+        pattern = re.compile(
+            r'([A-Z][a-zA-Z\s\.\-\'/&()]{2,50}?)\s+Statistical Information\s+'
+            r'.*?Offender Profiles\s+([\d,]+)\s+'
+            r'.*?Arrestee\s+([\d,]+)\s+'
+            r'.*?Forensic Profiles\s+([\d,]+)\s+'
+            r'.*?NDIS Participating Labs\s+(\d+)\s+'
+            r'.*?Investigations Aided\s+([\d,]+)',
+            re.I
+        )
+        
+        for match in pattern.finditer(text):
+            jurisdiction_raw, offender, arrestee, forensic, labs, investigations = match.groups()
+            jurisdiction = standardize_jurisdiction_name(jurisdiction_raw)
+            
+            records.append({
+                'timestamp': timestamp,
+                'jurisdiction': jurisdiction,
+                'offender_profiles': offender.replace(',', ''),
+                'arrestee': arrestee.replace(',', ''),
+                'forensic_profiles': forensic.replace(',', ''),
+                'ndis_labs': labs,
+                'investigations_aided': investigations.replace(',', ''),
+                'data_as_of_date': data_date
+            })
+    
+    return records
+```
+
+## Process All Snapshots
+
+```{python}
+def process_all_snapshots():
+    """Parse all downloaded snapshots and create datasets"""
+    print("Processing all snapshots...")
+    
+    all_records = []
+    html_files = sorted(HTML_DIR.glob("*.html"))
+    
+    for html_file in tqdm(html_files, desc="Parsing HTML files"):
+        try:
+            records = parse_ndis_snapshot(html_file)
+            all_records.extend(records)
+        except Exception as e:
+            print(f"Error parsing {html_file.name}: {e}")
+    
+    # Convert to DataFrame
+    df = pd.DataFrame(all_records)
+    
+    # Convert numeric fields
+    numeric_fields = ['offender_profiles', 'arrestee', 'forensic_profiles', 'ndis_labs', 'investigations_aided']
+    for field in numeric_fields:
+        df[field] = pd.to_numeric(df[field], errors='coerce').fillna(0).astype(int)
+    
+    # Add datetime columns
+    df['capture_datetime'] = pd.to_datetime(df['timestamp'], format='%Y%m%d%H%M%S')
+    df['capture_date'] = df['capture_datetime'].dt.date
+    
+    # Sort by timestamp and jurisdiction
+    df = df.sort_values(['timestamp', 'jurisdiction'])
+    
+    return df
+
+# Process all files
+df_raw = process_all_snapshots()
+print(f"\nProcessed {len(df_raw)} total records")
+print(f"Unique jurisdictions: {df_raw['jurisdiction'].nunique()}")
+print(f"Date range: {df_raw['capture_datetime'].min()} to {df_raw['capture_datetime'].max()}")
+```
+
+## Check Download Completeness
+
+```{python}
+# Check if we have all expected files
+print("\nChecking download completeness...")
+status = analyze_download_status()
+
+# Automatically retry if there are failures
+if status and status['failed_last_run'] and len(status['failed_last_run']) > 0:
+    print(f"\n⚠️  Found {len(status['failed_last_run'])} failed downloads from last run. Retrying...")
+    retry_df = create_retry_list(status, retry_only_failed=True)
+    if retry_df is not None and len(retry_df) > 0:
+        download_missing_snapshots(retry_df, HTML_DIR)
+        
+        # Re-check status after retry
+        print("\nRechecking status after retry...")
+        status = analyze_download_status()
+elif status and status['missing']:
+    print(f"\n⚠️  {len(status['missing'])} files are missing but weren't from a failed run.")
+    print("These may be new snapshots. Run download cell manually if needed.")
+else:
+    print("\n✅ All files successfully downloaded!")
+```
+
+## Apply Typo Fixes
+
+```{python}
+def apply_typo_fixes(df):
+    """Apply known typo corrections"""
+    df_fixed = df.copy()
+    
+    for typo in KNOWN_TYPOS:
+        mask = (
+            (df_fixed['timestamp'] == typo['timestamp']) & 
+            (df_fixed['jurisdiction'] == typo['jurisdiction'])
+        )
+        if mask.any():
+            df_fixed.loc[mask, typo['field']] = int(typo['correct_value'])
+            print(f"Fixed typo: {typo['jurisdiction']} on {typo['timestamp'][:8]} - "
+                  f"{typo['field']} from {typo['wrong_value']} to {typo['correct_value']}")
+    
+    return df_fixed
+
+# Apply fixes
+df_fixed = apply_typo_fixes(df_raw)
+```
+
+## Save Datasets
+
+```{python}
+# Save datasets
+df_raw.to_csv(OUTPUT_DIR / 'ndis_data_raw.csv', index=False)
+df_fixed.to_csv(OUTPUT_DIR / 'ndis_data_fixed.csv', index=False)
+print(f"\nSaved raw data to: {OUTPUT_DIR / 'ndis_data_raw.csv'}")
+print(f"Saved fixed data to: {OUTPUT_DIR / 'ndis_data_fixed.csv'}")
+```
+
+## Summary Statistics
+
+```{python}
+# Calculate summary statistics
+latest_data = df_fixed[df_fixed['capture_datetime'] == df_fixed['capture_datetime'].max()]
+latest_data = latest_data[latest_data['jurisdiction'] != 'D.C./Metro PD']
+
+print("\nLatest Statistics Summary:")
+print(f"  As of: {latest_data['capture_datetime'].iloc[0]}")
+print(f"  Data from: {latest_data['data_as_of_date'].iloc[0] if latest_data['data_as_of_date'].iloc[0] else 'Unknown'}")
+print(f"  Jurisdictions reporting: {len(latest_data)}")
+print(f"  Total offender profiles: {latest_data['offender_profiles'].sum():,}")
+print(f"  Total arrestee profiles: {latest_data['arrestee'].sum():,}")
+print(f"  Total forensic profiles: {latest_data['forensic_profiles'].sum():,}")
+print(f"  Total investigations aided: {latest_data['investigations_aided'].sum():,}")
+```
+
+## Visualizations
+
+```{python}
+#| fig-width: 16
+#| fig-height: 18
+
+def create_visualizations(df_raw, df_fixed):
+    """Create comprehensive visualizations"""
+    # Exclude D.C./Metro PD from visualizations
+    df_raw_viz = df_raw[df_raw['jurisdiction'] != 'D.C./Metro PD']
+    df_fixed_viz = df_fixed[df_fixed['jurisdiction'] != 'D.C./Metro PD']
+    
+    # Create figure with subplots
+    fig, axes = plt.subplots(3, 2, figsize=(16, 18))
+    
+    # 1. Jurisdictions reporting over time
+    for ax, (df, title_suffix) in zip([axes[0,0], axes[0,1]], 
+                                      [(df_raw_viz, 'Raw'), (df_fixed_viz, 'Fixed')]):
+        jurisdictions_per_date = df.groupby('capture_datetime')['jurisdiction'].nunique()
+        ax.plot(jurisdictions_per_date.index, jurisdictions_per_date.values, 'b-', linewidth=2)
+        ax.set_title(f'Jurisdictions Reporting ({title_suffix})')
+        ax.set_ylabel('Number of Jurisdictions')
+        ax.grid(True, alpha=0.3)
+        ax.yaxis.set_major_locator(plt.MaxNLocator(integer=True))
+    
+    # 2. Total investigations aided
+    for ax, (df, title_suffix) in zip([axes[1,0], axes[1,1]], 
+                                      [(df_raw_viz, 'Raw with Typo'), (df_fixed_viz, 'Fixed')]):
+        total_inv = df.groupby('capture_datetime')['investigations_aided'].sum()
+        ax.plot(total_inv.index, total_inv.values / 1e3, 'purple', linewidth=2)
+        ax.set_title(f'Total Investigations Aided ({title_suffix})')
+        ax.set_ylabel('Thousands of Investigations')
+        ax.grid(True, alpha=0.3)
+        
+        # Highlight the typo in raw data
+        if 'Raw' in title_suffix:
+            typo_dates = df[(df['jurisdiction'] == 'California') & 
+                          (df['investigations_aided'] > 1000000)]['capture_datetime']
+            for date in typo_dates:
+                ax.axvline(x=date, color='red', linestyle='--', alpha=0.5)
+                ax.text(date, ax.get_ylim()[1]*0.9, 'Typo', rotation=90, 
+                       verticalalignment='bottom', color='red')
+    
+    # 3. Data lag analysis
+    ax = axes[2, 0]
+    df_with_lag = df_fixed_viz[df_fixed_viz['data_as_of_date'].notna()].copy()
+    df_with_lag['data_lag_days'] = (df_with_lag['capture_datetime'] - df_with_lag['data_as_of_date']).dt.days
+    
+    avg_lag = df_with_lag.groupby('capture_datetime')['data_lag_days'].mean()
+    ax.plot(avg_lag.index, avg_lag.values, 'orange', linewidth=2)
+    ax.set_title('Average Data Lag (Capture Date vs "As Of" Date)')
+    ax.set_ylabel('Days')
+    ax.grid(True, alpha=0.3)
+    
+    # 4. California investigations over time (showing typo fix)
+    ax = axes[2, 1]
+    cal_raw = df_raw_viz[df_raw_viz['jurisdiction'] == 'California']
+    cal_fixed = df_fixed_viz[df_fixed_viz['jurisdiction'] == 'California']
+    
+    ax.plot(cal_raw['capture_datetime'], cal_raw['investigations_aided'], 
+            'r-', label='Raw (with typo)', linewidth=2, alpha=0.7)
+    ax.plot(cal_fixed['capture_datetime'], cal_fixed['investigations_aided'], 
+            'g-', label='Fixed', linewidth=2)
+    ax.set_title('California Investigations Aided: Raw vs Fixed')
+    ax.set_ylabel('Investigations Aided')
+    ax.legend()
+    ax.grid(True, alpha=0.3)
+    
+    plt.tight_layout()
+    plt.savefig(OUTPUT_DIR / 'ndis_analysis_complete.png', dpi=300, bbox_inches='tight')
+    plt.show()
+
+# Create visualizations
+print("\nCreating visualizations...")
+create_visualizations(df_raw, df_fixed)
+print("\nProcessing complete!")
+```

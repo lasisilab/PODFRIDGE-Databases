@@ -1,0 +1,8 @@
+column_name,description,notes
+state,U.S. state name,
+offender_type,Category of individuals in database,"Values: Convicted Offender, Offenders, Arrestee, Combined (when not separated), All (total across types)"
+variable_category,Type of demographic information,"Values: total, gender, race, gender_race"
+variable_detailed,Specific demographic value,"e.g., total_profiles, Male, Female, African American, etc."
+value,The reported number or percentage,Exactly as reported in FOIA response
+value_type,Whether value is a count or percentage,"Values: count, percentage"
+date,Date of data snapshot,Date when state pulled the data
