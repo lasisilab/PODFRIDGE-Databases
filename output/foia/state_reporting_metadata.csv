@@ -1,8 +1,0 @@
-state,date_of_data,separates_offender_types,reports_counts,reports_percentages,special_notes
-California,2018-07-05,Yes,Yes,No,"Provides all demographic counts by offender type; notes duplicate profiles may exist; arrestee index is fluid; race/gender not verified by DOJ"
-Florida,Not specified,No,Yes,Yes,"All data is combined; provides both counts AND percentages for all demographics"
-Indiana,2018-07-24,Totals only,Totals only,Demographics only,"Only totals given as counts; all demographics given as percentages only; race and ethnicity are self-reported"
-Maine,2018-07-10,No,Yes,Yes,"Combined data only; provides both counts and percentages; uses single letter codes (M/F/U for gender, W/B/U/I/H/A for race)"
-Nevada,2018 (unspecified),Yes,Yes,Some percentages,"Separates totals but not demographics; provides counts for all, percentages for some; uses 'flags' instead of 'profiles'; can't provide data by collection date"
-South Dakota,2018-07-18,No,Yes,Yes,"Combined data only; provides both counts and percentages; unique in providing detailed race×gender combinations"
-Texas,2018-06-19,Yes,Yes (partial),No,"Only reports female counts for gender (not male); full race counts by offender type; notes possible SDIS/LIMS differences"

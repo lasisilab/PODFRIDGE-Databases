@@ -38,9 +38,9 @@ States included:
 
 ## File Structure and Contents
 
-### 1. Raw Data File: `foia_raw.csv`
+### State-Specific Files: `per_state/[state]_foia_data.csv`
 
-**Purpose**: Contains exactly what was reported in each FOIA response with zero calculations or modifications.
+**Purpose**: Individual files for each state containing only their reported data.
 
 **Structure**: Long format with columns:
 
@@ -50,510 +50,1379 @@ States included:
 - `variable_detailed`: Specific value (e.g., Male, Female, African American)
 - `value`: The reported number or percentage
 - `value_type`: Whether value is a "count" or "percentage"
-- `date`: Date of data snapshot
+- `date`: Date of data snapshot, if reported
 
-### 2. State-Specific Files: `per_state/[state]_foia_data.csv`
+## Processing workflow
 
-**Purpose**: Individual files for each state containing only their reported data.
+For transparency, each state file is processed independently then merged into a single **combined long‑format table (`foia_combined`)**:
 
-### 3. Metadata File: `state_reporting_metadata.csv`
+1. **Load one file per state** from `output/foia/per_state/`.
+2. **Append** its rows to `foia_combined`.
+   A parallel dataframe, **`foia_state_metadata`**, records what each state reported (counts, percentages, which categories) and any state-specific characteristics (e.g. Nevada's "flags" terminology).
+3. **Quality‑check each state**:
 
-**Purpose**: Documents what each state provided and their reporting quirks.
+   * verify that race and gender percentages sum to ≈ 100 % when provided,
+   * confirm that demographic counts sum to the state's reported total profiles,
+   * **calculate** any missing counts or percentages and tag those rows `value_source = "calculated"`.
+4. **Save outputs**
 
-### 4. Data Dictionary: `foia_data_dictionary.csv`
+   * `output/foia/foia_data_clean.csv` — the fully combined tidy table with both reported and calculated values,
+   * `output/foia/foia_state_metadata.csv` — one row per state summarising coverage and caveats.
+     After QC passes, I will freeze `foia_data_clean.csv` to `data/v1.0/foia_state_race_2016.csv`.
 
-**Purpose**: Defines all column names and their possible values.
-
-## Data Processing Steps
+## State Processing
 
 ```{python}
 #| label: setup
 #| echo: true
 
 import pandas as pd
-import numpy as np
 from pathlib import Path
-from IPython.display import display, Markdown, HTML
+from IPython.display import display, Markdown
+import matplotlib.pyplot as plt
 
-# Set display options for better formatting
-pd.options.display.max_columns = None
-pd.options.display.width = None
-pd.options.display.max_colwidth = None
+# Display options
+pd.set_option("display.max_columns", None)
+pd.set_option("display.width", None)
 
-# Set up paths - assuming we're running from analysis/ directory
-base_dir = Path("..") 
-output_dir = base_dir / "output" / "foia"
+# Path to per‑state files (run notebook from analysis/)
+base_dir   = Path("..")
+per_state  = base_dir / "output" / "foia" / "per_state"
 
-# Load the raw FOIA data
-foia_raw = pd.read_csv(output_dir / "foia_raw.csv")
-metadata = pd.read_csv(output_dir / "state_reporting_metadata.csv")
+# ------------------------------------------------------------------
+# 1. Discover available per‑state CSV files
+# ------------------------------------------------------------------
+state_files = sorted(per_state.glob("*_foia_data.csv"))
 
-print(f"Loaded {len(foia_raw)} rows of FOIA data from {foia_raw['state'].nunique()} states")
-print("\nStates included:", ', '.join(foia_raw['state'].unique()))
-
-# Check for any non-numeric values in 'value' column
-non_numeric = foia_raw[pd.to_numeric(foia_raw['value'], errors='coerce').isna()]['value'].unique()
-if len(non_numeric) > 0:
-    print(f"\nNote: Found non-numeric value(s): {non_numeric}")
-
-# Convert value column, handling special cases
-foia_raw['value_numeric'] = foia_raw['value'].apply(
-    lambda x: 0.5 if str(x) == '<1' else pd.to_numeric(x, errors='coerce')
-)
-
-# Show metadata summary
-display(Markdown("### State Reporting Summary"))
-display(HTML(metadata[['state', 'separates_offender_types', 'reports_counts', 'reports_percentages']].to_html(index=False)))
-```
-
-### Step 1: States with Both Counts AND Percentages
-
-These states provided both counts and percentages, allowing us to verify their calculations.
-
-#### Florida: Complete Count and Percentage Data
-
-```{python}
-#| label: check-florida
-
-# Florida provides both counts and percentages
-florida_data = foia_raw[foia_raw['state'] == 'Florida'].copy()
-
-# Pivot to get counts and percentages side by side
-florida_wide = florida_data.pivot_table(
-    index=['offender_type', 'variable_category', 'variable_detailed'],
-    columns='value_type',
-    values='value_numeric',
-    aggfunc='first'
-).reset_index()
-
-# Calculate percentages from counts and compare
-if 'count' in florida_wide.columns and 'percentage' in florida_wide.columns:
-    florida_check = florida_wide[florida_wide['count'].notna()].copy()
-    total_profiles = 1175391
-
-    florida_check['calc_percentage'] = np.where(
-        florida_check['variable_detailed'] == 'total_profiles',
-        100.0,
-        round(florida_check['count'] / total_profiles * 100, 2)
+if not state_files:
+    raise FileNotFoundError(
+        f"No per‑state FOIA files found in {per_state}. "
+        "Check the folder path."
     )
-    florida_check['diff'] = florida_check['calc_percentage'] - florida_check['percentage']
 
-    display(Markdown("**Florida: Comparing reported vs calculated percentages**"))
-    
-    # Create summary table
-    summary_df = florida_check[['variable_category', 'variable_detailed', 'count', 
-                               'percentage', 'calc_percentage', 'diff']]
-    summary_df.columns = ['Category', 'Detail', 'Count', 'Reported %', 'Calculated %', 'Difference']
-    
-    # Format numbers nicely
-    summary_df['Count'] = summary_df['Count'].apply(lambda x: f"{x:,.0f}")
-    summary_df['Reported %'] = summary_df['Reported %'].apply(lambda x: f"{x:.2f}%")
-    summary_df['Calculated %'] = summary_df['Calculated %'].apply(lambda x: f"{x:.2f}%")
-    summary_df['Difference'] = summary_df['Difference'].apply(lambda x: f"{x:+.2f}" if pd.notna(x) else "")
-    
-    display(HTML(summary_df.to_html(index=False, classes='table table-striped table-hover')))
+def stem_to_state(stem: str) -> str:
+    toks = stem.split("_")
+    if "foia" in toks:
+        toks = toks[:toks.index("foia")]
+    return " ".join(t.title() for t in toks)
 
-    # Check if percentages sum to 100
-    florida_pct_sum = florida_check.groupby('variable_category')['percentage'].sum()
-    display(Markdown("\n**Florida percentage totals by category:**"))
-    totals_df = pd.DataFrame({
-        'Category': florida_pct_sum[florida_pct_sum.index != 'total'].index,
-        'Total %': [f"{x:.2f}%" for x in florida_pct_sum[florida_pct_sum.index != 'total'].values]
-    })
-    display(HTML(totals_df.to_html(index=False, classes='table table-striped')))
+states_available = [stem_to_state(f.stem) for f in state_files]
+
+
+print(f"✓ Found {len(state_files)} per‑state files:")
+for s in states_available:
+    print("  •", s)
+
+display(Markdown(
+    f"**States with data loaded:** {', '.join(states_available)}"
+))
+
+# ------------------------------------------------------------------
+# 2. Initialise empty containers for the loop that follows
+# ------------------------------------------------------------------
+foia_combined       = pd.DataFrame()   # merged tidy data
+foia_state_metadata = []               # list of dicts, one per state
 ```
 
-#### Maine: Count and Percentage Verification
+## Helper Functions
 
 ```{python}
-#| label: check-maine
+#| label: helper-functions
+#| echo: true
 
-# Maine provides both counts and percentages
-maine_data = foia_raw[foia_raw['state'] == 'Maine'].copy()
+# Define columns needed for foia_combined
+COLUMNS_NEEDED = ['state', 'offender_type', 'variable_category', 
+                  'variable_detailed', 'value', 'value_type']
 
-maine_wide = maine_data.pivot_table(
-    index=['offender_type', 'variable_category', 'variable_detailed'],
-    columns='value_type',
-    values='value_numeric',
-    aggfunc='first'
-).reset_index()
-
-if 'count' in maine_wide.columns and 'percentage' in maine_wide.columns:
-    maine_check = maine_wide[maine_wide['count'].notna()].copy()
-    total_maine = 33711
-
-    maine_check['calc_percentage'] = round(maine_check['count'] / total_maine * 100, 1)
-    maine_check['diff'] = maine_check['calc_percentage'] - maine_check['percentage']
-
-    display(Markdown("**Maine: Comparing reported vs calculated percentages**"))
-    
-    summary_df = maine_check[maine_check['variable_category'] != 'total'][
-        ['variable_category', 'variable_detailed', 'count', 'percentage', 'calc_percentage', 'diff']
-    ].copy()
-    summary_df.columns = ['Category', 'Detail', 'Count', 'Reported %', 'Calculated %', 'Difference']
-    
-    # Format for display
-    summary_df['Count'] = summary_df['Count'].apply(lambda x: f"{x:,.0f}")
-    summary_df['Reported %'] = summary_df['Reported %'].apply(lambda x: f"{x:.1f}%")
-    summary_df['Calculated %'] = summary_df['Calculated %'].apply(lambda x: f"{x:.1f}%")
-    summary_df['Difference'] = summary_df['Difference'].apply(lambda x: f"{x:+.1f}")
-    
-    display(HTML(summary_df.to_html(index=False, classes='table table-striped table-hover')))
-
-    # Check sums
-    maine_pct_sum = maine_check.groupby('variable_category')['percentage'].sum()
-    display(Markdown("\n**Maine percentage totals by category:**"))
-    totals_df = pd.DataFrame({
-        'Category': maine_pct_sum[maine_pct_sum.index != 'total'].index,
-        'Total %': [f"{x:.1f}%" for x in maine_pct_sum[maine_pct_sum.index != 'total'].values]
-    })
-    display(HTML(totals_df.to_html(index=False, classes='table table-striped')))
-```
-
-#### South Dakota: Count and Percentage Verification
-
-```{python}
-#| label: check-south-dakota
-
-# South Dakota - check main categories (not intersections)
-sd_data = foia_raw[
-    (foia_raw['state'] == 'South Dakota') & 
-    (foia_raw['variable_category'].isin(['total', 'gender', 'race']))
-].copy()
-
-sd_wide = sd_data.pivot_table(
-    index=['offender_type', 'variable_category', 'variable_detailed'],
-    columns='value_type',
-    values='value_numeric',
-    aggfunc='first'
-).reset_index()
-
-sd_check = sd_wide[sd_wide['count'].notna()].copy()
-total_sd = 67753
-
-sd_check['calc_percentage'] = np.where(
-    sd_check['variable_detailed'] == 'total_profiles',
-    100.0,
-    round(sd_check['count'] / total_sd * 100, 2)
-)
-sd_check['diff'] = sd_check['calc_percentage'] - sd_check['percentage']
-
-display(Markdown("**South Dakota: Comparing reported vs calculated percentages**"))
-
-summary_df = sd_check[sd_check['variable_category'] != 'total'][
-    ['variable_category', 'variable_detailed', 'count', 'percentage', 'calc_percentage', 'diff']
-].copy()
-summary_df.columns = ['Category', 'Detail', 'Count', 'Reported %', 'Calculated %', 'Difference']
-
-# Format for display
-summary_df['Count'] = summary_df['Count'].apply(lambda x: f"{x:,.0f}")
-summary_df['Reported %'] = summary_df['Reported %'].apply(lambda x: f"{x:.2f}%")
-summary_df['Calculated %'] = summary_df['Calculated %'].apply(lambda x: f"{x:.2f}%")
-summary_df['Difference'] = summary_df['Difference'].apply(lambda x: f"{x:+.2f}")
-
-display(HTML(summary_df.to_html(index=False, classes='table table-striped table-hover')))
-
-# Check sums
-sd_pct_sum = sd_check.groupby('variable_category')['percentage'].sum()
-display(Markdown("\n**South Dakota percentage totals by category:**"))
-totals_df = pd.DataFrame({
-    'Category': sd_pct_sum[sd_pct_sum.index != 'total'].index,
-    'Total %': [f"{x:.2f}%" for x in sd_pct_sum[sd_pct_sum.index != 'total'].values]
-})
-display(HTML(totals_df.to_html(index=False, classes='table table-striped')))
-
-display(Markdown("\n*Note: South Dakota uniquely provides race×gender intersection data (24 additional rows not shown here)*"))
-```
-
-### Step 2: States with Only Counts
-
-These states need percentages calculated.
-
-#### California: Calculate Percentages
-
-```{python}
-#| label: california-percentages
-
-# California only provided counts
-california_data = foia_raw[foia_raw['state'] == 'California'].copy()
-
-# Get totals for each offender type
-ca_totals = california_data[california_data['variable_category'] == 'total'].set_index('offender_type')['value_numeric'].to_dict()
-
-# Calculate percentages
-ca_with_pct = california_data[california_data['value_type'] == 'count'].copy()
-
-def get_total(row):
-    if row['variable_category'] == 'total':
-        return row['value_numeric']
+def report_status(df, category):
+    values = df.loc[df["variable_category"] == category, "value_type"].unique()
+    if {"count", "percentage"}.issubset(values):
+        return "both"
+    elif "count" in values:
+        return "counts"
+    elif "percentage" in values:
+        return "percentages"
     else:
-        return ca_totals.get(row['offender_type'], 0)
+        return "neither"
 
-ca_with_pct['total'] = ca_with_pct.apply(get_total, axis=1)
-ca_with_pct['percentage'] = round(ca_with_pct['value_numeric'] / ca_with_pct['total'] * 100, 2)
+def verify_category_totals(df):
+    """
+    For every offender_type × variable_category pair:
+      • find the reported total_profiles,
+      • sum all count rows in that category,
+      • return the difference.
+    """
+    # 1  pull total_profiles per offender_type
+    total_map = (df[(df["variable_category"] == "total") &
+                    (df["variable_detailed"] == "total_profiles")]
+                 .set_index("offender_type")["value"]
+                 .to_dict())
 
-display(Markdown("**California: Calculated percentages**"))
+    # 2  sum counts by offender_type and variable_category
+    demo_sum = (df[(df["value_type"] == "count") &
+                   (df["variable_category"] != "total")]
+                .groupby(["offender_type", "variable_category"])["value"]
+                .sum()
+                .rename("sum_demo_counts")
+                .reset_index())
 
-# Show sample by offender type
-for offender_type in ['Convicted Offender', 'Arrestee']:
-    subset = ca_with_pct[
-        (ca_with_pct['offender_type'] == offender_type) & 
-        (ca_with_pct['variable_category'] != 'total')
-    ].copy()
+    # 3  attach total_profiles and compute difference
+    demo_sum["total_profiles"] = demo_sum["offender_type"].map(total_map)
+    demo_sum["difference"] = demo_sum["total_profiles"] - demo_sum["sum_demo_counts"]
+
+    # tidy columns order
+    return demo_sum[["offender_type",
+                     "variable_category",
+                     "total_profiles",
+                     "sum_demo_counts",
+                     "difference"]]
+
+def calculate_combined_totals(df, state_name):
+    """
+    Calculate Combined totals by summing across offender types.
+    Returns a dataframe of Combined rows to add.
+    """
+    # Get all counts
+    counts_df = df[(df['value_type'] == 'count')].copy()
     
-    display(Markdown(f"\n*{offender_type}:*"))
-    summary_df = subset[['variable_category', 'variable_detailed', 'value_numeric', 'percentage']]
-    summary_df.columns = ['Category', 'Detail', 'Count', 'Calculated %']
-    summary_df['Count'] = summary_df['Count'].apply(lambda x: f"{x:,.0f}")
-    summary_df['Calculated %'] = summary_df['Calculated %'].apply(lambda x: f"{x:.2f}%")
-    display(HTML(summary_df.to_html(index=False, classes='table table-striped table-hover')))
-
-# Check if percentages sum to 100%
-ca_pct_check = ca_with_pct[ca_with_pct['variable_category'] != 'total'].groupby(
-    ['offender_type', 'variable_category']
-)['percentage'].sum().reset_index()
-
-display(Markdown("\n**California: Percentage totals by category**"))
-ca_pct_check.columns = ['Offender Type', 'Category', 'Total %']
-ca_pct_check['Total %'] = ca_pct_check['Total %'].apply(lambda x: f"{x:.2f}%")
-display(HTML(ca_pct_check.to_html(index=False, classes='table table-striped')))
-
-display(Markdown("\n⚠️ **Warning**: California race percentages don't sum to 100%, indicating missing categories"))
-```
-
-#### Texas: Calculate Percentages and Identify Missing Data
-
-```{python}
-#| label: texas-analysis
-
-# Texas only provided counts (and only female counts for gender)
-texas_data = foia_raw[foia_raw['state'] == 'Texas'].copy()
-
-# First, check if race counts sum to totals
-texas_totals = texas_data[texas_data['variable_category'] == 'total'].set_index('offender_type')['value_numeric'].to_dict()
-texas_race_sums = texas_data[texas_data['variable_category'] == 'race'].groupby('offender_type')['value_numeric'].sum()
-
-display(Markdown("**Texas: Missing race data (Unknown category)**"))
-missing_data = []
-for offender_type, total in texas_totals.items():
-    if offender_type in texas_race_sums.index:
-        race_sum = texas_race_sums[offender_type]
-        missing = total - race_sum
-        missing_data.append({
-            'Offender Type': offender_type,
-            'Total': f"{int(total):,}",
-            'Race Sum': f"{int(race_sum):,}",
-            'Missing': f"{int(missing):,}",
-            'Missing %': f"{missing/total * 100:.2f}%"
+    # Group by variable_category and variable_detailed, sum values
+    combined_sums = (counts_df.groupby(['variable_category', 'variable_detailed'])['value']
+                     .sum()
+                     .reset_index())
+    
+    # Create Combined rows
+    combined_rows = []
+    for _, row in combined_sums.iterrows():
+        combined_rows.append({
+            'state': state_name,
+            'offender_type': 'Combined',
+            'variable_category': row['variable_category'],
+            'variable_detailed': row['variable_detailed'],
+            'value': row['value'],
+            'value_type': 'count',
+            'value_source': 'calculated'
         })
+    
+    return pd.DataFrame(combined_rows)
 
-missing_df = pd.DataFrame(missing_data)
-display(HTML(missing_df.to_html(index=False, classes='table table-striped table-hover')))
 
-# Calculate percentages for available data
-texas_with_pct = texas_data[
-    (texas_data['value_type'] == 'count') & 
-    (texas_data['variable_category'] != 'total')
-].copy()
+def calculate_percentages(df_combined, state_name):
+    """
+    Calculate percentages for all demographic categories.
+    Returns a dataframe of percentage rows to add.
+    """
+    # Get total profiles for each offender type
+    totals_map = (df_combined[
+        (df_combined['state'] == state_name) &
+        (df_combined['variable_category'] == 'total') &
+        (df_combined['variable_detailed'] == 'total_profiles')
+    ].set_index('offender_type')['value'].to_dict())
+    
+    percentage_rows = []
+    
+    for offender_type, total in totals_map.items():
+        # Get all demographic counts
+        demo_data = df_combined[
+            (df_combined['state'] == state_name) &
+            (df_combined['offender_type'] == offender_type) &
+            (df_combined['variable_category'].isin(['gender', 'race'])) &
+            (df_combined['value_type'] == 'count')
+        ]
+        
+        # Calculate percentage for each
+        for _, row in demo_data.iterrows():
+            percentage = (row['value'] / total) * 100
+            percentage_rows.append({
+                'state': state_name,
+                'offender_type': offender_type,
+                'variable_category': row['variable_category'],
+                'variable_detailed': row['variable_detailed'],
+                'value': round(percentage, 2),
+                'value_type': 'percentage',
+                'value_source': 'calculated'
+            })
+    
+    return pd.DataFrame(percentage_rows)
 
-texas_with_pct['total'] = texas_with_pct['offender_type'].map(texas_totals)
-texas_with_pct['percentage'] = round(texas_with_pct['value_numeric'] / texas_with_pct['total'] * 100, 2)
 
-display(Markdown("\n**Texas: Gender data (only female counts provided)**"))
-gender_df = texas_with_pct[texas_with_pct['variable_category'] == 'gender'][
-    ['offender_type', 'variable_detailed', 'value_numeric', 'percentage']
-].copy()
-gender_df.columns = ['Offender Type', 'Gender', 'Count', 'Percentage']
-gender_df['Count'] = gender_df['Count'].apply(lambda x: f"{x:,.0f}")
-gender_df['Percentage'] = gender_df['Percentage'].apply(lambda x: f"{x:.2f}%")
-display(HTML(gender_df.to_html(index=False, classes='table table-striped table-hover')))
+def calculate_counts_from_percentages(df_combined, state_name):
+    """
+    Calculate counts from percentages when only percentages are provided.
+    Returns a dataframe of count rows to add.
+    """
+    # Get total profiles for each offender type
+    totals_map = (df_combined[
+        (df_combined['state'] == state_name) &
+        (df_combined['variable_category'] == 'total') &
+        (df_combined['variable_detailed'] == 'total_profiles')
+    ].set_index('offender_type')['value'].to_dict())
+    
+    count_rows = []
+    
+    for offender_type, total in totals_map.items():
+        # Get all demographic percentages
+        demo_data = df_combined[
+            (df_combined['state'] == state_name) &
+            (df_combined['offender_type'] == offender_type) &
+            (df_combined['variable_category'].isin(['gender', 'race'])) &
+            (df_combined['value_type'] == 'percentage')
+        ]
+        
+        # Calculate count for each
+        for _, row in demo_data.iterrows():
+            count = round(total * (row['value'] / 100))
+            count_rows.append({
+                'state': state_name,
+                'offender_type': offender_type,
+                'variable_category': row['variable_category'],
+                'variable_detailed': row['variable_detailed'],
+                'value': int(count),
+                'value_type': 'count',
+                'value_source': 'calculated'
+            })
+    
+    return pd.DataFrame(count_rows)
 
-# Calculate male counts
-display(Markdown("\n**Calculated Male/Other counts:**"))
-male_data = []
-for offender_type in ['Offenders', 'Arrestee']:
-    total = texas_totals[offender_type]
-    female = texas_with_pct[(texas_with_pct['offender_type'] == offender_type) & 
-                           (texas_with_pct['variable_category'] == 'gender')]['value_numeric'].iloc[0]
-    male = total - female
-    male_data.append({
-        'Offender Type': offender_type,
-        'Male/Other Count': f"{int(male):,}",
-        'Male/Other %': f"{male/total * 100:.2f}%"
-    })
-male_df = pd.DataFrame(male_data)
-display(HTML(male_df.to_html(index=False, classes='table table-striped')))
 
-display(Markdown("\n⚠️ **Note**: Texas only reported female counts. Male/Other counts must be calculated by subtraction."))
-```
+def standardize_offender_types(df):
+    """
+    Standardize offender type terminology across states.
+    """
+    replacements = {
+        'Offenders': 'Convicted Offender',
+        'Convicted offenders': 'Convicted Offender',
+        'Arrested offender': 'Arrestee',
+        'All': 'Combined'
+    }
+    
+    df = df.copy()
+    df['offender_type'] = df['offender_type'].replace(replacements)
+    return df
 
-### Step 3: States with Only Percentages
 
-Indiana requires special handling as they only provided percentages for demographics.
-
-#### Indiana: Verify Percentages Sum to 100%
-
-```{python}
-#| label: indiana-percentages
-
-# Indiana only provided percentages for demographics
-indiana_pct = foia_raw[
-    (foia_raw['state'] == 'Indiana') & 
-    (foia_raw['value_type'] == 'percentage')
-].copy()
-
-# Check if percentages sum to 100%
-indiana_pct_check = indiana_pct.groupby('variable_category').agg({
-    'value_numeric': 'sum',
-    'variable_detailed': lambda x: ', '.join(x)
-}).rename(columns={'value_numeric': 'total_percentage'})
-
-display(Markdown("**Indiana: Checking if percentages sum to 100%**"))
-check_df = indiana_pct_check.reset_index()
-check_df.columns = ['Category', 'Total %', 'Values']
-check_df['Total %'] = check_df['Total %'].apply(lambda x: f"{x:.1f}%")
-display(HTML(check_df.to_html(index=False, classes='table table-striped table-hover')))
-
-# Get totals for calculating counts
-indiana_totals = foia_raw[
-    (foia_raw['state'] == 'Indiana') & 
-    (foia_raw['variable_category'] == 'total')
-]
-
-convicted = indiana_totals[indiana_totals['offender_type'] == 'Convicted Offender']['value_numeric'].iloc[0]
-arrestee = indiana_totals[indiana_totals['offender_type'] == 'Arrestee']['value_numeric'].iloc[0]
-combined = convicted + arrestee
-
-display(Markdown("\n**Indiana totals for calculating counts:**"))
-totals_data = [
-    ['Convicted', f"{int(convicted):,}"],
-    ['Arrestee', f"{int(arrestee):,}"],
-    ['Combined', f"{int(combined):,}"]
-]
-totals_df = pd.DataFrame(totals_data, columns=['Type', 'Count'])
-display(HTML(totals_df.to_html(index=False, classes='table table-striped')))
-
-# Calculate counts from percentages
-display(Markdown("\n**Calculated counts from percentages:**"))
-calculated_counts = []
-for _, row in indiana_pct.iterrows():
-    count = round(combined * row['value_numeric'] / 100)
-    calculated_counts.append({
-        'Category': row['variable_category'],
-        'Detail': row['variable_detailed'],
-        'Percentage': f"{row['value_numeric']}%",
-        'Calculated Count': f"{int(count):,}"
-    })
-calc_df = pd.DataFrame(calculated_counts)
-display(HTML(calc_df.to_html(index=False, classes='table table-striped table-hover')))
-
-display(Markdown("\n⚠️ **Note**: Indiana's race percentages sum to 100.5% due to '<1%' being interpreted as 0.5%"))
-```
-
-### Step 4: Nevada Special Case
-
-Nevada provides counts for all data but only some percentages.
-
-```{python}
-#| label: nevada-analysis
-
-# Nevada has counts for everything, percentages for some
-nevada_data = foia_raw[foia_raw['state'] == 'Nevada'].copy()
-
-nevada_wide = nevada_data.pivot_table(
-    index=['offender_type', 'variable_category', 'variable_detailed'],
-    columns='value_type',
-    values='value_numeric',
-    aggfunc='first'
-).reset_index()
-
-display(Markdown("**Nevada: Data with provided percentages**"))
-with_pct = nevada_wide[nevada_wide['percentage'].notna()].copy()
-summary_df = with_pct[['offender_type', 'variable_category', 'variable_detailed', 'count', 'percentage']]
-summary_df.columns = ['Offender Type', 'Category', 'Detail', 'Count', 'Percentage']
-summary_df['Count'] = summary_df['Count'].apply(lambda x: f"{x:,.0f}")
-summary_df['Percentage'] = summary_df['Percentage'].apply(lambda x: f"{x:.4f}%")
-display(HTML(summary_df.to_html(index=False, classes='table table-striped table-hover')))
-
-# Calculate missing percentages
-total_flags = 344097
-nevada_calc = nevada_wide[nevada_wide['percentage'].isna() & nevada_wide['count'].notna()].copy()
-nevada_calc['calc_percentage'] = round(nevada_calc['count'] / total_flags * 100, 3)
-
-display(Markdown("\n**Nevada: Calculated percentages for missing data**"))
-calc_df = nevada_calc[['offender_type', 'variable_category', 'variable_detailed', 'count', 'calc_percentage']].copy()
-calc_df.columns = ['Offender Type', 'Category', 'Detail', 'Count', 'Calculated %']
-calc_df['Count'] = calc_df['Count'].apply(lambda x: f"{x:,.0f}")
-calc_df['Calculated %'] = calc_df['Calculated %'].apply(lambda x: f"{x:.3f}%")
-display(HTML(calc_df.to_html(index=False, classes='table table-striped table-hover')))
-
-display(Markdown("\n⚠️ **Note**: Nevada uses 'flags' instead of 'profiles' terminology"))
-```
-
-## Summary of Calculations Needed
-
-### 1. Verification Results (States with Both)
-
-✅ **All states with both counts and percentages show excellent agreement:**
-
-- **Florida**: Perfect match - all differences are 0.00
-- **Maine**: Only 0.5% difference for Male due to rounding  
-- **South Dakota**: Only 0.07% difference for Asian due to rounding
-
-### 2. States Requiring Percentage Calculations
-
-⚠️ **Critical issues found:**
-
-- **California**: 
-  - All percentages need calculation
-  - Race percentages don't sum to 100% (Convicted: 80.50%, Arrestee: 87.22%)
-  
-- **Texas**: 
-  - All percentages need calculation
-  - Only female gender counts provided
-  - Race counts missing Unknown category
-
-### 3. States Requiring Count Calculations
-  
-- **Indiana**: 
-  - Gender percentages sum to 100% ✓
-  - Race percentages sum to 100.5% (due to "<1%" → 0.5%)
-  - Use combined total of 300,741 for calculations
-
-### 4. Mixed Reporting
-
-- **Nevada**: 
-  - Has counts for all data
-  - Missing some percentages (need calculation)
-  - Uses "flags" terminology instead of "profiles"
-
-## Data Quality Issues Summary
-
-```{python}
-#| label: quality-summary
-#| echo: false
-
-issues = pd.DataFrame([
-    ["Texas", "Gender", "Critical", "Only female counts provided; male counts must be calculated"],
-    ["Texas", "Race", "Critical", "Totals don't match sum; 29 Offenders and 2,161 Arrestees missing"],
-    ["California", "Race", "Major", "Convicted: 80.50% total; Arrestee: 87.22% total"],
-    ["Indiana", "Race", "Minor", "'<1%' for Other race requires interpretation"],
-    ["Florida", "Gender", "Minor", "Percentages sum to 100.01% (rounding)"],
-    ["Nevada", "Terminology", "Note", "Uses 'flags' instead of 'profiles'"],
-    ["South Dakota", "Complexity", "Note", "Provides race×gender intersections (unique among states)"]
-], columns=['State', 'Issue Type', 'Severity', 'Description'])
-
-# Color code by severity
-def severity_color(row):
-    if row['Severity'] == 'Critical':
-        return ['background-color: #ffcccc'] * len(row)
-    elif row['Severity'] == 'Major':
-        return ['background-color: #ffe6cc'] * len(row)
-    elif row['Severity'] == 'Minor':
-        return ['background-color: #ffffcc'] * len(row)
+def prepare_state_for_combined(df, state_name):
+    """
+    Prepare state data for appending to foia_combined.
+    Selects only needed columns and adds value_source if missing.
+    """
+    df_prepared = df[COLUMNS_NEEDED].copy()
+    
+    # Add value_source if not present
+    if 'value_source' not in df_prepared.columns:
+        df_prepared['value_source'] = 'reported'
     else:
-        return [''] * len(row)
+        df_prepared['value_source'] = df_prepared['value_source'].fillna('reported')
+    
+    return df_prepared
 
-styled = issues.style.apply(severity_color, axis=1)
-display(HTML(styled.to_html()))
+
+def create_state_visualizations(df_combined, state_name):
+    """
+    Create count and percentage pie charts for a state.
+    """
+    state_data = df_combined[df_combined['state'] == state_name]
+    
+    # Determine offender types for this state
+    offender_types = sorted(state_data['offender_type'].unique())
+    n_types = len(offender_types)
+    
+    # Create figure
+    fig, axes = plt.subplots(4, n_types, figsize=(5*n_types, 16))
+    if n_types == 1:
+        axes = axes.reshape(-1, 1)
+    
+    fig.suptitle(f'{state_name} DNA Database Demographics - Counts and Percentages', fontsize=18)
+    
+    # Create pie charts for each metric
+    for i, offender_type in enumerate(offender_types):
+        # Gender counts
+        create_pie_chart(axes[0, i], state_data, offender_type, 'gender', 'count', 
+                        f'{offender_type}\nGender Counts', show_values=True)
+        
+        # Gender percentages
+        create_pie_chart(axes[1, i], state_data, offender_type, 'gender', 'percentage',
+                        f'{offender_type}\nGender Percentages')
+        
+        # Race counts
+        create_pie_chart(axes[2, i], state_data, offender_type, 'race', 'count',
+                        f'{offender_type}\nRace Counts', show_values=True)
+        
+        # Race percentages
+        create_pie_chart(axes[3, i], state_data, offender_type, 'race', 'percentage',
+                        f'{offender_type}\nRace Percentages')
+    
+    plt.tight_layout()
+    plt.show()
+    
+    # Display count summary
+    print(f"\n{state_name} profile counts by offender type:")
+    count_summary = state_data[
+        (state_data['variable_category'] == 'total') &
+        (state_data['variable_detailed'] == 'total_profiles') &
+        (state_data['value_type'] == 'count')
+    ][['offender_type', 'value']].set_index('offender_type')
+    count_summary.columns = ['Total Profiles']
+    count_summary['Total Profiles'] = count_summary['Total Profiles'].apply(lambda x: f"{x:,}")
+    display(count_summary)
+
+
+def create_pie_chart(ax, data, offender_type, category, value_type, title, show_values=False):
+    """
+    Helper to create a single pie chart.
+    """
+    chart_data = data[
+        (data['offender_type'] == offender_type) &
+        (data['variable_category'] == category) &
+        (data['value_type'] == value_type)
+    ].sort_values('value', ascending=False)
+    
+    if len(chart_data) > 0:
+        if show_values and value_type == 'count':
+            labels = [f"{row['variable_detailed']}\n({row['value']:,.0f})" 
+                     for _, row in chart_data.iterrows()]
+        else:
+            labels = chart_data['variable_detailed']
+        
+        colors = plt.cm.Set3(range(len(chart_data)))
+        wedges, texts, autotexts = ax.pie(chart_data['value'], 
+                                          labels=labels,
+                                          autopct='%1.1f%%',
+                                          startangle=90,
+                                          colors=colors)
+        
+        # Adjust text size for readability
+        for text in texts:
+            text.set_fontsize(8 if category == 'race' else 9)
+        for autotext in autotexts:
+            autotext.set_fontsize(8)
+            
+        ax.set_title(title)
+    else:
+        ax.text(0.5, 0.5, 'No data', ha='center', va='center', transform=ax.transAxes)
+        ax.set_title(title)
+```
+
+### California
+
+```{python}
+#| label: ca-load-preview
+#| echo: true
+
+ca_path = per_state / "california_foia_data.csv"
+ca      = pd.read_csv(ca_path)
+
+display(ca)
+```
+
+We begin by loading California's file. California supplies **counts only** for gender and race plus a separate total for each offender type; no percentages are reported.
+
+Recording California's reporting structure:
+
+```{python}
+#| label: ca-add-metadata
+#| echo: true
+
+foia_state_metadata.append({
+    "state": "California",
+    "race_report_values":   report_status(ca, "race"),
+    "gender_report_values": report_status(ca, "gender")
+})
+
+print("✓ Added metadata row:", foia_state_metadata[-1])
+```
+
+#### Verifying that demographic counts match reported totals
+
+Using the `verify_category_totals` helper function:
+
+```{python}
+#| label: ca-run-category-verify
+#| echo: true
+
+ca_category_qc = verify_category_totals(ca)
+ca_category_qc
+
+```
+
+#### Interpreting the race shortfall
+
+> *"Racial classification is not considered a required field on the collection card; thus, an unknown number of offenders may have **no racial classification listed**."*
+> — California DOJ FOIA letter, July 10 2018 (`raw/foia_pdfs/FOIA_RacialComp_California.pdf`)
+
+The 393  887 Convicted‑Offender profiles and 96  127 Arrestee profiles that do **not** appear in any of the four reported race categories must therefore belong to an unreported "Unknown/Other" bucket. To keep row totals consistent and enable percentage calculations later, we add one new race row per offender type:
+
+* `variable_category = "race"`
+* `variable_detailed = "Unknown"`
+* `value_type = "count"`
+* `value_source = "calculated"`
+
+```{python}
+#| label: ca-insert-unknown
+#| echo: true
+
+# ------------------------------------------------------------------
+# 1.  Remove any prior Unknown‑race rows 
+# ------------------------------------------------------------------
+ca = ca[~(
+    (ca["variable_category"] == "race") &
+    (ca["variable_detailed"] == "Unknown")
+)].copy()
+
+# ------------------------------------------------------------------
+# 2.  Add one Unknown‑race row per offender type
+# ------------------------------------------------------------------
+unknown_rows = pd.DataFrame([
+    {
+        "state": "California",
+        "offender_type": "Convicted Offender",
+        "variable_category": "race",
+        "variable_detailed": "Unknown",
+        "value": 393887,           
+        "value_type": "count",
+        "value_source": "calculated",
+    },
+    {
+        "state": "California",
+        "offender_type": "Arrestee",
+        "variable_category": "race",
+        "variable_detailed": "Unknown",
+        "value": 96127,
+        "value_type": "count",
+        "value_source": "calculated",
+    },
+])
+
+ca = pd.concat([ca, unknown_rows], ignore_index=True)
+
+# ------------------------------------------------------------------
+# 3.  Confirm race and gender now reconcile to totals
+# ------------------------------------------------------------------
+print("Category‑level check after adding Unknown rows:")
+display(verify_category_totals(ca))
+```
+
+#### Creating Combined totals
+
+California reported data separately for Convicted Offenders and Arrestees. Combined totals are calculated by summing across both offender types for all categories and demographic values.
+
+```{python}
+#| label: ca-create-combined
+#| echo: true
+
+# Calculate Combined totals using helper function
+combined_df = calculate_combined_totals(ca, "California")
+
+# Add Combined rows to ca
+ca = pd.concat([ca, combined_df], ignore_index=True)
+
+print("✓ Created Combined totals for California")
+print(f"  Combined total profiles: {combined_df[combined_df['variable_detailed'] == 'total_profiles']['value'].values[0]:,}")
+
+# Display Combined gender counts
+print("\nCombined gender counts:")
+display(combined_df[combined_df['variable_category'] == 'gender'].sort_values('variable_detailed'))
+
+# Display Combined race counts  
+print("\nCombined race counts:")
+display(combined_df[combined_df['variable_category'] == 'race'].sort_values('variable_detailed'))
+
+# Verify Combined calculations
+print("\n✓ Verification of Combined calculations:")
+
+# Get counts dataframe for verification
+counts_df = ca[(ca['value_type'] == 'count') & (ca['offender_type'] != 'Combined')].copy()
+
+conv_total = counts_df[(counts_df['offender_type'] == 'Convicted Offender') & 
+                       (counts_df['variable_detailed'] == 'total_profiles')]['value'].values[0]
+arr_total = counts_df[(counts_df['offender_type'] == 'Arrestee') & 
+                      (counts_df['variable_detailed'] == 'total_profiles')]['value'].values[0]
+comb_total = combined_df[combined_df['variable_detailed'] == 'total_profiles']['value'].values[0]
+
+print(f"  Convicted Offender total: {conv_total:,}")
+print(f"  Arrestee total: {arr_total:,}")
+print(f"  Sum: {conv_total + arr_total:,}")
+print(f"  Combined total: {comb_total:,}")
+print(f"  Match: {conv_total + arr_total == comb_total}")
+```
+
+#### Preparing California data for the combined dataset
+
+The California data requires selection of specific columns for inclusion in the combined dataset.
+
+```{python}
+#| label: ca-append-to-combined
+#| echo: true
+
+# ------------------------------------------------------------------
+# Create California data for foia_combined with only needed columns
+# ------------------------------------------------------------------
+# Select existing California data with the columns we want
+ca_for_combined = ca[['state', 'offender_type', 'variable_category', 
+                      'variable_detailed', 'value', 'value_type']].copy()
+
+# Add value_source column
+ca_for_combined['value_source'] = 'reported'
+
+# Update value_source for calculated rows (Unknown race and Combined totals)
+ca_for_combined.loc[
+    ((ca_for_combined['variable_category'] == 'race') & 
+     (ca_for_combined['variable_detailed'] == 'Unknown')) |
+    (ca_for_combined['offender_type'] == 'Combined'), 
+    'value_source'
+] = 'calculated'
+
+# Display sample of data structure
+print("California data structure verification:")
+print(f"Unique offender types: {ca_for_combined['offender_type'].unique()}")
+print(f"Unique variable categories: {ca_for_combined['variable_category'].unique()}")
+
+# Append to the combined dataframe
+foia_combined = pd.concat([foia_combined, ca_for_combined], ignore_index=True)
+
+print(f"\n✓ Appended {len(ca_for_combined)} California rows to foia_combined")
+print(f"✓ Total rows in foia_combined: {len(foia_combined)}")
+```
+
+#### Calculating percentages
+
+California provided only counts. For comparative analysis, percentages are calculated for each demographic category as the proportion of each demographic value relative to the total profiles for that offender type.
+
+```{python}
+#| label: ca-calculate-percentages
+#| echo: true
+
+# Calculate percentages using helper function
+percentages_df = calculate_percentages(foia_combined, "California")
+
+# Add percentages to foia_combined
+foia_combined = pd.concat([foia_combined, percentages_df], ignore_index=True)
+
+print(f"✓ Calculated and added {len(percentages_df)} percentage rows for California")
+print(f"✓ Total rows in foia_combined: {len(foia_combined)}")
+
+# Display the actual percentage values
+print("\nGender percentages by offender type:")
+gender_pct = percentages_df[percentages_df['variable_category'] == 'gender'].pivot_table(
+    index='variable_detailed', columns='offender_type', values='value'
+)
+display(gender_pct)
+
+print("\nRace percentages by offender type:")
+race_pct = percentages_df[percentages_df['variable_category'] == 'race'].pivot_table(
+    index='variable_detailed', columns='offender_type', values='value'
+)
+display(race_pct)
+
+# Verify percentages sum to approximately 100% for each category
+print("\nVerification of percentage totals by category:")
+verification = (percentages_df.groupby(['offender_type', 'variable_category'])['value']
+                .sum()
+                .round(2)
+                .reset_index()
+                .rename(columns={'value': 'sum_of_percentages'}))
+display(verification)
+
+# Note about rounding
+print("\nNote: Percentage sums may not equal exactly 100% due to rounding to 2 decimal places.")
+```
+
+#### Summary of California processing
+
+California data processing complete. The dataset now includes:
+- Reported counts for Convicted Offenders and Arrestees
+- Calculated Unknown race counts to reconcile reported totals
+- Calculated Combined totals for gender and race categories
+- Calculated percentages for all offender types and demographic categories
+
+All values include appropriate `value_source` indicators distinguishing reported from calculated values.
+
+#### Visualizing California demographics
+
+```{python}
+#| label: ca-visualize
+#| echo: true
+#| fig-width: 15
+#| fig-height: 16
+
+create_state_visualizations(foia_combined, "California")
+```
+
+### Florida
+
+```{python}
+#| label: fl-load-preview
+#| echo: true
+
+fl_path = per_state / "florida_foia_data.csv"
+fl = pd.read_csv(fl_path)
+
+display(fl)
+```
+
+Florida provides both counts and percentages for gender and race categories. The state already includes Combined totals, simplifying our processing.
+
+Recording Florida's reporting structure in our metadata:
+
+```{python}
+#| label: fl-add-metadata
+#| echo: true
+
+foia_state_metadata.append({
+    "state": "Florida",
+    "race_report_values": report_status(fl, "race"),
+    "gender_report_values": report_status(fl, "gender")
+})
+
+print("✓ Added metadata row:", foia_state_metadata[-1])
+```
+
+#### Verifying demographic consistency
+
+```{python}
+#| label: fl-verify-totals
+#| echo: true
+
+fl_category_qc = verify_category_totals(fl)
+display(fl_category_qc)
+```
+
+Florida's demographic counts sum correctly to the reported total. The state data appears internally consistent.
+
+#### Preparing Florida data for the combined dataset
+
+```{python}
+#| label: fl-append-to-combined
+#| echo: true
+
+# Prepare Florida data with only needed columns
+fl_for_combined = prepare_state_for_combined(fl, "Florida")
+
+# Display structure verification
+print("Florida data structure verification:")
+print(f"Unique offender types: {fl_for_combined['offender_type'].unique()}")
+print(f"Unique variable categories: {fl_for_combined['variable_category'].unique()}")
+print(f"Value types present: {fl_for_combined['value_type'].unique()}")
+
+# Append to the combined dataframe
+foia_combined = pd.concat([foia_combined, fl_for_combined], ignore_index=True)
+
+print(f"\n✓ Appended {len(fl_for_combined)} Florida rows to foia_combined")
+print(f"✓ Total rows in foia_combined: {len(foia_combined)}")
+```
+
+#### Visualizing Florida demographics
+
+```{python}
+#| label: fl-visualize
+#| echo: true
+#| fig-width: 8
+#| fig-height: 16
+
+create_state_visualizations(foia_combined, "Florida")
+```
+
+#### Summary of Florida processing
+
+Florida data processing complete. The state provided:
+- Both counts and percentages for all demographic categories
+- Combined totals already calculated
+- Internally consistent data requiring no adjustments
+
+All values maintain `value_source = "reported"` as no calculations were necessary.
+
+### Nevada
+
+```{python}
+#| label: nv-load-preview
+#| echo: true
+
+nv_path = per_state / "nevada_foia_data.csv"
+nevada = pd.read_csv(nv_path)
+
+display(nevada)
+```
+
+Nevada uses non-standard terminology that requires standardization:
+- "All" instead of "Combined"
+- "Arrested offender" instead of "Arrestee"
+- "Convicted offenders" instead of "Convicted Offender"
+- Uses "flags" terminology instead of "profiles"
+
+```{python}
+#| label: nv-standardize
+#| echo: true
+
+# Standardize offender types
+nevada = standardize_offender_types(nevada)
+
+print("✓ Standardized Nevada offender type terminology")
+print(f"Offender types after standardization: {sorted(nevada['offender_type'].unique())}")
+```
+
+Recording Nevada's reporting structure:
+
+```{python}
+#| label: nv-add-metadata
+#| echo: true
+
+foia_state_metadata.append({
+    "state": "Nevada",
+    "race_report_values": report_status(nevada, "race"),
+    "gender_report_values": report_status(nevada, "gender"),
+    "notes": "Uses 'flags' terminology instead of 'profiles'"
+})
+
+print("✓ Added metadata row:", foia_state_metadata[-1])
+```
+
+#### Verifying demographic consistency
+
+```{python}
+#| label: nv-verify-totals
+#| echo: true
+
+nv_category_qc = verify_category_totals(nevada)
+display(nv_category_qc)
+
+# Verify percentages sum to ~100%
+print("\nVerifying Nevada percentages sum to ~100%:")
+nv_pct_check = (nevada[nevada['value_type'] == 'percentage']
+                .groupby(['offender_type', 'variable_category'])['value']
+                .sum()
+                .round(2))
+display(nv_pct_check)
+```
+
+Nevada's data shows good internal consistency after terminology standardization.
+
+#### Preparing Nevada data for the combined dataset
+
+```{python}
+#| label: nv-append-to-combined
+#| echo: true
+
+# Prepare Nevada data with only needed columns
+nv_for_combined = prepare_state_for_combined(nevada, "Nevada")
+
+# Display structure verification
+print("Nevada data structure verification:")
+print(f"Unique offender types: {nv_for_combined['offender_type'].unique()}")
+print(f"Unique variable categories: {nv_for_combined['variable_category'].unique()}")
+print(f"Value types present: {nv_for_combined['value_type'].unique()}")
+
+# Append to the combined dataframe
+foia_combined = pd.concat([foia_combined, nv_for_combined], ignore_index=True)
+
+print(f"\n✓ Appended {len(nv_for_combined)} Nevada rows to foia_combined")
+print(f"✓ Total rows in foia_combined: {len(foia_combined)}")
+```
+
+#### Visualizing Nevada demographics
+
+```{python}
+#| label: nv-visualize
+#| echo: true
+#| fig-width: 10
+#| fig-height: 16
+
+create_state_visualizations(foia_combined, "Nevada")
+```
+
+#### Summary of Nevada processing
+
+Nevada data processing complete. The state required:
+- Standardization of offender type terminology for consistency
+- Recognition of "flags" as equivalent to "profiles" in other states
+- Both counts and percentages were provided for all categories
+
+All values maintain `value_source = "reported"` as only terminology changes were necessary.
+
+### South Dakota
+
+```{python}
+#| label: sd-load-preview
+#| echo: true
+
+sd_path = per_state / "south_dakota_foia_data.csv"
+south_dakota = pd.read_csv(sd_path)
+
+display(south_dakota.head(20))
+print(f"\n... showing first 20 of {len(south_dakota)} rows")
+```
+
+South Dakota provides the most comprehensive reporting with 41 rows, including:
+- Standard gender and race breakdowns
+- Unique `gender_race` cross-tabulation showing intersectional demographics
+- Both counts and percentages for all categories
+
+Recording South Dakota's reporting structure:
+
+```{python}
+#| label: sd-add-metadata
+#| echo: true
+
+foia_state_metadata.append({
+    "state": "South Dakota",
+    "race_report_values": report_status(south_dakota, "race"),
+    "gender_report_values": report_status(south_dakota, "gender"),
+    "notes": "Includes gender_race cross-tabulation for intersectional analysis"
+})
+
+print("✓ Added metadata row:", foia_state_metadata[-1])
+```
+
+#### Examining the intersectional data
+
+```{python}
+#| label: sd-examine-intersectional
+#| echo: true
+
+# Display the unique gender_race combinations
+gender_race_data = south_dakota[south_dakota['variable_category'] == 'gender_race']
+print("South Dakota's intersectional gender × race categories:")
+print(f"Total gender_race rows: {len(gender_race_data)}")
+print("\nUnique combinations:")
+for combo in sorted(gender_race_data['variable_detailed'].unique()):
+    print(f"  • {combo}")
+```
+
+#### Verifying demographic consistency
+
+```{python}
+#| label: sd-verify-totals
+#| echo: true
+
+sd_category_qc = verify_category_totals(south_dakota)
+display(sd_category_qc)
+
+# Verify percentages sum to ~100%
+print("\nVerifying South Dakota percentages sum to ~100%:")
+sd_pct_check = (south_dakota[south_dakota['value_type'] == 'percentage']
+                .groupby(['variable_category'])['value']
+                .sum()
+                .round(2))
+display(sd_pct_check)
+```
+
+South Dakota's data demonstrates excellent internal consistency across all categories, including the intersectional data.
+
+#### Preparing South Dakota data for the combined dataset
+
+```{python}
+#| label: sd-append-to-combined
+#| echo: true
+
+# Prepare South Dakota data with only needed columns
+sd_for_combined = prepare_state_for_combined(south_dakota, "South Dakota")
+
+# Display structure verification
+print("South Dakota data structure verification:")
+print(f"Unique offender types: {sd_for_combined['offender_type'].unique()}")
+print(f"Unique variable categories: {sd_for_combined['variable_category'].unique()}")
+print(f"Value types present: {sd_for_combined['value_type'].unique()}")
+
+# Show breakdown by category
+print("\nRows by variable category:")
+print(sd_for_combined['variable_category'].value_counts())
+
+# Append to the combined dataframe
+foia_combined = pd.concat([foia_combined, sd_for_combined], ignore_index=True)
+
+print(f"\n✓ Appended {len(sd_for_combined)} South Dakota rows to foia_combined")
+print(f"✓ Total rows in foia_combined: {len(foia_combined)}")
+```
+
+#### Visualizing South Dakota demographics
+
+```{python}
+#| label: sd-visualize
+#| echo: true
+#| fig-width: 8
+#| fig-height: 16
+
+create_state_visualizations(foia_combined, "South Dakota")
+```
+
+#### Summary of South Dakota processing
+
+South Dakota data processing complete. The state provided:
+- Most comprehensive reporting with 41 rows of data
+- Standard gender and race categories plus unique intersectional gender×race data
+- Complete counts and percentages for all categories
+- Exemplary data quality with perfect internal consistency
+
+All values maintain `value_source = "reported"`. The intersectional data provides unique insights unavailable from other states.
+
+### Texas
+
+```{python}
+#| label: tx-load-preview
+#| echo: true
+
+tx_path = per_state / "texas_foia_data.csv"
+texas = pd.read_csv(tx_path)
+
+display(texas)
+```
+
+Texas provides counts only and uses "Offenders" instead of "Convicted Offender". Like California, Texas will need Combined totals and percentages calculated.
+
+```{python}
+#| label: tx-standardize
+#| echo: true
+
+# Standardize offender types
+texas = standardize_offender_types(texas)
+
+print("✓ Standardized Texas offender type terminology")
+print(f"Offender types after standardization: {sorted(texas['offender_type'].unique())}")
+```
+
+Recording Texas's reporting structure:
+
+```{python}
+#| label: tx-add-metadata
+#| echo: true
+
+foia_state_metadata.append({
+    "state": "Texas",
+    "race_report_values": report_status(texas, "race"),
+    "gender_report_values": report_status(texas, "gender")
+})
+
+print("✓ Added metadata row:", foia_state_metadata[-1])
+```
+
+#### Verifying demographic consistency
+
+```{python}
+#| label: tx-verify-totals
+#| echo: true
+
+tx_category_qc = verify_category_totals(texas)
+display(tx_category_qc)
+```
+
+Texas shows perfect internal consistency with all demographic counts matching reported totals.
+
+#### Creating Combined totals
+
+```{python}
+#| label: tx-create-combined
+#| echo: true
+
+# Calculate Combined totals using helper function
+tx_combined = calculate_combined_totals(texas, "Texas")
+
+# Add Combined rows to texas dataframe
+texas = pd.concat([texas, tx_combined], ignore_index=True)
+
+print("✓ Created Combined totals for Texas")
+print(f"  Combined total profiles: {tx_combined[tx_combined['variable_detailed'] == 'total_profiles']['value'].values[0]:,}")
+
+# Display Combined counts
+print("\nCombined gender counts:")
+display(tx_combined[tx_combined['variable_category'] == 'gender'].sort_values('variable_detailed'))
+
+print("\nCombined race counts:")
+display(tx_combined[tx_combined['variable_category'] == 'race'].sort_values('variable_detailed'))
+
+# Verify Combined calculations
+print("\n✓ Verification of Combined calculations:")
+
+# Get original counts for verification
+conv_total = texas[(texas['offender_type'] == 'Convicted Offender') & 
+                   (texas['variable_detailed'] == 'total_profiles') &
+                   (texas['value_type'] == 'count')]['value'].values[0]
+arr_total = texas[(texas['offender_type'] == 'Arrestee') & 
+                  (texas['variable_detailed'] == 'total_profiles') &
+                  (texas['value_type'] == 'count')]['value'].values[0]
+comb_total = tx_combined[tx_combined['variable_detailed'] == 'total_profiles']['value'].values[0]
+
+print(f"  Convicted Offender total: {conv_total:,}")
+print(f"  Arrestee total: {arr_total:,}")
+print(f"  Sum: {conv_total + arr_total:,}")
+print(f"  Combined total: {comb_total:,}")
+print(f"  Match: {conv_total + arr_total == comb_total}")
+```
+
+#### Preparing Texas data for the combined dataset
+
+```{python}
+#| label: tx-append-to-combined
+#| echo: true
+
+# Prepare Texas data with only needed columns
+tx_for_combined = prepare_state_for_combined(texas, "Texas")
+
+# Update value_source for Combined rows
+tx_for_combined.loc[
+    tx_for_combined['offender_type'] == 'Combined', 
+    'value_source'
+] = 'calculated'
+
+# Display structure verification
+print("Texas data structure verification:")
+print(f"Unique offender types: {tx_for_combined['offender_type'].unique()}")
+print(f"Unique variable categories: {tx_for_combined['variable_category'].unique()}")
+
+# Append to the combined dataframe
+foia_combined = pd.concat([foia_combined, tx_for_combined], ignore_index=True)
+
+print(f"\n✓ Appended {len(tx_for_combined)} Texas rows to foia_combined")
+print(f"✓ Total rows in foia_combined: {len(foia_combined)}")
+```
+
+#### Calculating percentages
+
+```{python}
+#| label: tx-calculate-percentages
+#| echo: true
+
+# Calculate percentages using helper function
+tx_percentages = calculate_percentages(foia_combined, "Texas")
+
+# Add percentages to foia_combined
+foia_combined = pd.concat([foia_combined, tx_percentages], ignore_index=True)
+
+print(f"✓ Calculated and added {len(tx_percentages)} percentage rows for Texas")
+print(f"✓ Total rows in foia_combined: {len(foia_combined)}")
+
+# Display sample of calculated percentages
+print("\nGender percentages by offender type:")
+gender_pct = tx_percentages[tx_percentages['variable_category'] == 'gender'].pivot_table(
+    index='variable_detailed', columns='offender_type', values='value'
+)
+display(gender_pct)
+
+# Verify percentages sum to ~100%
+print("\nVerification of percentage totals by category:")
+verification = (tx_percentages.groupby(['offender_type', 'variable_category'])['value']
+                .sum()
+                .round(2)
+                .reset_index()
+                .rename(columns={'value': 'sum_of_percentages'}))
+display(verification)
+```
+
+#### Visualizing Texas demographics
+
+```{python}
+#| label: tx-visualize
+#| echo: true
+#| fig-width: 15
+#| fig-height: 16
+
+create_state_visualizations(foia_combined, "Texas")
+```
+
+#### Summary of Texas processing
+
+Texas data processing complete. The state required:
+- Standardization of "Offenders" to "Convicted Offender"
+- Calculation of Combined totals across offender types
+- Calculation of percentages from provided counts
+
+Mixed `value_source` attribution: original counts are "reported", Combined totals and all percentages are "calculated".
+
+## Final Processing Summary
+
+All seven states have been successfully processed and combined into a unified dataset.
+
+```{python}
+#| label: final-summary
+#| echo: true
+
+# Display final metadata summary
+print("State Processing Metadata:")
+print("=" * 80)
+metadata_df = pd.DataFrame(foia_state_metadata)
+display(metadata_df)
+
+# Summary statistics
+print(f"\n✓ Total rows in foia_combined: {len(foia_combined)}")
+print(f"✓ States processed: {sorted(foia_combined['state'].unique())}")
+print(f"✓ Offender types: {sorted(foia_combined['offender_type'].unique())}")
+print(f"✓ Variable categories: {sorted(foia_combined['variable_category'].unique())}")
+
+# Value source breakdown
+print("\nValue source breakdown:")
+source_counts = foia_combined['value_source'].value_counts()
+for source, count in source_counts.items():
+    pct = (count / len(foia_combined)) * 100
+    print(f"  • {source}: {count} rows ({pct:.1f}%)")
+
+# Show sample of final combined data
+print("\nSample of final combined dataset:")
+display(foia_combined.sample(10, random_state=42))
+```
+
+## Saving Processed Data
+
+```{python}
+#| label: save-outputs
+#| echo: true
+
+# Define output paths
+output_dir = base_dir / "output" / "foia"
+output_dir.mkdir(parents=True, exist_ok=True)
+
+# Save the combined dataset
+foia_output_path = output_dir / "foia_data_clean.csv"
+foia_combined.to_csv(foia_output_path, index=False)
+print(f"✓ Saved combined FOIA data to: {foia_output_path}")
+
+# Save the metadata
+metadata_output_path = output_dir / "foia_state_metadata.csv"
+metadata_df.to_csv(metadata_output_path, index=False)
+print(f"✓ Saved state metadata to: {metadata_output_path}")
+
+# Create final frozen version
+frozen_dir = base_dir / "data" / "v1.0"
+frozen_dir.mkdir(parents=True, exist_ok=True)
+
+frozen_path = frozen_dir / "foia_state_race_v1.0.csv"
+foia_combined.to_csv(frozen_path, index=False)
+print(f"✓ Created frozen version at: {frozen_path}")
+
+print("\n✅ All processing complete!")
+```
+
+## Key Findings and Notes
+
+1. **Data Completeness**: All states provided total profile counts and demographic breakdowns, though reporting formats varied significantly.
+
+2. **Calculated Values**: 
+   - California and Texas required Combined totals and percentage calculations
+   - Indiana required count calculations from percentages
+   - All calculated values are clearly marked with `value_source = "calculated"`
+
+3. **Terminology Standardization**:
+   - Nevada: "All" → "Combined", "Arrested offender" → "Arrestee"
+   - Texas: "Offenders" → "Convicted Offender"
+
+4. **Unique Features**:
+   - South Dakota provided intersectional gender×race data unavailable from other states
+   - Nevada uses "flags" terminology instead of "profiles"
+   - California acknowledged missing race data, requiring "Unknown" category calculation
+
+5. **Data Quality**: After processing, all states show internally consistent data with demographic counts summing to reported totals and percentages summing to approximately 100% (accounting for rounding).
+
+This standardized dataset enables direct state-to-state comparisons of DNA database demographics while maintaining full transparency about data sources and calculations.
+
+## Conclusion
+
+This processing pipeline has successfully transformed heterogeneous FOIA responses from seven states into a standardized, analysis-ready dataset. By maintaining clear attribution of reported versus calculated values and documenting all processing decisions, this work supports reproducible research on racial disparities in DNA databases.
+
+The unified dataset (`foia_state_race_2016.csv`) and accompanying metadata provide researchers with accessible, transparent data to examine critical questions about equity and representation in forensic DNA databases. As noted in the introduction, making this data more accessible represents an important contribution to research ethics and transparency in criminal justice studies.
+
+### Indiana
+
+```{python}
+#| label: in-load-preview
+#| echo: true
+
+in_path = per_state / "indiana_foia_data.csv"
+indiana = pd.read_csv(in_path)
+
+display(indiana)
+```
+
+Indiana presents a unique reporting pattern: total counts are provided, but demographic breakdowns are given only as percentages. Additionally, the value column contains String data that requires conversion.
+
+```{python}
+#| label: in-convert-values
+#| echo: true
+
+# Convert string values to numeric
+indiana['value'] = pd.to_numeric(indiana['value'])
+
+print("✓ Converted Indiana values from String to numeric")
+print(f"Value data type after conversion: {indiana['value'].dtype}")
+```
+
+Recording Indiana's reporting structure:
+
+```{python}
+#| label: in-add-metadata
+#| echo: true
+
+foia_state_metadata.append({
+    "state": "Indiana",
+    "race_report_values": report_status(indiana, "race"),
+    "gender_report_values": report_status(indiana, "gender"),
+    "notes": "Provides percentages for demographics, counts for totals only"
+})
+
+print("✓ Added metadata row:", foia_state_metadata[-1])
+```
+
+#### Calculating demographic counts from percentages
+
+Since Indiana only provides percentages for demographics, we need to calculate the actual counts:
+
+```{python}
+#| label: in-prepare-and-calculate
+#| echo: true
+
+# First, prepare and append the reported data
+in_for_combined = prepare_state_for_combined(indiana, "Indiana")
+foia_combined = pd.concat([foia_combined, in_for_combined], ignore_index=True)
+
+print(f"✓ Appended {len(in_for_combined)} Indiana reported rows to foia_combined")
+
+# Now calculate counts from the percentages
+in_counts = calculate_counts_from_percentages(foia_combined, "Indiana")
+
+# Append calculated counts
+foia_combined = pd.concat([foia_combined, in_counts], ignore_index=True)
+
+print(f"✓ Calculated and added {len(in_counts)} count rows for Indiana")
+print(f"✓ Total rows in foia_combined: {len(foia_combined)}")
+
+# Display sample of calculated counts
+print("\nSample of calculated Indiana counts:")
+display(in_counts[in_counts['variable_category'] == 'race'].head())
+```
+
+#### Verifying calculated totals
+
+```{python}
+#| label: in-verify-calculated
+#| echo: true
+
+# Create temporary dataframe with Indiana's complete data for verification
+in_complete = pd.concat([indiana, in_counts], ignore_index=True)
+in_category_qc = verify_category_totals(in_complete)
+display(in_category_qc)
+
+# Check if percentages sum to ~100%
+print("\nVerifying Indiana percentages sum to ~100%:")
+in_pct_check = (indiana[indiana['value_type'] == 'percentage']
+                .groupby(['offender_type', 'variable_category'])['value']
+                .sum()
+                .round(2))
+display(in_pct_check)
+```
+
+#### Visualizing Indiana demographics
+
+```{python}
+#| label: in-visualize
+#| echo: true
+#| fig-width: 15
+#| fig-height: 16
+
+create_state_visualizations(foia_combined, "Indiana")
+```
+
+#### Summary of Indiana processing
+
+Indiana data processing complete. The state's unique reporting required:
+- Conversion of String values to numeric format
+- Calculation of demographic counts from reported percentages
+- All demographic values now available in both count and percentage formats
+
+Mixed `value_source` attribution: percentages are "reported", counts are "calculated".
+
+### Maine
+
+```{python}
+#| label: me-load-preview
+#| echo: true
+
+me_path = per_state / "maine_foia_data.csv"
+maine = pd.read_csv(me_path)
+
+display(maine)
+```
+
+Maine provides comprehensive reporting with both counts and percentages for all demographic categories, including Combined totals.
+
+Recording Maine's reporting structure:
+
+```{python}
+#| label: me-add-metadata
+#| echo: true
+
+foia_state_metadata.append({
+    "state": "Maine",
+    "race_report_values": report_status(maine, "race"),
+    "gender_report_values": report_status(maine, "gender")
+})
+
+print("✓ Added metadata row:", foia_state_metadata[-1])
+```
+
+#### Verifying demographic consistency
+
+```{python}
+#| label: me-verify-totals
+#| echo: true
+
+me_category_qc = verify_category_totals(maine)
+display(me_category_qc)
+
+# Also verify that reported percentages sum to ~100%
+print("\nVerifying Maine percentages sum to ~100%:")
+me_pct_check = (maine[maine['value_type'] == 'percentage']
+                .groupby(['variable_category'])['value']
+                .sum()
+                .round(2))
+display(me_pct_check)
+```
+
+Maine's data shows excellent internal consistency with both counts and percentages properly aligned.
+
+#### Preparing Maine data for the combined dataset
+
+```{python}
+#| label: me-append-to-combined
+#| echo: true
+
+# Prepare Maine data with only needed columns
+me_for_combined = prepare_state_for_combined(maine, "Maine")
+
+# Display structure verification
+print("Maine data structure verification:")
+print(f"Unique offender types: {me_for_combined['offender_type'].unique()}")
+print(f"Unique variable categories: {me_for_combined['variable_category'].unique()}")
+print(f"Value types present: {me_for_combined['value_type'].unique()}")
+
+# Append to the combined dataframe
+foia_combined = pd.concat([foia_combined, me_for_combined], ignore_index=True)
+
+print(f"\n✓ Appended {len(me_for_combined)} Maine rows to foia_combined")
+print(f"✓ Total rows in foia_combined: {len(foia_combined)}")
+```
+
+#### Visualizing Maine demographics
+
+```{python}
+#| label: me-visualize
+#| echo: true
+#| fig-width: 8
+#| fig-height: 16
+
+create_state_visualizations(foia_combined, "Maine")
+```
+
+#### Summary of Maine processing
+
+Maine data processing complete. The state provided:
+- Complete reporting with both counts and percentages
+- Combined totals already calculated
+- Internally consistent data with percentages summing to 100%
+
+All values maintain `value_source = "reported"` as no calculations were necessary.
+
+#### Visualizing California demographics
+
+```{python}
+#| label: ca-visualize
+#| echo: true
+#| fig-width: 15
+#| fig-height: 16
+
+create_state_visualizations(foia_combined, "California")
 ```

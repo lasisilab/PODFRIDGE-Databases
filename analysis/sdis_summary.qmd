@@ -1,0 +1,323 @@
+---
+title: "SDIS Summary Analysis"
+author: "Tina Lasisi"
+date: today
+format:
+  html:
+    code-fold: false
+    toc: true
+execute:
+  echo: true
+  warning: false
+---
+
+## Overview
+
+This analysis examines State DNA Index System (SDIS) data that includes information reported separately for each state's DNA database. The data captures key dimensions including:
+
+- Total size of each state's DNA database
+- Whether states collect DNA from arrestees (not just convicted offenders)
+- Whether states allow familial DNA searching
+- References to relevant state statutes (from Murphy & Tong appendix)
+
+This information provides insight into the variation in DNA database policies, practices, and legal frameworks across U.S. states.
+
+## Data Loading
+
+```{python}
+import pandas as pd
+import numpy as np
+from pathlib import Path
+
+# Set up path to data file
+base_dir = Path("..")
+data_file = base_dir / "output" / "sdis" / "sdis_raw.csv"
+
+# Load the SDIS data
+sdis_data = pd.read_csv(data_file)
+
+print(f"Loaded SDIS data: {len(sdis_data)} rows")
+print(f"Columns: {list(sdis_data.columns)}")
+
+# Display first few rows
+display(sdis_data.head())
+
+# Display data types for each column
+print("\nData types:")
+display(sdis_data.dtypes)
+```
+
+## Data Preprocessing
+
+This section ensures data consistency between arrestee collection policies and reported arrestee counts. States that do not collect arrestee DNA (arrestee_collection = 'no') should have N_arrestees set to zero to avoid data inconsistencies.
+
+```{python}
+# Create a copy of the data for processing
+sdis_data_processed = sdis_data.copy()
+
+# Count states affected by this adjustment
+states_with_no_collection = sdis_data_processed[sdis_data_processed['arrestee_collection'] == 'no']
+states_to_adjust = states_with_no_collection[states_with_no_collection['n_arrestees'].notna() & (states_with_no_collection['n_arrestees'] != 0)]
+
+if len(states_to_adjust) > 0:
+    print(f"States with arrestee_collection='no' but non-zero n_arrestees values:")
+    for _, state in states_to_adjust.iterrows():
+        print(f"  • {state['state']}: n_arrestees = {state['n_arrestees']:,.0f}")
+
+# Set n_arrestees to 0 for states that don't collect arrestee DNA
+sdis_data_processed.loc[sdis_data_processed['arrestee_collection'] == 'no', 'n_arrestees'] = 0
+
+print(f"\nAdjusted N_arrestees to 0 for {len(states_with_no_collection)} states that do not collect arrestee DNA")
+
+# Use processed data for all subsequent analyses
+sdis_data = sdis_data_processed
+```
+
+## Data Availability Overview
+
+This section provides an overview of states represented in the dataset and the completeness of data fields across states.
+
+```{python}
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Identify states present in the dataset
+states_in_data = sdis_data['state'].unique()
+states_in_data = sorted(states_in_data)
+print(f"Number of states with data: {len(states_in_data)}")
+
+# Check if all 50 states are represented
+all_states = ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut',
+              'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa',
+              'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan',
+              'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire',
+              'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio',
+              'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota',
+              'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia',
+              'Wisconsin', 'Wyoming']
+
+missing_states = [state for state in all_states if state not in states_in_data]
+if missing_states:
+    print(f"\nMissing states: {', '.join(missing_states)}")
+else:
+    print("\nAll 50 states are represented in the dataset")
+
+# Assess data completeness for each state
+data_availability = pd.DataFrame(index=states_in_data)
+
+for col in sdis_data.columns:
+    if col != 'state':  # Exclude the state identifier column
+        # Calculate non-null values per state
+        availability = sdis_data.groupby('state')[col].apply(lambda x: x.notna().sum())
+        data_availability[col] = availability
+
+# Generate visualization of data completeness
+if len(data_availability.columns) > 0:
+    # Focus on key numeric and policy fields
+    key_fields = ['n_total', 'n_arrestees', 'n_offenders', 'n_forensic', 
+                  'arrestee_collection', 'fam_search']
+    
+    # Filter to include only key fields that exist in the data
+    available_key_fields = [f for f in key_fields if f in data_availability.columns]
+    
+    if available_key_fields:
+        plt.figure(figsize=(10, 14))
+        
+        # Create binary matrix for visualization
+        availability_subset = data_availability[available_key_fields]
+        availability_binary = (availability_subset > 0).astype(int)
+        
+        # Generate heatmap
+        sns.heatmap(availability_binary, 
+                    cmap=['#f0f0f0', '#2E86AB'],
+                    cbar=False,  # Remove colorbar for binary data
+                    linewidths=0.5,
+                    linecolor='gray',
+                    square=True,
+                    vmin=0, vmax=1)
+        
+        plt.title('Data Availability by State', fontsize=14, pad=20)
+        plt.xlabel('Data Fields', fontsize=12)
+        plt.ylabel('States', fontsize=12)
+        plt.xticks(rotation=45, ha='right')
+        
+        # Add annotations for clarity
+        for i in range(len(availability_binary)):
+            for j in range(len(availability_binary.columns)):
+                if availability_binary.iloc[i, j] == 1:
+                    plt.text(j + 0.5, i + 0.5, '✓', ha='center', va='center', 
+                            fontsize=8, color='white', fontweight='bold')
+        
+        plt.tight_layout()
+        plt.show()
+        
+        print(f"\nTotal states shown in heatmap: {len(availability_binary)}")
+
+# Data coverage summary
+print(f"\nData field coverage across states:")
+
+# Focus on key fields
+key_fields = ['n_total', 'n_arrestees', 'n_offenders', 'n_forensic', 
+              'arrestee_collection', 'fam_search', 'collection_statute']
+
+for col in key_fields:
+    if col in data_availability.columns:
+        states_with_data = (data_availability[col] > 0).sum()
+        coverage_pct = states_with_data/len(states_in_data)*100
+        print(f"{col}: {states_with_data} states ({coverage_pct:.1f}%)")
+```
+
+## Total Profile Calculations Verification
+
+This section examines states reporting n_total alongside component counts to determine whether totals represent:
+1. Sum of all profile types including forensic (n_arrestees + n_offenders + n_forensic)
+2. Sum of combined profiles only (n_arrestees + n_offenders)
+
+```{python}
+# Identify states with n_total and at least one component count
+states_with_totals = sdis_data[sdis_data['n_total'].notna()].copy()
+
+# Calculate different possible sums
+states_with_totals['sum_all'] = states_with_totals[['n_arrestees', 'n_offenders', 'n_forensic']].sum(axis=1, skipna=True)
+states_with_totals['sum_criminal'] = states_with_totals[['n_arrestees', 'n_offenders']].sum(axis=1, skipna=True)
+
+# Check which sum matches n_total (with small tolerance for rounding)
+tolerance = 10  # Allow small differences due to rounding or timing
+
+# Check matches_combined_forensic - will be False if any component is missing
+states_with_totals['matches_combined_forensic'] = np.where(
+    states_with_totals[['n_arrestees', 'n_offenders', 'n_forensic']].notna().all(axis=1),
+    abs(states_with_totals['n_total'] - states_with_totals['sum_all']) <= tolerance,
+    False
+)
+
+# Check matches_combined - will be False if n_arrestees or n_offenders is missing
+# Additional condition: only True if arrestee_collection is 'no' OR n_arrestees > 0
+states_with_totals['matches_combined'] = np.where(
+    states_with_totals[['n_arrestees', 'n_offenders']].notna().all(axis=1),
+    (abs(states_with_totals['n_total'] - states_with_totals['sum_criminal']) <= tolerance) & 
+    ((states_with_totals['arrestee_collection'] == 'no') | (states_with_totals['n_arrestees'] > 0)),
+    False
+)
+
+# Create summary dataframe for display
+total_verification = states_with_totals[['state', 'n_total', 'n_arrestees', 'n_offenders', 'n_forensic', 
+                                        'arrestee_collection', 'sum_all', 'sum_criminal', 
+                                        'matches_combined_forensic', 'matches_combined']].copy()
+
+# Filter to states with at least one component count
+has_components = total_verification[
+    (total_verification['n_arrestees'].notna()) | 
+    (total_verification['n_offenders'].notna()) | 
+    (total_verification['n_forensic'].notna())
+]
+
+print(f"States with n_total and component data: {len(has_components)}")
+print("\nTotal calculation patterns:")
+
+# Categorize states
+includes_all = has_components[has_components['matches_combined_forensic'] == True]['state'].tolist()
+criminal_only = has_components[(has_components['matches_combined'] == True) & (has_components['matches_combined_forensic'] == False)]['state'].tolist()
+neither = has_components[(has_components['matches_combined_forensic'] == False) & (has_components['matches_combined'] == False)]['state'].tolist()
+
+if includes_all:
+    print(f"\nn_total includes combined profiles with forensic (arrestees + offenders + forensic):")
+    for state in includes_all:
+        print(f"  • {state}")
+
+if criminal_only:
+    print(f"\nn_total includes combined profiles only (arrestees + offenders):")
+    for state in criminal_only:
+        print(f"  • {state}")
+
+if neither:
+    print(f"\nn_total does not match calculated sums:")
+    for state in neither:
+        state_data = has_components[has_components['state'] == state].iloc[0]
+        print(f"  • {state}: n_total={state_data['n_total']:,.0f}, "
+              f"Sum_all={state_data['sum_all']:,.0f}, "
+              f"Sum_criminal={state_data['sum_criminal']:,.0f}")
+
+# Display detailed breakdown for verification
+print("\nDetailed breakdown:")
+display(has_components[['state', 'n_total', 'n_arrestees', 'n_offenders', 'n_forensic', 
+                       'arrestee_collection', 'matches_combined_forensic', 'matches_combined']].style.format({
+    'n_total': '{:,.0f}',
+    'n_arrestees': lambda x: '{:,.0f}'.format(x) if pd.notna(x) else '',
+    'n_offenders': lambda x: '{:,.0f}'.format(x) if pd.notna(x) else '',
+    'n_forensic': lambda x: '{:,.0f}'.format(x) if pd.notna(x) else ''
+}))
+```
+
+## Analysis of Database Totals and Data Quality Issues
+
+This section examines states where N_total values reveal potential data quality issues or reporting inconsistencies.
+
+```{python}
+# Identify states with potential data issues
+potential_issues = has_components[
+    (has_components['matches_combined_forensic'] == False) & 
+    (has_components['matches_combined'] == False)
+].copy()
+
+# States that collect arrestee DNA but have zero or missing arrestee counts
+arrestee_collection_issues = has_components[
+    (has_components['arrestee_collection'] == 'yes') & 
+    ((has_components['n_arrestees'] == 0) | (has_components['n_arrestees'].isna()))
+].copy()
+
+# States where the sum is close but not within tolerance
+close_matches = has_components.copy()
+close_matches['diff_all'] = abs(close_matches['n_total'] - close_matches['sum_all'])
+close_matches['diff_criminal'] = abs(close_matches['n_total'] - close_matches['sum_criminal'])
+close_but_not_matching = close_matches[
+    ((close_matches['diff_all'] > tolerance) & (close_matches['diff_all'] < 1000)) |
+    ((close_matches['diff_criminal'] > tolerance) & (close_matches['diff_criminal'] < 1000))
+]
+
+print("Data Quality Assessment:")
+print("=" * 50)
+
+if len(arrestee_collection_issues) > 0:
+    print(f"\nStates that collect arrestee DNA but report zero/missing arrestee counts:")
+    for _, state in arrestee_collection_issues.iterrows():
+        arrestee_val = "0" if state['n_arrestees'] == 0 else "missing"
+        print(f"  • {state['state']}: n_arrestees = {arrestee_val}")
+        if pd.notna(state['n_total']):
+            print(f"    n_total = {state['n_total']:,.0f}", end="")
+        if pd.notna(state['n_offenders']):
+            print(f", n_offenders = {state['n_offenders']:,.0f}", end="")
+        print()
+
+if len(close_but_not_matching) > 0:
+    print(f"\nStates with small discrepancies (>{tolerance} but <1000 difference):")
+    for _, state in close_but_not_matching.iterrows():
+        if state['diff_criminal'] < 1000 and state['diff_criminal'] > tolerance:
+            print(f"  • {state['state']}: n_total - (n_arrestees + n_offenders) = {state['diff_criminal']:.0f}")
+        if state['diff_all'] < 1000 and state['diff_all'] > tolerance:
+            print(f"    n_total - (all components) = {state['diff_all']:.0f}")
+
+# Examine states where totals don't match any expected pattern
+unexplained_totals = has_components[
+    (has_components['matches_combined_forensic'] == False) & 
+    (has_components['matches_combined'] == False) &
+    (has_components[['n_arrestees', 'n_offenders']].notna().all(axis=1))
+]
+
+if len(unexplained_totals) > 0:
+    print(f"\nStates with unexplained total calculations:")
+    for _, state in unexplained_totals.iterrows():
+        print(f"  • {state['state']}:")
+        print(f"    - n_total: {state['n_total']:,.0f}")
+        print(f"    - Sum (arrestees + offenders): {state['sum_criminal']:,.0f}")
+        if pd.notna(state['n_forensic']):
+            print(f"    - Sum (all including forensic): {state['sum_all']:,.0f}")
+        print(f"    - Arrestee collection policy: {state['arrestee_collection']}")
+
+# Summary statistics
+print(f"\nSummary:")
+print(f"  • States with clear calculation patterns: {len(includes_all) + len(criminal_only)}")
+print(f"  • States with data quality issues: {len(neither)}")
+print(f"  • States collecting arrestee DNA: {len(has_components[has_components['arrestee_collection'] == 'yes'])}")
+print(f"  • States NOT collecting arrestee DNA: {len(has_components[has_components['arrestee_collection'] == 'no'])}")
+```
