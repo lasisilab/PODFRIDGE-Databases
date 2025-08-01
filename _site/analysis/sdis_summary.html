@@ -225,7 +225,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="data-loading" class="level2">
 <h2 class="anchored" data-anchor-id="data-loading">Data Loading</h2>
-<div id="c4a614df" class="cell" data-execution_count="1">
+<div id="f77c5004" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
@@ -370,7 +370,7 @@ dtype: object</code></pre>
 <section id="data-preprocessing" class="level2">
 <h2 class="anchored" data-anchor-id="data-preprocessing">Data Preprocessing</h2>
 <p>This section ensures data consistency between arrestee collection policies and reported arrestee counts. States that do not collect arrestee DNA (arrestee_collection = ‘no’) should have N_arrestees set to zero to avoid data inconsistencies.</p>
-<div id="596a80a6" class="cell" data-execution_count="2">
+<div id="69feff10" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a copy of the data for processing</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>sdis_data_processed <span class="op">=</span> sdis_data.copy()</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -399,7 +399,7 @@ Adjusted N_arrestees to 0 for 17 states that do not collect arrestee DNA</code><
 <section id="data-availability-overview" class="level2">
 <h2 class="anchored" data-anchor-id="data-availability-overview">Data Availability Overview</h2>
 <p>This section provides an overview of states represented in the dataset and the completeness of data fields across states.</p>
-<div id="144fe562" class="cell" data-execution_count="3">
+<div id="d06047d4" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -517,7 +517,7 @@ collection_statute: 50 states (100.0%)</code></pre>
 <section id="total-profile-calculations-verification" class="level2">
 <h2 class="anchored" data-anchor-id="total-profile-calculations-verification">Total Profile Calculations Verification</h2>
 <p>This section examines states reporting n_total alongside component counts to determine whether totals represent: 1. Sum of all profile types including forensic (n_arrestees + n_offenders + n_forensic) 2. Sum of combined profiles only (n_arrestees + n_offenders)</p>
-<div id="50a56f11" class="cell" data-execution_count="4">
+<div id="cd1f3f1b" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Note: This analysis uses the original data before renaming columns</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a temporary copy with the original column name for this analysis</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>sdis_data_temp <span class="op">=</span> sdis_data.copy()</span>
@@ -629,207 +629,207 @@ Detailed breakdown:</code></pre>
 <style type="text/css">
 </style>
 
-<table id="T_98af9" class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<table id="T_a0eef" class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
 <thead>
 <tr class="header">
 <th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
-<th id="T_98af9_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">state</th>
-<th id="T_98af9_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">n_total</th>
-<th id="T_98af9_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">n_arrestees</th>
-<th id="T_98af9_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">n_offenders</th>
-<th id="T_98af9_level0_col4" class="col_heading level0 col4" data-quarto-table-cell-role="th">n_forensic</th>
-<th id="T_98af9_level0_col5" class="col_heading level0 col5" data-quarto-table-cell-role="th">arrestee_collection</th>
-<th id="T_98af9_level0_col6" class="col_heading level0 col6" data-quarto-table-cell-role="th">matches_combined_forensic</th>
-<th id="T_98af9_level0_col7" class="col_heading level0 col7" data-quarto-table-cell-role="th">matches_combined</th>
+<th id="T_a0eef_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">state</th>
+<th id="T_a0eef_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">n_total</th>
+<th id="T_a0eef_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">n_arrestees</th>
+<th id="T_a0eef_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">n_offenders</th>
+<th id="T_a0eef_level0_col4" class="col_heading level0 col4" data-quarto-table-cell-role="th">n_forensic</th>
+<th id="T_a0eef_level0_col5" class="col_heading level0 col5" data-quarto-table-cell-role="th">arrestee_collection</th>
+<th id="T_a0eef_level0_col6" class="col_heading level0 col6" data-quarto-table-cell-role="th">matches_combined_forensic</th>
+<th id="T_a0eef_level0_col7" class="col_heading level0 col7" data-quarto-table-cell-role="th">matches_combined</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td id="T_98af9_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">1</td>
-<td id="T_98af9_row0_col0" class="data row0 col0">Alaska</td>
-<td id="T_98af9_row0_col1" class="data row0 col1">79,146</td>
-<td id="T_98af9_row0_col2" class="data row0 col2">52,149</td>
-<td id="T_98af9_row0_col3" class="data row0 col3">26,997</td>
-<td id="T_98af9_row0_col4" class="data row0 col4">3,866</td>
-<td id="T_98af9_row0_col5" class="data row0 col5">yes</td>
-<td id="T_98af9_row0_col6" class="data row0 col6">False</td>
-<td id="T_98af9_row0_col7" class="data row0 col7">True</td>
+<td id="T_a0eef_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">1</td>
+<td id="T_a0eef_row0_col0" class="data row0 col0">Alaska</td>
+<td id="T_a0eef_row0_col1" class="data row0 col1">79,146</td>
+<td id="T_a0eef_row0_col2" class="data row0 col2">52,149</td>
+<td id="T_a0eef_row0_col3" class="data row0 col3">26,997</td>
+<td id="T_a0eef_row0_col4" class="data row0 col4">3,866</td>
+<td id="T_a0eef_row0_col5" class="data row0 col5">yes</td>
+<td id="T_a0eef_row0_col6" class="data row0 col6">False</td>
+<td id="T_a0eef_row0_col7" class="data row0 col7">True</td>
 </tr>
 <tr class="even">
-<td id="T_98af9_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">4</td>
-<td id="T_98af9_row1_col0" class="data row1 col0">California</td>
-<td id="T_98af9_row1_col1" class="data row1 col1">3,365,402</td>
-<td id="T_98af9_row1_col2" class="data row1 col2"></td>
-<td id="T_98af9_row1_col3" class="data row1 col3"></td>
-<td id="T_98af9_row1_col4" class="data row1 col4">167,053</td>
-<td id="T_98af9_row1_col5" class="data row1 col5">yes</td>
-<td id="T_98af9_row1_col6" class="data row1 col6">False</td>
-<td id="T_98af9_row1_col7" class="data row1 col7">False</td>
+<td id="T_a0eef_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">4</td>
+<td id="T_a0eef_row1_col0" class="data row1 col0">California</td>
+<td id="T_a0eef_row1_col1" class="data row1 col1">3,365,402</td>
+<td id="T_a0eef_row1_col2" class="data row1 col2"></td>
+<td id="T_a0eef_row1_col3" class="data row1 col3"></td>
+<td id="T_a0eef_row1_col4" class="data row1 col4">167,053</td>
+<td id="T_a0eef_row1_col5" class="data row1 col5">yes</td>
+<td id="T_a0eef_row1_col6" class="data row1 col6">False</td>
+<td id="T_a0eef_row1_col7" class="data row1 col7">False</td>
 </tr>
 <tr class="odd">
-<td id="T_98af9_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">6</td>
-<td id="T_98af9_row2_col0" class="data row2 col0">Connecticut</td>
-<td id="T_98af9_row2_col1" class="data row2 col1">127,940</td>
-<td id="T_98af9_row2_col2" class="data row2 col2"></td>
-<td id="T_98af9_row2_col3" class="data row2 col3">127,940</td>
-<td id="T_98af9_row2_col4" class="data row2 col4">23,200</td>
-<td id="T_98af9_row2_col5" class="data row2 col5">yes</td>
-<td id="T_98af9_row2_col6" class="data row2 col6">False</td>
-<td id="T_98af9_row2_col7" class="data row2 col7">False</td>
+<td id="T_a0eef_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">6</td>
+<td id="T_a0eef_row2_col0" class="data row2 col0">Connecticut</td>
+<td id="T_a0eef_row2_col1" class="data row2 col1">127,940</td>
+<td id="T_a0eef_row2_col2" class="data row2 col2"></td>
+<td id="T_a0eef_row2_col3" class="data row2 col3">127,940</td>
+<td id="T_a0eef_row2_col4" class="data row2 col4">23,200</td>
+<td id="T_a0eef_row2_col5" class="data row2 col5">yes</td>
+<td id="T_a0eef_row2_col6" class="data row2 col6">False</td>
+<td id="T_a0eef_row2_col7" class="data row2 col7">False</td>
 </tr>
 <tr class="even">
-<td id="T_98af9_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">9</td>
-<td id="T_98af9_row3_col0" class="data row3 col0">Georgia</td>
-<td id="T_98af9_row3_col1" class="data row3 col1">347,145</td>
-<td id="T_98af9_row3_col2" class="data row3 col2"></td>
-<td id="T_98af9_row3_col3" class="data row3 col3">324,864</td>
-<td id="T_98af9_row3_col4" class="data row3 col4">22,281</td>
-<td id="T_98af9_row3_col5" class="data row3 col5">yes</td>
-<td id="T_98af9_row3_col6" class="data row3 col6">False</td>
-<td id="T_98af9_row3_col7" class="data row3 col7">False</td>
+<td id="T_a0eef_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">9</td>
+<td id="T_a0eef_row3_col0" class="data row3 col0">Georgia</td>
+<td id="T_a0eef_row3_col1" class="data row3 col1">347,145</td>
+<td id="T_a0eef_row3_col2" class="data row3 col2"></td>
+<td id="T_a0eef_row3_col3" class="data row3 col3">324,864</td>
+<td id="T_a0eef_row3_col4" class="data row3 col4">22,281</td>
+<td id="T_a0eef_row3_col5" class="data row3 col5">yes</td>
+<td id="T_a0eef_row3_col6" class="data row3 col6">False</td>
+<td id="T_a0eef_row3_col7" class="data row3 col7">False</td>
 </tr>
 <tr class="odd">
-<td id="T_98af9_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">11</td>
-<td id="T_98af9_row4_col0" class="data row4 col0">Idaho</td>
-<td id="T_98af9_row4_col1" class="data row4 col1">39,000</td>
-<td id="T_98af9_row4_col2" class="data row4 col2">0</td>
-<td id="T_98af9_row4_col3" class="data row4 col3">39,000</td>
-<td id="T_98af9_row4_col4" class="data row4 col4"></td>
-<td id="T_98af9_row4_col5" class="data row4 col5">no</td>
-<td id="T_98af9_row4_col6" class="data row4 col6">False</td>
-<td id="T_98af9_row4_col7" class="data row4 col7">True</td>
+<td id="T_a0eef_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">11</td>
+<td id="T_a0eef_row4_col0" class="data row4 col0">Idaho</td>
+<td id="T_a0eef_row4_col1" class="data row4 col1">39,000</td>
+<td id="T_a0eef_row4_col2" class="data row4 col2">0</td>
+<td id="T_a0eef_row4_col3" class="data row4 col3">39,000</td>
+<td id="T_a0eef_row4_col4" class="data row4 col4"></td>
+<td id="T_a0eef_row4_col5" class="data row4 col5">no</td>
+<td id="T_a0eef_row4_col6" class="data row4 col6">False</td>
+<td id="T_a0eef_row4_col7" class="data row4 col7">True</td>
 </tr>
 <tr class="even">
-<td id="T_98af9_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">12</td>
-<td id="T_98af9_row5_col0" class="data row5 col0">Illinois</td>
-<td id="T_98af9_row5_col1" class="data row5 col1">689,297</td>
-<td id="T_98af9_row5_col2" class="data row5 col2"></td>
-<td id="T_98af9_row5_col3" class="data row5 col3">689,297</td>
-<td id="T_98af9_row5_col4" class="data row5 col4">69,927</td>
-<td id="T_98af9_row5_col5" class="data row5 col5">yes</td>
-<td id="T_98af9_row5_col6" class="data row5 col6">False</td>
-<td id="T_98af9_row5_col7" class="data row5 col7">False</td>
+<td id="T_a0eef_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">12</td>
+<td id="T_a0eef_row5_col0" class="data row5 col0">Illinois</td>
+<td id="T_a0eef_row5_col1" class="data row5 col1">689,297</td>
+<td id="T_a0eef_row5_col2" class="data row5 col2"></td>
+<td id="T_a0eef_row5_col3" class="data row5 col3">689,297</td>
+<td id="T_a0eef_row5_col4" class="data row5 col4">69,927</td>
+<td id="T_a0eef_row5_col5" class="data row5 col5">yes</td>
+<td id="T_a0eef_row5_col6" class="data row5 col6">False</td>
+<td id="T_a0eef_row5_col7" class="data row5 col7">False</td>
 </tr>
 <tr class="odd">
-<td id="T_98af9_level0_row6" class="row_heading level0 row6" data-quarto-table-cell-role="th">13</td>
-<td id="T_98af9_row6_col0" class="data row6 col0">Indiana</td>
-<td id="T_98af9_row6_col1" class="data row6 col1">449,000</td>
-<td id="T_98af9_row6_col2" class="data row6 col2">144,000</td>
-<td id="T_98af9_row6_col3" class="data row6 col3">304,000</td>
-<td id="T_98af9_row6_col4" class="data row6 col4">22,400</td>
-<td id="T_98af9_row6_col5" class="data row6 col5">yes</td>
-<td id="T_98af9_row6_col6" class="data row6 col6">False</td>
-<td id="T_98af9_row6_col7" class="data row6 col7">False</td>
+<td id="T_a0eef_level0_row6" class="row_heading level0 row6" data-quarto-table-cell-role="th">13</td>
+<td id="T_a0eef_row6_col0" class="data row6 col0">Indiana</td>
+<td id="T_a0eef_row6_col1" class="data row6 col1">449,000</td>
+<td id="T_a0eef_row6_col2" class="data row6 col2">144,000</td>
+<td id="T_a0eef_row6_col3" class="data row6 col3">304,000</td>
+<td id="T_a0eef_row6_col4" class="data row6 col4">22,400</td>
+<td id="T_a0eef_row6_col5" class="data row6 col5">yes</td>
+<td id="T_a0eef_row6_col6" class="data row6 col6">False</td>
+<td id="T_a0eef_row6_col7" class="data row6 col7">False</td>
 </tr>
 <tr class="even">
-<td id="T_98af9_level0_row7" class="row_heading level0 row7" data-quarto-table-cell-role="th">22</td>
-<td id="T_98af9_row7_col0" class="data row7 col0">Minnesota</td>
-<td id="T_98af9_row7_col1" class="data row7 col1">180,000</td>
-<td id="T_98af9_row7_col2" class="data row7 col2"></td>
-<td id="T_98af9_row7_col3" class="data row7 col3">180,000</td>
-<td id="T_98af9_row7_col4" class="data row7 col4"></td>
-<td id="T_98af9_row7_col5" class="data row7 col5">yes</td>
-<td id="T_98af9_row7_col6" class="data row7 col6">False</td>
-<td id="T_98af9_row7_col7" class="data row7 col7">False</td>
+<td id="T_a0eef_level0_row7" class="row_heading level0 row7" data-quarto-table-cell-role="th">22</td>
+<td id="T_a0eef_row7_col0" class="data row7 col0">Minnesota</td>
+<td id="T_a0eef_row7_col1" class="data row7 col1">180,000</td>
+<td id="T_a0eef_row7_col2" class="data row7 col2"></td>
+<td id="T_a0eef_row7_col3" class="data row7 col3">180,000</td>
+<td id="T_a0eef_row7_col4" class="data row7 col4"></td>
+<td id="T_a0eef_row7_col5" class="data row7 col5">yes</td>
+<td id="T_a0eef_row7_col6" class="data row7 col6">False</td>
+<td id="T_a0eef_row7_col7" class="data row7 col7">False</td>
 </tr>
 <tr class="odd">
-<td id="T_98af9_level0_row8" class="row_heading level0 row8" data-quarto-table-cell-role="th">24</td>
-<td id="T_98af9_row8_col0" class="data row8 col0">Missouri</td>
-<td id="T_98af9_row8_col1" class="data row8 col1">400,000</td>
-<td id="T_98af9_row8_col2" class="data row8 col2"></td>
-<td id="T_98af9_row8_col3" class="data row8 col3">386,000</td>
-<td id="T_98af9_row8_col4" class="data row8 col4"></td>
-<td id="T_98af9_row8_col5" class="data row8 col5">yes</td>
-<td id="T_98af9_row8_col6" class="data row8 col6">False</td>
-<td id="T_98af9_row8_col7" class="data row8 col7">False</td>
+<td id="T_a0eef_level0_row8" class="row_heading level0 row8" data-quarto-table-cell-role="th">24</td>
+<td id="T_a0eef_row8_col0" class="data row8 col0">Missouri</td>
+<td id="T_a0eef_row8_col1" class="data row8 col1">400,000</td>
+<td id="T_a0eef_row8_col2" class="data row8 col2"></td>
+<td id="T_a0eef_row8_col3" class="data row8 col3">386,000</td>
+<td id="T_a0eef_row8_col4" class="data row8 col4"></td>
+<td id="T_a0eef_row8_col5" class="data row8 col5">yes</td>
+<td id="T_a0eef_row8_col6" class="data row8 col6">False</td>
+<td id="T_a0eef_row8_col7" class="data row8 col7">False</td>
 </tr>
 <tr class="even">
-<td id="T_98af9_level0_row9" class="row_heading level0 row9" data-quarto-table-cell-role="th">25</td>
-<td id="T_98af9_row9_col0" class="data row9 col0">Montana</td>
-<td id="T_98af9_row9_col1" class="data row9 col1">32,284</td>
-<td id="T_98af9_row9_col2" class="data row9 col2">0</td>
-<td id="T_98af9_row9_col3" class="data row9 col3">32,284</td>
-<td id="T_98af9_row9_col4" class="data row9 col4">878</td>
-<td id="T_98af9_row9_col5" class="data row9 col5">no</td>
-<td id="T_98af9_row9_col6" class="data row9 col6">False</td>
-<td id="T_98af9_row9_col7" class="data row9 col7">True</td>
+<td id="T_a0eef_level0_row9" class="row_heading level0 row9" data-quarto-table-cell-role="th">25</td>
+<td id="T_a0eef_row9_col0" class="data row9 col0">Montana</td>
+<td id="T_a0eef_row9_col1" class="data row9 col1">32,284</td>
+<td id="T_a0eef_row9_col2" class="data row9 col2">0</td>
+<td id="T_a0eef_row9_col3" class="data row9 col3">32,284</td>
+<td id="T_a0eef_row9_col4" class="data row9 col4">878</td>
+<td id="T_a0eef_row9_col5" class="data row9 col5">no</td>
+<td id="T_a0eef_row9_col6" class="data row9 col6">False</td>
+<td id="T_a0eef_row9_col7" class="data row9 col7">True</td>
 </tr>
 <tr class="odd">
-<td id="T_98af9_level0_row10" class="row_heading level0 row10" data-quarto-table-cell-role="th">32</td>
-<td id="T_98af9_row10_col0" class="data row10 col0">North Carolina</td>
-<td id="T_98af9_row10_col1" class="data row10 col1">350,000</td>
-<td id="T_98af9_row10_col2" class="data row10 col2">50,000</td>
-<td id="T_98af9_row10_col3" class="data row10 col3">300,000</td>
-<td id="T_98af9_row10_col4" class="data row10 col4"></td>
-<td id="T_98af9_row10_col5" class="data row10 col5">yes</td>
-<td id="T_98af9_row10_col6" class="data row10 col6">False</td>
-<td id="T_98af9_row10_col7" class="data row10 col7">True</td>
+<td id="T_a0eef_level0_row10" class="row_heading level0 row10" data-quarto-table-cell-role="th">32</td>
+<td id="T_a0eef_row10_col0" class="data row10 col0">North Carolina</td>
+<td id="T_a0eef_row10_col1" class="data row10 col1">350,000</td>
+<td id="T_a0eef_row10_col2" class="data row10 col2">50,000</td>
+<td id="T_a0eef_row10_col3" class="data row10 col3">300,000</td>
+<td id="T_a0eef_row10_col4" class="data row10 col4"></td>
+<td id="T_a0eef_row10_col5" class="data row10 col5">yes</td>
+<td id="T_a0eef_row10_col6" class="data row10 col6">False</td>
+<td id="T_a0eef_row10_col7" class="data row10 col7">True</td>
 </tr>
 <tr class="even">
-<td id="T_98af9_level0_row11" class="row_heading level0 row11" data-quarto-table-cell-role="th">38</td>
-<td id="T_98af9_row11_col0" class="data row11 col0">Rhode Island</td>
-<td id="T_98af9_row11_col1" class="data row11 col1">27,818</td>
-<td id="T_98af9_row11_col2" class="data row11 col2">484</td>
-<td id="T_98af9_row11_col3" class="data row11 col3">27,334</td>
-<td id="T_98af9_row11_col4" class="data row11 col4">1,798</td>
-<td id="T_98af9_row11_col5" class="data row11 col5">yes</td>
-<td id="T_98af9_row11_col6" class="data row11 col6">False</td>
-<td id="T_98af9_row11_col7" class="data row11 col7">True</td>
+<td id="T_a0eef_level0_row11" class="row_heading level0 row11" data-quarto-table-cell-role="th">38</td>
+<td id="T_a0eef_row11_col0" class="data row11 col0">Rhode Island</td>
+<td id="T_a0eef_row11_col1" class="data row11 col1">27,818</td>
+<td id="T_a0eef_row11_col2" class="data row11 col2">484</td>
+<td id="T_a0eef_row11_col3" class="data row11 col3">27,334</td>
+<td id="T_a0eef_row11_col4" class="data row11 col4">1,798</td>
+<td id="T_a0eef_row11_col5" class="data row11 col5">yes</td>
+<td id="T_a0eef_row11_col6" class="data row11 col6">False</td>
+<td id="T_a0eef_row11_col7" class="data row11 col7">True</td>
 </tr>
 <tr class="odd">
-<td id="T_98af9_level0_row12" class="row_heading level0 row12" data-quarto-table-cell-role="th">39</td>
-<td id="T_98af9_row12_col0" class="data row12 col0">South Carolina</td>
-<td id="T_98af9_row12_col1" class="data row12 col1">175,629</td>
-<td id="T_98af9_row12_col2" class="data row12 col2"></td>
-<td id="T_98af9_row12_col3" class="data row12 col3"></td>
-<td id="T_98af9_row12_col4" class="data row12 col4">11,127</td>
-<td id="T_98af9_row12_col5" class="data row12 col5">yes</td>
-<td id="T_98af9_row12_col6" class="data row12 col6">False</td>
-<td id="T_98af9_row12_col7" class="data row12 col7">False</td>
+<td id="T_a0eef_level0_row12" class="row_heading level0 row12" data-quarto-table-cell-role="th">39</td>
+<td id="T_a0eef_row12_col0" class="data row12 col0">South Carolina</td>
+<td id="T_a0eef_row12_col1" class="data row12 col1">175,629</td>
+<td id="T_a0eef_row12_col2" class="data row12 col2"></td>
+<td id="T_a0eef_row12_col3" class="data row12 col3"></td>
+<td id="T_a0eef_row12_col4" class="data row12 col4">11,127</td>
+<td id="T_a0eef_row12_col5" class="data row12 col5">yes</td>
+<td id="T_a0eef_row12_col6" class="data row12 col6">False</td>
+<td id="T_a0eef_row12_col7" class="data row12 col7">False</td>
 </tr>
 <tr class="even">
-<td id="T_98af9_level0_row13" class="row_heading level0 row13" data-quarto-table-cell-role="th">41</td>
-<td id="T_98af9_row13_col0" class="data row13 col0">Tennessee</td>
-<td id="T_98af9_row13_col1" class="data row13 col1">518,614</td>
-<td id="T_98af9_row13_col2" class="data row13 col2">226,569</td>
-<td id="T_98af9_row13_col3" class="data row13 col3">292,045</td>
-<td id="T_98af9_row13_col4" class="data row13 col4"></td>
-<td id="T_98af9_row13_col5" class="data row13 col5">yes</td>
-<td id="T_98af9_row13_col6" class="data row13 col6">False</td>
-<td id="T_98af9_row13_col7" class="data row13 col7">True</td>
+<td id="T_a0eef_level0_row13" class="row_heading level0 row13" data-quarto-table-cell-role="th">41</td>
+<td id="T_a0eef_row13_col0" class="data row13 col0">Tennessee</td>
+<td id="T_a0eef_row13_col1" class="data row13 col1">518,614</td>
+<td id="T_a0eef_row13_col2" class="data row13 col2">226,569</td>
+<td id="T_a0eef_row13_col3" class="data row13 col3">292,045</td>
+<td id="T_a0eef_row13_col4" class="data row13 col4"></td>
+<td id="T_a0eef_row13_col5" class="data row13 col5">yes</td>
+<td id="T_a0eef_row13_col6" class="data row13 col6">False</td>
+<td id="T_a0eef_row13_col7" class="data row13 col7">True</td>
 </tr>
 <tr class="odd">
-<td id="T_98af9_level0_row14" class="row_heading level0 row14" data-quarto-table-cell-role="th">42</td>
-<td id="T_98af9_row14_col0" class="data row14 col0">Texas</td>
-<td id="T_98af9_row14_col1" class="data row14 col1">1,308,774</td>
-<td id="T_98af9_row14_col2" class="data row14 col2"></td>
-<td id="T_98af9_row14_col3" class="data row14 col3">1,308,774</td>
-<td id="T_98af9_row14_col4" class="data row14 col4"></td>
-<td id="T_98af9_row14_col5" class="data row14 col5">yes</td>
-<td id="T_98af9_row14_col6" class="data row14 col6">False</td>
-<td id="T_98af9_row14_col7" class="data row14 col7">False</td>
+<td id="T_a0eef_level0_row14" class="row_heading level0 row14" data-quarto-table-cell-role="th">42</td>
+<td id="T_a0eef_row14_col0" class="data row14 col0">Texas</td>
+<td id="T_a0eef_row14_col1" class="data row14 col1">1,308,774</td>
+<td id="T_a0eef_row14_col2" class="data row14 col2"></td>
+<td id="T_a0eef_row14_col3" class="data row14 col3">1,308,774</td>
+<td id="T_a0eef_row14_col4" class="data row14 col4"></td>
+<td id="T_a0eef_row14_col5" class="data row14 col5">yes</td>
+<td id="T_a0eef_row14_col6" class="data row14 col6">False</td>
+<td id="T_a0eef_row14_col7" class="data row14 col7">False</td>
 </tr>
 <tr class="even">
-<td id="T_98af9_level0_row15" class="row_heading level0 row15" data-quarto-table-cell-role="th">46</td>
-<td id="T_98af9_row15_col0" class="data row15 col0">Washington</td>
-<td id="T_98af9_row15_col1" class="data row15 col1">272,000</td>
-<td id="T_98af9_row15_col2" class="data row15 col2">0</td>
-<td id="T_98af9_row15_col3" class="data row15 col3">272,000</td>
-<td id="T_98af9_row15_col4" class="data row15 col4">8,800</td>
-<td id="T_98af9_row15_col5" class="data row15 col5">no</td>
-<td id="T_98af9_row15_col6" class="data row15 col6">False</td>
-<td id="T_98af9_row15_col7" class="data row15 col7">True</td>
+<td id="T_a0eef_level0_row15" class="row_heading level0 row15" data-quarto-table-cell-role="th">46</td>
+<td id="T_a0eef_row15_col0" class="data row15 col0">Washington</td>
+<td id="T_a0eef_row15_col1" class="data row15 col1">272,000</td>
+<td id="T_a0eef_row15_col2" class="data row15 col2">0</td>
+<td id="T_a0eef_row15_col3" class="data row15 col3">272,000</td>
+<td id="T_a0eef_row15_col4" class="data row15 col4">8,800</td>
+<td id="T_a0eef_row15_col5" class="data row15 col5">no</td>
+<td id="T_a0eef_row15_col6" class="data row15 col6">False</td>
+<td id="T_a0eef_row15_col7" class="data row15 col7">True</td>
 </tr>
 <tr class="odd">
-<td id="T_98af9_level0_row16" class="row_heading level0 row16" data-quarto-table-cell-role="th">47</td>
-<td id="T_98af9_row16_col0" class="data row16 col0">West Virginia</td>
-<td id="T_98af9_row16_col1" class="data row16 col1">47,444</td>
-<td id="T_98af9_row16_col2" class="data row16 col2">0</td>
-<td id="T_98af9_row16_col3" class="data row16 col3">47,444</td>
-<td id="T_98af9_row16_col4" class="data row16 col4">3,905</td>
-<td id="T_98af9_row16_col5" class="data row16 col5">no</td>
-<td id="T_98af9_row16_col6" class="data row16 col6">False</td>
-<td id="T_98af9_row16_col7" class="data row16 col7">True</td>
+<td id="T_a0eef_level0_row16" class="row_heading level0 row16" data-quarto-table-cell-role="th">47</td>
+<td id="T_a0eef_row16_col0" class="data row16 col0">West Virginia</td>
+<td id="T_a0eef_row16_col1" class="data row16 col1">47,444</td>
+<td id="T_a0eef_row16_col2" class="data row16 col2">0</td>
+<td id="T_a0eef_row16_col3" class="data row16 col3">47,444</td>
+<td id="T_a0eef_row16_col4" class="data row16 col4">3,905</td>
+<td id="T_a0eef_row16_col5" class="data row16 col5">no</td>
+<td id="T_a0eef_row16_col6" class="data row16 col6">False</td>
+<td id="T_a0eef_row16_col7" class="data row16 col7">True</td>
 </tr>
 </tbody>
 </table>
@@ -839,7 +839,7 @@ Detailed breakdown:</code></pre>
 <section id="analysis-of-database-totals-and-data-quality-issues" class="level2">
 <h2 class="anchored" data-anchor-id="analysis-of-database-totals-and-data-quality-issues">Analysis of Database Totals and Data Quality Issues</h2>
 <p>This section examines states where N_total values reveal potential data quality issues or reporting inconsistencies.</p>
-<div id="c83478a5" class="cell" data-execution_count="5">
+<div id="73dae89c" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create enhanced data quality analysis</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>sdis_enhanced <span class="op">=</span> sdis_data.copy()</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1168,519 +1168,519 @@ Full Enhanced Data with Estimated Totals (All 50 States):</code></pre>
 <style type="text/css">
 </style>
 
-<table id="T_0dd3c" class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<table id="T_ade69" class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
 <thead>
 <tr class="header">
 <th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
-<th id="T_0dd3c_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">state</th>
-<th id="T_0dd3c_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">n_total_estimated</th>
-<th id="T_0dd3c_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">n_total_reported</th>
-<th id="T_0dd3c_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">n_offenders</th>
-<th id="T_0dd3c_level0_col4" class="col_heading level0 col4" data-quarto-table-cell-role="th">n_arrestees</th>
-<th id="T_0dd3c_level0_col5" class="col_heading level0 col5" data-quarto-table-cell-role="th">n_forensic</th>
-<th id="T_0dd3c_level0_col6" class="col_heading level0 col6" data-quarto-table-cell-role="th">n_total_estimated_comment</th>
+<th id="T_ade69_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">state</th>
+<th id="T_ade69_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">n_total_estimated</th>
+<th id="T_ade69_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">n_total_reported</th>
+<th id="T_ade69_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">n_offenders</th>
+<th id="T_ade69_level0_col4" class="col_heading level0 col4" data-quarto-table-cell-role="th">n_arrestees</th>
+<th id="T_ade69_level0_col5" class="col_heading level0 col5" data-quarto-table-cell-role="th">n_forensic</th>
+<th id="T_ade69_level0_col6" class="col_heading level0 col6" data-quarto-table-cell-role="th">n_total_estimated_comment</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td id="T_0dd3c_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">0</td>
-<td id="T_0dd3c_row0_col0" class="data row0 col0">Alabama</td>
-<td id="T_0dd3c_row0_col1" class="data row0 col1">360,000</td>
-<td id="T_0dd3c_row0_col2" class="data row0 col2">360,000</td>
-<td id="T_0dd3c_row0_col3" class="data row0 col3"></td>
-<td id="T_0dd3c_row0_col4" class="data row0 col4"></td>
-<td id="T_0dd3c_row0_col5" class="data row0 col5"></td>
-<td id="T_0dd3c_row0_col6" class="data row0 col6">Total only reported (no breakdown available)</td>
+<td id="T_ade69_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">0</td>
+<td id="T_ade69_row0_col0" class="data row0 col0">Alabama</td>
+<td id="T_ade69_row0_col1" class="data row0 col1">360,000</td>
+<td id="T_ade69_row0_col2" class="data row0 col2">360,000</td>
+<td id="T_ade69_row0_col3" class="data row0 col3"></td>
+<td id="T_ade69_row0_col4" class="data row0 col4"></td>
+<td id="T_ade69_row0_col5" class="data row0 col5"></td>
+<td id="T_ade69_row0_col6" class="data row0 col6">Total only reported (no breakdown available)</td>
 </tr>
 <tr class="even">
-<td id="T_0dd3c_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">1</td>
-<td id="T_0dd3c_row1_col0" class="data row1 col0">Alaska</td>
-<td id="T_0dd3c_row1_col1" class="data row1 col1">79,146</td>
-<td id="T_0dd3c_row1_col2" class="data row1 col2">79,146</td>
-<td id="T_0dd3c_row1_col3" class="data row1 col3">26,997</td>
-<td id="T_0dd3c_row1_col4" class="data row1 col4">52,149</td>
-<td id="T_0dd3c_row1_col5" class="data row1 col5">3,866</td>
-<td id="T_0dd3c_row1_col6" class="data row1 col6">Used reported total (matches offenders + arrestees)</td>
+<td id="T_ade69_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">1</td>
+<td id="T_ade69_row1_col0" class="data row1 col0">Alaska</td>
+<td id="T_ade69_row1_col1" class="data row1 col1">79,146</td>
+<td id="T_ade69_row1_col2" class="data row1 col2">79,146</td>
+<td id="T_ade69_row1_col3" class="data row1 col3">26,997</td>
+<td id="T_ade69_row1_col4" class="data row1 col4">52,149</td>
+<td id="T_ade69_row1_col5" class="data row1 col5">3,866</td>
+<td id="T_ade69_row1_col6" class="data row1 col6">Used reported total (matches offenders + arrestees)</td>
 </tr>
 <tr class="odd">
-<td id="T_0dd3c_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">2</td>
-<td id="T_0dd3c_row2_col0" class="data row2 col0">Arizona</td>
-<td id="T_0dd3c_row2_col1" class="data row2 col1"></td>
-<td id="T_0dd3c_row2_col2" class="data row2 col2"></td>
-<td id="T_0dd3c_row2_col3" class="data row2 col3"></td>
-<td id="T_0dd3c_row2_col4" class="data row2 col4"></td>
-<td id="T_0dd3c_row2_col5" class="data row2 col5"></td>
-<td id="T_0dd3c_row2_col6" class="data row2 col6"></td>
+<td id="T_ade69_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">2</td>
+<td id="T_ade69_row2_col0" class="data row2 col0">Arizona</td>
+<td id="T_ade69_row2_col1" class="data row2 col1"></td>
+<td id="T_ade69_row2_col2" class="data row2 col2"></td>
+<td id="T_ade69_row2_col3" class="data row2 col3"></td>
+<td id="T_ade69_row2_col4" class="data row2 col4"></td>
+<td id="T_ade69_row2_col5" class="data row2 col5"></td>
+<td id="T_ade69_row2_col6" class="data row2 col6"></td>
 </tr>
 <tr class="even">
-<td id="T_0dd3c_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">3</td>
-<td id="T_0dd3c_row3_col0" class="data row3 col0">Arkansas</td>
-<td id="T_0dd3c_row3_col1" class="data row3 col1">12,221</td>
-<td id="T_0dd3c_row3_col2" class="data row3 col2">12,221</td>
-<td id="T_0dd3c_row3_col3" class="data row3 col3"></td>
-<td id="T_0dd3c_row3_col4" class="data row3 col4"></td>
-<td id="T_0dd3c_row3_col5" class="data row3 col5"></td>
-<td id="T_0dd3c_row3_col6" class="data row3 col6">Total only reported (no breakdown available)</td>
+<td id="T_ade69_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">3</td>
+<td id="T_ade69_row3_col0" class="data row3 col0">Arkansas</td>
+<td id="T_ade69_row3_col1" class="data row3 col1">12,221</td>
+<td id="T_ade69_row3_col2" class="data row3 col2">12,221</td>
+<td id="T_ade69_row3_col3" class="data row3 col3"></td>
+<td id="T_ade69_row3_col4" class="data row3 col4"></td>
+<td id="T_ade69_row3_col5" class="data row3 col5"></td>
+<td id="T_ade69_row3_col6" class="data row3 col6">Total only reported (no breakdown available)</td>
 </tr>
 <tr class="odd">
-<td id="T_0dd3c_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">4</td>
-<td id="T_0dd3c_row4_col0" class="data row4 col0">California</td>
-<td id="T_0dd3c_row4_col1" class="data row4 col1">3,365,402</td>
-<td id="T_0dd3c_row4_col2" class="data row4 col2">3,365,402</td>
-<td id="T_0dd3c_row4_col3" class="data row4 col3"></td>
-<td id="T_0dd3c_row4_col4" class="data row4 col4"></td>
-<td id="T_0dd3c_row4_col5" class="data row4 col5">167,053</td>
-<td id="T_0dd3c_row4_col6" class="data row4 col6">Total only reported (forensic reported separately)</td>
+<td id="T_ade69_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">4</td>
+<td id="T_ade69_row4_col0" class="data row4 col0">California</td>
+<td id="T_ade69_row4_col1" class="data row4 col1">3,365,402</td>
+<td id="T_ade69_row4_col2" class="data row4 col2">3,365,402</td>
+<td id="T_ade69_row4_col3" class="data row4 col3"></td>
+<td id="T_ade69_row4_col4" class="data row4 col4"></td>
+<td id="T_ade69_row4_col5" class="data row4 col5">167,053</td>
+<td id="T_ade69_row4_col6" class="data row4 col6">Total only reported (forensic reported separately)</td>
 </tr>
 <tr class="even">
-<td id="T_0dd3c_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">5</td>
-<td id="T_0dd3c_row5_col0" class="data row5 col0">Colorado</td>
-<td id="T_0dd3c_row5_col1" class="data row5 col1">499,170</td>
-<td id="T_0dd3c_row5_col2" class="data row5 col2">499,170</td>
-<td id="T_0dd3c_row5_col3" class="data row5 col3"></td>
-<td id="T_0dd3c_row5_col4" class="data row5 col4"></td>
-<td id="T_0dd3c_row5_col5" class="data row5 col5"></td>
-<td id="T_0dd3c_row5_col6" class="data row5 col6">Total only reported (no breakdown available)</td>
+<td id="T_ade69_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">5</td>
+<td id="T_ade69_row5_col0" class="data row5 col0">Colorado</td>
+<td id="T_ade69_row5_col1" class="data row5 col1">499,170</td>
+<td id="T_ade69_row5_col2" class="data row5 col2">499,170</td>
+<td id="T_ade69_row5_col3" class="data row5 col3"></td>
+<td id="T_ade69_row5_col4" class="data row5 col4"></td>
+<td id="T_ade69_row5_col5" class="data row5 col5"></td>
+<td id="T_ade69_row5_col6" class="data row5 col6">Total only reported (no breakdown available)</td>
 </tr>
 <tr class="odd">
-<td id="T_0dd3c_level0_row6" class="row_heading level0 row6" data-quarto-table-cell-role="th">6</td>
-<td id="T_0dd3c_row6_col0" class="data row6 col0">Connecticut</td>
-<td id="T_0dd3c_row6_col1" class="data row6 col1">127,940</td>
-<td id="T_0dd3c_row6_col2" class="data row6 col2">127,940</td>
-<td id="T_0dd3c_row6_col3" class="data row6 col3">127,940</td>
-<td id="T_0dd3c_row6_col4" class="data row6 col4"></td>
-<td id="T_0dd3c_row6_col5" class="data row6 col5">23,200</td>
-<td id="T_0dd3c_row6_col6" class="data row6 col6">Used reported total (matches offenders only)</td>
+<td id="T_ade69_level0_row6" class="row_heading level0 row6" data-quarto-table-cell-role="th">6</td>
+<td id="T_ade69_row6_col0" class="data row6 col0">Connecticut</td>
+<td id="T_ade69_row6_col1" class="data row6 col1">127,940</td>
+<td id="T_ade69_row6_col2" class="data row6 col2">127,940</td>
+<td id="T_ade69_row6_col3" class="data row6 col3">127,940</td>
+<td id="T_ade69_row6_col4" class="data row6 col4"></td>
+<td id="T_ade69_row6_col5" class="data row6 col5">23,200</td>
+<td id="T_ade69_row6_col6" class="data row6 col6">Used reported total (matches offenders only)</td>
 </tr>
 <tr class="even">
-<td id="T_0dd3c_level0_row7" class="row_heading level0 row7" data-quarto-table-cell-role="th">7</td>
-<td id="T_0dd3c_row7_col0" class="data row7 col0">Delaware</td>
-<td id="T_0dd3c_row7_col1" class="data row7 col1"></td>
-<td id="T_0dd3c_row7_col2" class="data row7 col2"></td>
-<td id="T_0dd3c_row7_col3" class="data row7 col3"></td>
-<td id="T_0dd3c_row7_col4" class="data row7 col4">0</td>
-<td id="T_0dd3c_row7_col5" class="data row7 col5"></td>
-<td id="T_0dd3c_row7_col6" class="data row7 col6"></td>
+<td id="T_ade69_level0_row7" class="row_heading level0 row7" data-quarto-table-cell-role="th">7</td>
+<td id="T_ade69_row7_col0" class="data row7 col0">Delaware</td>
+<td id="T_ade69_row7_col1" class="data row7 col1"></td>
+<td id="T_ade69_row7_col2" class="data row7 col2"></td>
+<td id="T_ade69_row7_col3" class="data row7 col3"></td>
+<td id="T_ade69_row7_col4" class="data row7 col4">0</td>
+<td id="T_ade69_row7_col5" class="data row7 col5"></td>
+<td id="T_ade69_row7_col6" class="data row7 col6"></td>
 </tr>
 <tr class="odd">
-<td id="T_0dd3c_level0_row8" class="row_heading level0 row8" data-quarto-table-cell-role="th">8</td>
-<td id="T_0dd3c_row8_col0" class="data row8 col0">Florida</td>
-<td id="T_0dd3c_row8_col1" class="data row8 col1">1,713,890</td>
-<td id="T_0dd3c_row8_col2" class="data row8 col2">1,713,890</td>
-<td id="T_0dd3c_row8_col3" class="data row8 col3"></td>
-<td id="T_0dd3c_row8_col4" class="data row8 col4"></td>
-<td id="T_0dd3c_row8_col5" class="data row8 col5"></td>
-<td id="T_0dd3c_row8_col6" class="data row8 col6">Total only reported (no breakdown available)</td>
+<td id="T_ade69_level0_row8" class="row_heading level0 row8" data-quarto-table-cell-role="th">8</td>
+<td id="T_ade69_row8_col0" class="data row8 col0">Florida</td>
+<td id="T_ade69_row8_col1" class="data row8 col1">1,713,890</td>
+<td id="T_ade69_row8_col2" class="data row8 col2">1,713,890</td>
+<td id="T_ade69_row8_col3" class="data row8 col3"></td>
+<td id="T_ade69_row8_col4" class="data row8 col4"></td>
+<td id="T_ade69_row8_col5" class="data row8 col5"></td>
+<td id="T_ade69_row8_col6" class="data row8 col6">Total only reported (no breakdown available)</td>
 </tr>
 <tr class="even">
-<td id="T_0dd3c_level0_row9" class="row_heading level0 row9" data-quarto-table-cell-role="th">9</td>
-<td id="T_0dd3c_row9_col0" class="data row9 col0">Georgia</td>
-<td id="T_0dd3c_row9_col1" class="data row9 col1">347,145</td>
-<td id="T_0dd3c_row9_col2" class="data row9 col2">347,145</td>
-<td id="T_0dd3c_row9_col3" class="data row9 col3">324,864</td>
-<td id="T_0dd3c_row9_col4" class="data row9 col4"></td>
-<td id="T_0dd3c_row9_col5" class="data row9 col5">22,281</td>
-<td id="T_0dd3c_row9_col6" class="data row9 col6">Total with discrepancy (calculation unclear)</td>
+<td id="T_ade69_level0_row9" class="row_heading level0 row9" data-quarto-table-cell-role="th">9</td>
+<td id="T_ade69_row9_col0" class="data row9 col0">Georgia</td>
+<td id="T_ade69_row9_col1" class="data row9 col1">347,145</td>
+<td id="T_ade69_row9_col2" class="data row9 col2">347,145</td>
+<td id="T_ade69_row9_col3" class="data row9 col3">324,864</td>
+<td id="T_ade69_row9_col4" class="data row9 col4"></td>
+<td id="T_ade69_row9_col5" class="data row9 col5">22,281</td>
+<td id="T_ade69_row9_col6" class="data row9 col6">Total with discrepancy (calculation unclear)</td>
 </tr>
 <tr class="odd">
-<td id="T_0dd3c_level0_row10" class="row_heading level0 row10" data-quarto-table-cell-role="th">10</td>
-<td id="T_0dd3c_row10_col0" class="data row10 col0">Hawaii</td>
-<td id="T_0dd3c_row10_col1" class="data row10 col1"></td>
-<td id="T_0dd3c_row10_col2" class="data row10 col2"></td>
-<td id="T_0dd3c_row10_col3" class="data row10 col3"></td>
-<td id="T_0dd3c_row10_col4" class="data row10 col4">0</td>
-<td id="T_0dd3c_row10_col5" class="data row10 col5"></td>
-<td id="T_0dd3c_row10_col6" class="data row10 col6"></td>
+<td id="T_ade69_level0_row10" class="row_heading level0 row10" data-quarto-table-cell-role="th">10</td>
+<td id="T_ade69_row10_col0" class="data row10 col0">Hawaii</td>
+<td id="T_ade69_row10_col1" class="data row10 col1"></td>
+<td id="T_ade69_row10_col2" class="data row10 col2"></td>
+<td id="T_ade69_row10_col3" class="data row10 col3"></td>
+<td id="T_ade69_row10_col4" class="data row10 col4">0</td>
+<td id="T_ade69_row10_col5" class="data row10 col5"></td>
+<td id="T_ade69_row10_col6" class="data row10 col6"></td>
 </tr>
 <tr class="even">
-<td id="T_0dd3c_level0_row11" class="row_heading level0 row11" data-quarto-table-cell-role="th">11</td>
-<td id="T_0dd3c_row11_col0" class="data row11 col0">Idaho</td>
-<td id="T_0dd3c_row11_col1" class="data row11 col1">39,000</td>
-<td id="T_0dd3c_row11_col2" class="data row11 col2">39,000</td>
-<td id="T_0dd3c_row11_col3" class="data row11 col3">39,000</td>
-<td id="T_0dd3c_row11_col4" class="data row11 col4">0</td>
-<td id="T_0dd3c_row11_col5" class="data row11 col5"></td>
-<td id="T_0dd3c_row11_col6" class="data row11 col6">Used reported total (matches offenders only)</td>
+<td id="T_ade69_level0_row11" class="row_heading level0 row11" data-quarto-table-cell-role="th">11</td>
+<td id="T_ade69_row11_col0" class="data row11 col0">Idaho</td>
+<td id="T_ade69_row11_col1" class="data row11 col1">39,000</td>
+<td id="T_ade69_row11_col2" class="data row11 col2">39,000</td>
+<td id="T_ade69_row11_col3" class="data row11 col3">39,000</td>
+<td id="T_ade69_row11_col4" class="data row11 col4">0</td>
+<td id="T_ade69_row11_col5" class="data row11 col5"></td>
+<td id="T_ade69_row11_col6" class="data row11 col6">Used reported total (matches offenders only)</td>
 </tr>
 <tr class="odd">
-<td id="T_0dd3c_level0_row12" class="row_heading level0 row12" data-quarto-table-cell-role="th">12</td>
-<td id="T_0dd3c_row12_col0" class="data row12 col0">Illinois</td>
-<td id="T_0dd3c_row12_col1" class="data row12 col1">689,297</td>
-<td id="T_0dd3c_row12_col2" class="data row12 col2">689,297</td>
-<td id="T_0dd3c_row12_col3" class="data row12 col3">689,297</td>
-<td id="T_0dd3c_row12_col4" class="data row12 col4"></td>
-<td id="T_0dd3c_row12_col5" class="data row12 col5">69,927</td>
-<td id="T_0dd3c_row12_col6" class="data row12 col6">Used reported total (matches offenders only)</td>
+<td id="T_ade69_level0_row12" class="row_heading level0 row12" data-quarto-table-cell-role="th">12</td>
+<td id="T_ade69_row12_col0" class="data row12 col0">Illinois</td>
+<td id="T_ade69_row12_col1" class="data row12 col1">689,297</td>
+<td id="T_ade69_row12_col2" class="data row12 col2">689,297</td>
+<td id="T_ade69_row12_col3" class="data row12 col3">689,297</td>
+<td id="T_ade69_row12_col4" class="data row12 col4"></td>
+<td id="T_ade69_row12_col5" class="data row12 col5">69,927</td>
+<td id="T_ade69_row12_col6" class="data row12 col6">Used reported total (matches offenders only)</td>
 </tr>
 <tr class="even">
-<td id="T_0dd3c_level0_row13" class="row_heading level0 row13" data-quarto-table-cell-role="th">13</td>
-<td id="T_0dd3c_row13_col0" class="data row13 col0">Indiana</td>
-<td id="T_0dd3c_row13_col1" class="data row13 col1">449,000</td>
-<td id="T_0dd3c_row13_col2" class="data row13 col2">449,000</td>
-<td id="T_0dd3c_row13_col3" class="data row13 col3">304,000</td>
-<td id="T_0dd3c_row13_col4" class="data row13 col4">144,000</td>
-<td id="T_0dd3c_row13_col5" class="data row13 col5">22,400</td>
-<td id="T_0dd3c_row13_col6" class="data row13 col6">Total with discrepancy (calculation unclear)</td>
+<td id="T_ade69_level0_row13" class="row_heading level0 row13" data-quarto-table-cell-role="th">13</td>
+<td id="T_ade69_row13_col0" class="data row13 col0">Indiana</td>
+<td id="T_ade69_row13_col1" class="data row13 col1">449,000</td>
+<td id="T_ade69_row13_col2" class="data row13 col2">449,000</td>
+<td id="T_ade69_row13_col3" class="data row13 col3">304,000</td>
+<td id="T_ade69_row13_col4" class="data row13 col4">144,000</td>
+<td id="T_ade69_row13_col5" class="data row13 col5">22,400</td>
+<td id="T_ade69_row13_col6" class="data row13 col6">Total with discrepancy (calculation unclear)</td>
 </tr>
 <tr class="odd">
-<td id="T_0dd3c_level0_row14" class="row_heading level0 row14" data-quarto-table-cell-role="th">14</td>
-<td id="T_0dd3c_row14_col0" class="data row14 col0">Iowa</td>
-<td id="T_0dd3c_row14_col1" class="data row14 col1"></td>
-<td id="T_0dd3c_row14_col2" class="data row14 col2"></td>
-<td id="T_0dd3c_row14_col3" class="data row14 col3"></td>
-<td id="T_0dd3c_row14_col4" class="data row14 col4">0</td>
-<td id="T_0dd3c_row14_col5" class="data row14 col5"></td>
-<td id="T_0dd3c_row14_col6" class="data row14 col6"></td>
+<td id="T_ade69_level0_row14" class="row_heading level0 row14" data-quarto-table-cell-role="th">14</td>
+<td id="T_ade69_row14_col0" class="data row14 col0">Iowa</td>
+<td id="T_ade69_row14_col1" class="data row14 col1"></td>
+<td id="T_ade69_row14_col2" class="data row14 col2"></td>
+<td id="T_ade69_row14_col3" class="data row14 col3"></td>
+<td id="T_ade69_row14_col4" class="data row14 col4">0</td>
+<td id="T_ade69_row14_col5" class="data row14 col5"></td>
+<td id="T_ade69_row14_col6" class="data row14 col6"></td>
 </tr>
 <tr class="even">
-<td id="T_0dd3c_level0_row15" class="row_heading level0 row15" data-quarto-table-cell-role="th">15</td>
-<td id="T_0dd3c_row15_col0" class="data row15 col0">Kansas</td>
-<td id="T_0dd3c_row15_col1" class="data row15 col1"></td>
-<td id="T_0dd3c_row15_col2" class="data row15 col2"></td>
-<td id="T_0dd3c_row15_col3" class="data row15 col3"></td>
-<td id="T_0dd3c_row15_col4" class="data row15 col4"></td>
-<td id="T_0dd3c_row15_col5" class="data row15 col5"></td>
-<td id="T_0dd3c_row15_col6" class="data row15 col6"></td>
+<td id="T_ade69_level0_row15" class="row_heading level0 row15" data-quarto-table-cell-role="th">15</td>
+<td id="T_ade69_row15_col0" class="data row15 col0">Kansas</td>
+<td id="T_ade69_row15_col1" class="data row15 col1"></td>
+<td id="T_ade69_row15_col2" class="data row15 col2"></td>
+<td id="T_ade69_row15_col3" class="data row15 col3"></td>
+<td id="T_ade69_row15_col4" class="data row15 col4"></td>
+<td id="T_ade69_row15_col5" class="data row15 col5"></td>
+<td id="T_ade69_row15_col6" class="data row15 col6"></td>
 </tr>
 <tr class="odd">
-<td id="T_0dd3c_level0_row16" class="row_heading level0 row16" data-quarto-table-cell-role="th">16</td>
-<td id="T_0dd3c_row16_col0" class="data row16 col0">Kentucky</td>
-<td id="T_0dd3c_row16_col1" class="data row16 col1"></td>
-<td id="T_0dd3c_row16_col2" class="data row16 col2"></td>
-<td id="T_0dd3c_row16_col3" class="data row16 col3"></td>
-<td id="T_0dd3c_row16_col4" class="data row16 col4">0</td>
-<td id="T_0dd3c_row16_col5" class="data row16 col5"></td>
-<td id="T_0dd3c_row16_col6" class="data row16 col6"></td>
+<td id="T_ade69_level0_row16" class="row_heading level0 row16" data-quarto-table-cell-role="th">16</td>
+<td id="T_ade69_row16_col0" class="data row16 col0">Kentucky</td>
+<td id="T_ade69_row16_col1" class="data row16 col1"></td>
+<td id="T_ade69_row16_col2" class="data row16 col2"></td>
+<td id="T_ade69_row16_col3" class="data row16 col3"></td>
+<td id="T_ade69_row16_col4" class="data row16 col4">0</td>
+<td id="T_ade69_row16_col5" class="data row16 col5"></td>
+<td id="T_ade69_row16_col6" class="data row16 col6"></td>
 </tr>
 <tr class="even">
-<td id="T_0dd3c_level0_row17" class="row_heading level0 row17" data-quarto-table-cell-role="th">17</td>
-<td id="T_0dd3c_row17_col0" class="data row17 col0">Louisiana</td>
-<td id="T_0dd3c_row17_col1" class="data row17 col1">699,618</td>
-<td id="T_0dd3c_row17_col2" class="data row17 col2">699,618</td>
-<td id="T_0dd3c_row17_col3" class="data row17 col3"></td>
-<td id="T_0dd3c_row17_col4" class="data row17 col4"></td>
-<td id="T_0dd3c_row17_col5" class="data row17 col5"></td>
-<td id="T_0dd3c_row17_col6" class="data row17 col6">Total only reported (no breakdown available)</td>
+<td id="T_ade69_level0_row17" class="row_heading level0 row17" data-quarto-table-cell-role="th">17</td>
+<td id="T_ade69_row17_col0" class="data row17 col0">Louisiana</td>
+<td id="T_ade69_row17_col1" class="data row17 col1">699,618</td>
+<td id="T_ade69_row17_col2" class="data row17 col2">699,618</td>
+<td id="T_ade69_row17_col3" class="data row17 col3"></td>
+<td id="T_ade69_row17_col4" class="data row17 col4"></td>
+<td id="T_ade69_row17_col5" class="data row17 col5"></td>
+<td id="T_ade69_row17_col6" class="data row17 col6">Total only reported (no breakdown available)</td>
 </tr>
 <tr class="odd">
-<td id="T_0dd3c_level0_row18" class="row_heading level0 row18" data-quarto-table-cell-role="th">18</td>
-<td id="T_0dd3c_row18_col0" class="data row18 col0">Maine</td>
-<td id="T_0dd3c_row18_col1" class="data row18 col1"></td>
-<td id="T_0dd3c_row18_col2" class="data row18 col2"></td>
-<td id="T_0dd3c_row18_col3" class="data row18 col3"></td>
-<td id="T_0dd3c_row18_col4" class="data row18 col4">0</td>
-<td id="T_0dd3c_row18_col5" class="data row18 col5"></td>
-<td id="T_0dd3c_row18_col6" class="data row18 col6"></td>
+<td id="T_ade69_level0_row18" class="row_heading level0 row18" data-quarto-table-cell-role="th">18</td>
+<td id="T_ade69_row18_col0" class="data row18 col0">Maine</td>
+<td id="T_ade69_row18_col1" class="data row18 col1"></td>
+<td id="T_ade69_row18_col2" class="data row18 col2"></td>
+<td id="T_ade69_row18_col3" class="data row18 col3"></td>
+<td id="T_ade69_row18_col4" class="data row18 col4">0</td>
+<td id="T_ade69_row18_col5" class="data row18 col5"></td>
+<td id="T_ade69_row18_col6" class="data row18 col6"></td>
 </tr>
 <tr class="even">
-<td id="T_0dd3c_level0_row19" class="row_heading level0 row19" data-quarto-table-cell-role="th">19</td>
-<td id="T_0dd3c_row19_col0" class="data row19 col0">Maryland</td>
-<td id="T_0dd3c_row19_col1" class="data row19 col1">147,803</td>
-<td id="T_0dd3c_row19_col2" class="data row19 col2"></td>
-<td id="T_0dd3c_row19_col3" class="data row19 col3">142,278</td>
-<td id="T_0dd3c_row19_col4" class="data row19 col4">5,525</td>
-<td id="T_0dd3c_row19_col5" class="data row19 col5"></td>
-<td id="T_0dd3c_row19_col6" class="data row19 col6">Calculated from offenders + arrestees (no total reported)</td>
+<td id="T_ade69_level0_row19" class="row_heading level0 row19" data-quarto-table-cell-role="th">19</td>
+<td id="T_ade69_row19_col0" class="data row19 col0">Maryland</td>
+<td id="T_ade69_row19_col1" class="data row19 col1">147,803</td>
+<td id="T_ade69_row19_col2" class="data row19 col2"></td>
+<td id="T_ade69_row19_col3" class="data row19 col3">142,278</td>
+<td id="T_ade69_row19_col4" class="data row19 col4">5,525</td>
+<td id="T_ade69_row19_col5" class="data row19 col5"></td>
+<td id="T_ade69_row19_col6" class="data row19 col6">Calculated from offenders + arrestees (no total reported)</td>
 </tr>
 <tr class="odd">
-<td id="T_0dd3c_level0_row20" class="row_heading level0 row20" data-quarto-table-cell-role="th">20</td>
-<td id="T_0dd3c_row20_col0" class="data row20 col0">Massachusetts</td>
-<td id="T_0dd3c_row20_col1" class="data row20 col1"></td>
-<td id="T_0dd3c_row20_col2" class="data row20 col2"></td>
-<td id="T_0dd3c_row20_col3" class="data row20 col3"></td>
-<td id="T_0dd3c_row20_col4" class="data row20 col4">0</td>
-<td id="T_0dd3c_row20_col5" class="data row20 col5"></td>
-<td id="T_0dd3c_row20_col6" class="data row20 col6"></td>
+<td id="T_ade69_level0_row20" class="row_heading level0 row20" data-quarto-table-cell-role="th">20</td>
+<td id="T_ade69_row20_col0" class="data row20 col0">Massachusetts</td>
+<td id="T_ade69_row20_col1" class="data row20 col1"></td>
+<td id="T_ade69_row20_col2" class="data row20 col2"></td>
+<td id="T_ade69_row20_col3" class="data row20 col3"></td>
+<td id="T_ade69_row20_col4" class="data row20 col4">0</td>
+<td id="T_ade69_row20_col5" class="data row20 col5"></td>
+<td id="T_ade69_row20_col6" class="data row20 col6"></td>
 </tr>
 <tr class="even">
-<td id="T_0dd3c_level0_row21" class="row_heading level0 row21" data-quarto-table-cell-role="th">21</td>
-<td id="T_0dd3c_row21_col0" class="data row21 col0">Michigan</td>
-<td id="T_0dd3c_row21_col1" class="data row21 col1"></td>
-<td id="T_0dd3c_row21_col2" class="data row21 col2"></td>
-<td id="T_0dd3c_row21_col3" class="data row21 col3"></td>
-<td id="T_0dd3c_row21_col4" class="data row21 col4"></td>
-<td id="T_0dd3c_row21_col5" class="data row21 col5"></td>
-<td id="T_0dd3c_row21_col6" class="data row21 col6"></td>
+<td id="T_ade69_level0_row21" class="row_heading level0 row21" data-quarto-table-cell-role="th">21</td>
+<td id="T_ade69_row21_col0" class="data row21 col0">Michigan</td>
+<td id="T_ade69_row21_col1" class="data row21 col1"></td>
+<td id="T_ade69_row21_col2" class="data row21 col2"></td>
+<td id="T_ade69_row21_col3" class="data row21 col3"></td>
+<td id="T_ade69_row21_col4" class="data row21 col4"></td>
+<td id="T_ade69_row21_col5" class="data row21 col5"></td>
+<td id="T_ade69_row21_col6" class="data row21 col6"></td>
 </tr>
 <tr class="odd">
-<td id="T_0dd3c_level0_row22" class="row_heading level0 row22" data-quarto-table-cell-role="th">22</td>
-<td id="T_0dd3c_row22_col0" class="data row22 col0">Minnesota</td>
-<td id="T_0dd3c_row22_col1" class="data row22 col1">180,000</td>
-<td id="T_0dd3c_row22_col2" class="data row22 col2">180,000</td>
-<td id="T_0dd3c_row22_col3" class="data row22 col3">180,000</td>
-<td id="T_0dd3c_row22_col4" class="data row22 col4"></td>
-<td id="T_0dd3c_row22_col5" class="data row22 col5"></td>
-<td id="T_0dd3c_row22_col6" class="data row22 col6">Used reported total (matches offenders only)</td>
+<td id="T_ade69_level0_row22" class="row_heading level0 row22" data-quarto-table-cell-role="th">22</td>
+<td id="T_ade69_row22_col0" class="data row22 col0">Minnesota</td>
+<td id="T_ade69_row22_col1" class="data row22 col1">180,000</td>
+<td id="T_ade69_row22_col2" class="data row22 col2">180,000</td>
+<td id="T_ade69_row22_col3" class="data row22 col3">180,000</td>
+<td id="T_ade69_row22_col4" class="data row22 col4"></td>
+<td id="T_ade69_row22_col5" class="data row22 col5"></td>
+<td id="T_ade69_row22_col6" class="data row22 col6">Used reported total (matches offenders only)</td>
 </tr>
 <tr class="even">
-<td id="T_0dd3c_level0_row23" class="row_heading level0 row23" data-quarto-table-cell-role="th">23</td>
-<td id="T_0dd3c_row23_col0" class="data row23 col0">Mississippi</td>
-<td id="T_0dd3c_row23_col1" class="data row23 col1">118,000</td>
-<td id="T_0dd3c_row23_col2" class="data row23 col2">118,000</td>
-<td id="T_0dd3c_row23_col3" class="data row23 col3"></td>
-<td id="T_0dd3c_row23_col4" class="data row23 col4"></td>
-<td id="T_0dd3c_row23_col5" class="data row23 col5"></td>
-<td id="T_0dd3c_row23_col6" class="data row23 col6">Total only reported (no breakdown available)</td>
+<td id="T_ade69_level0_row23" class="row_heading level0 row23" data-quarto-table-cell-role="th">23</td>
+<td id="T_ade69_row23_col0" class="data row23 col0">Mississippi</td>
+<td id="T_ade69_row23_col1" class="data row23 col1">118,000</td>
+<td id="T_ade69_row23_col2" class="data row23 col2">118,000</td>
+<td id="T_ade69_row23_col3" class="data row23 col3"></td>
+<td id="T_ade69_row23_col4" class="data row23 col4"></td>
+<td id="T_ade69_row23_col5" class="data row23 col5"></td>
+<td id="T_ade69_row23_col6" class="data row23 col6">Total only reported (no breakdown available)</td>
 </tr>
 <tr class="odd">
-<td id="T_0dd3c_level0_row24" class="row_heading level0 row24" data-quarto-table-cell-role="th">24</td>
-<td id="T_0dd3c_row24_col0" class="data row24 col0">Missouri</td>
-<td id="T_0dd3c_row24_col1" class="data row24 col1">400,000</td>
-<td id="T_0dd3c_row24_col2" class="data row24 col2">400,000</td>
-<td id="T_0dd3c_row24_col3" class="data row24 col3">386,000</td>
-<td id="T_0dd3c_row24_col4" class="data row24 col4"></td>
-<td id="T_0dd3c_row24_col5" class="data row24 col5"></td>
-<td id="T_0dd3c_row24_col6" class="data row24 col6">Total with discrepancy (calculation unclear)</td>
+<td id="T_ade69_level0_row24" class="row_heading level0 row24" data-quarto-table-cell-role="th">24</td>
+<td id="T_ade69_row24_col0" class="data row24 col0">Missouri</td>
+<td id="T_ade69_row24_col1" class="data row24 col1">400,000</td>
+<td id="T_ade69_row24_col2" class="data row24 col2">400,000</td>
+<td id="T_ade69_row24_col3" class="data row24 col3">386,000</td>
+<td id="T_ade69_row24_col4" class="data row24 col4"></td>
+<td id="T_ade69_row24_col5" class="data row24 col5"></td>
+<td id="T_ade69_row24_col6" class="data row24 col6">Total with discrepancy (calculation unclear)</td>
 </tr>
 <tr class="even">
-<td id="T_0dd3c_level0_row25" class="row_heading level0 row25" data-quarto-table-cell-role="th">25</td>
-<td id="T_0dd3c_row25_col0" class="data row25 col0">Montana</td>
-<td id="T_0dd3c_row25_col1" class="data row25 col1">32,284</td>
-<td id="T_0dd3c_row25_col2" class="data row25 col2">32,284</td>
-<td id="T_0dd3c_row25_col3" class="data row25 col3">32,284</td>
-<td id="T_0dd3c_row25_col4" class="data row25 col4">0</td>
-<td id="T_0dd3c_row25_col5" class="data row25 col5">878</td>
-<td id="T_0dd3c_row25_col6" class="data row25 col6">Used reported total (matches offenders only)</td>
+<td id="T_ade69_level0_row25" class="row_heading level0 row25" data-quarto-table-cell-role="th">25</td>
+<td id="T_ade69_row25_col0" class="data row25 col0">Montana</td>
+<td id="T_ade69_row25_col1" class="data row25 col1">32,284</td>
+<td id="T_ade69_row25_col2" class="data row25 col2">32,284</td>
+<td id="T_ade69_row25_col3" class="data row25 col3">32,284</td>
+<td id="T_ade69_row25_col4" class="data row25 col4">0</td>
+<td id="T_ade69_row25_col5" class="data row25 col5">878</td>
+<td id="T_ade69_row25_col6" class="data row25 col6">Used reported total (matches offenders only)</td>
 </tr>
 <tr class="odd">
-<td id="T_0dd3c_level0_row26" class="row_heading level0 row26" data-quarto-table-cell-role="th">26</td>
-<td id="T_0dd3c_row26_col0" class="data row26 col0">Nebraska</td>
-<td id="T_0dd3c_row26_col1" class="data row26 col1"></td>
-<td id="T_0dd3c_row26_col2" class="data row26 col2"></td>
-<td id="T_0dd3c_row26_col3" class="data row26 col3"></td>
-<td id="T_0dd3c_row26_col4" class="data row26 col4">0</td>
-<td id="T_0dd3c_row26_col5" class="data row26 col5"></td>
-<td id="T_0dd3c_row26_col6" class="data row26 col6"></td>
+<td id="T_ade69_level0_row26" class="row_heading level0 row26" data-quarto-table-cell-role="th">26</td>
+<td id="T_ade69_row26_col0" class="data row26 col0">Nebraska</td>
+<td id="T_ade69_row26_col1" class="data row26 col1"></td>
+<td id="T_ade69_row26_col2" class="data row26 col2"></td>
+<td id="T_ade69_row26_col3" class="data row26 col3"></td>
+<td id="T_ade69_row26_col4" class="data row26 col4">0</td>
+<td id="T_ade69_row26_col5" class="data row26 col5"></td>
+<td id="T_ade69_row26_col6" class="data row26 col6"></td>
 </tr>
 <tr class="even">
-<td id="T_0dd3c_level0_row27" class="row_heading level0 row27" data-quarto-table-cell-role="th">27</td>
-<td id="T_0dd3c_row27_col0" class="data row27 col0">Nevada</td>
-<td id="T_0dd3c_row27_col1" class="data row27 col1">245,000</td>
-<td id="T_0dd3c_row27_col2" class="data row27 col2">245,000</td>
-<td id="T_0dd3c_row27_col3" class="data row27 col3"></td>
-<td id="T_0dd3c_row27_col4" class="data row27 col4"></td>
-<td id="T_0dd3c_row27_col5" class="data row27 col5"></td>
-<td id="T_0dd3c_row27_col6" class="data row27 col6">Total only reported (no breakdown available)</td>
+<td id="T_ade69_level0_row27" class="row_heading level0 row27" data-quarto-table-cell-role="th">27</td>
+<td id="T_ade69_row27_col0" class="data row27 col0">Nevada</td>
+<td id="T_ade69_row27_col1" class="data row27 col1">245,000</td>
+<td id="T_ade69_row27_col2" class="data row27 col2">245,000</td>
+<td id="T_ade69_row27_col3" class="data row27 col3"></td>
+<td id="T_ade69_row27_col4" class="data row27 col4"></td>
+<td id="T_ade69_row27_col5" class="data row27 col5"></td>
+<td id="T_ade69_row27_col6" class="data row27 col6">Total only reported (no breakdown available)</td>
 </tr>
 <tr class="odd">
-<td id="T_0dd3c_level0_row28" class="row_heading level0 row28" data-quarto-table-cell-role="th">28</td>
-<td id="T_0dd3c_row28_col0" class="data row28 col0">New Hampshire</td>
-<td id="T_0dd3c_row28_col1" class="data row28 col1"></td>
-<td id="T_0dd3c_row28_col2" class="data row28 col2"></td>
-<td id="T_0dd3c_row28_col3" class="data row28 col3"></td>
-<td id="T_0dd3c_row28_col4" class="data row28 col4">0</td>
-<td id="T_0dd3c_row28_col5" class="data row28 col5"></td>
-<td id="T_0dd3c_row28_col6" class="data row28 col6"></td>
+<td id="T_ade69_level0_row28" class="row_heading level0 row28" data-quarto-table-cell-role="th">28</td>
+<td id="T_ade69_row28_col0" class="data row28 col0">New Hampshire</td>
+<td id="T_ade69_row28_col1" class="data row28 col1"></td>
+<td id="T_ade69_row28_col2" class="data row28 col2"></td>
+<td id="T_ade69_row28_col3" class="data row28 col3"></td>
+<td id="T_ade69_row28_col4" class="data row28 col4">0</td>
+<td id="T_ade69_row28_col5" class="data row28 col5"></td>
+<td id="T_ade69_row28_col6" class="data row28 col6"></td>
 </tr>
 <tr class="even">
-<td id="T_0dd3c_level0_row29" class="row_heading level0 row29" data-quarto-table-cell-role="th">29</td>
-<td id="T_0dd3c_row29_col0" class="data row29 col0">New Jersey</td>
-<td id="T_0dd3c_row29_col1" class="data row29 col1">32,696</td>
-<td id="T_0dd3c_row29_col2" class="data row29 col2">32,696</td>
-<td id="T_0dd3c_row29_col3" class="data row29 col3"></td>
-<td id="T_0dd3c_row29_col4" class="data row29 col4"></td>
-<td id="T_0dd3c_row29_col5" class="data row29 col5"></td>
-<td id="T_0dd3c_row29_col6" class="data row29 col6">Total only reported (no breakdown available)</td>
+<td id="T_ade69_level0_row29" class="row_heading level0 row29" data-quarto-table-cell-role="th">29</td>
+<td id="T_ade69_row29_col0" class="data row29 col0">New Jersey</td>
+<td id="T_ade69_row29_col1" class="data row29 col1">32,696</td>
+<td id="T_ade69_row29_col2" class="data row29 col2">32,696</td>
+<td id="T_ade69_row29_col3" class="data row29 col3"></td>
+<td id="T_ade69_row29_col4" class="data row29 col4"></td>
+<td id="T_ade69_row29_col5" class="data row29 col5"></td>
+<td id="T_ade69_row29_col6" class="data row29 col6">Total only reported (no breakdown available)</td>
 </tr>
 <tr class="odd">
-<td id="T_0dd3c_level0_row30" class="row_heading level0 row30" data-quarto-table-cell-role="th">30</td>
-<td id="T_0dd3c_row30_col0" class="data row30 col0">New Mexico</td>
-<td id="T_0dd3c_row30_col1" class="data row30 col1"></td>
-<td id="T_0dd3c_row30_col2" class="data row30 col2"></td>
-<td id="T_0dd3c_row30_col3" class="data row30 col3"></td>
-<td id="T_0dd3c_row30_col4" class="data row30 col4"></td>
-<td id="T_0dd3c_row30_col5" class="data row30 col5"></td>
-<td id="T_0dd3c_row30_col6" class="data row30 col6"></td>
+<td id="T_ade69_level0_row30" class="row_heading level0 row30" data-quarto-table-cell-role="th">30</td>
+<td id="T_ade69_row30_col0" class="data row30 col0">New Mexico</td>
+<td id="T_ade69_row30_col1" class="data row30 col1"></td>
+<td id="T_ade69_row30_col2" class="data row30 col2"></td>
+<td id="T_ade69_row30_col3" class="data row30 col3"></td>
+<td id="T_ade69_row30_col4" class="data row30 col4"></td>
+<td id="T_ade69_row30_col5" class="data row30 col5"></td>
+<td id="T_ade69_row30_col6" class="data row30 col6"></td>
 </tr>
 <tr class="even">
-<td id="T_0dd3c_level0_row31" class="row_heading level0 row31" data-quarto-table-cell-role="th">31</td>
-<td id="T_0dd3c_row31_col0" class="data row31 col0">New York</td>
-<td id="T_0dd3c_row31_col1" class="data row31 col1"></td>
-<td id="T_0dd3c_row31_col2" class="data row31 col2"></td>
-<td id="T_0dd3c_row31_col3" class="data row31 col3"></td>
-<td id="T_0dd3c_row31_col4" class="data row31 col4">0</td>
-<td id="T_0dd3c_row31_col5" class="data row31 col5"></td>
-<td id="T_0dd3c_row31_col6" class="data row31 col6"></td>
+<td id="T_ade69_level0_row31" class="row_heading level0 row31" data-quarto-table-cell-role="th">31</td>
+<td id="T_ade69_row31_col0" class="data row31 col0">New York</td>
+<td id="T_ade69_row31_col1" class="data row31 col1"></td>
+<td id="T_ade69_row31_col2" class="data row31 col2"></td>
+<td id="T_ade69_row31_col3" class="data row31 col3"></td>
+<td id="T_ade69_row31_col4" class="data row31 col4">0</td>
+<td id="T_ade69_row31_col5" class="data row31 col5"></td>
+<td id="T_ade69_row31_col6" class="data row31 col6"></td>
 </tr>
 <tr class="odd">
-<td id="T_0dd3c_level0_row32" class="row_heading level0 row32" data-quarto-table-cell-role="th">32</td>
-<td id="T_0dd3c_row32_col0" class="data row32 col0">North Carolina</td>
-<td id="T_0dd3c_row32_col1" class="data row32 col1">350,000</td>
-<td id="T_0dd3c_row32_col2" class="data row32 col2">350,000</td>
-<td id="T_0dd3c_row32_col3" class="data row32 col3">300,000</td>
-<td id="T_0dd3c_row32_col4" class="data row32 col4">50,000</td>
-<td id="T_0dd3c_row32_col5" class="data row32 col5"></td>
-<td id="T_0dd3c_row32_col6" class="data row32 col6">Used reported total (matches offenders + arrestees)</td>
+<td id="T_ade69_level0_row32" class="row_heading level0 row32" data-quarto-table-cell-role="th">32</td>
+<td id="T_ade69_row32_col0" class="data row32 col0">North Carolina</td>
+<td id="T_ade69_row32_col1" class="data row32 col1">350,000</td>
+<td id="T_ade69_row32_col2" class="data row32 col2">350,000</td>
+<td id="T_ade69_row32_col3" class="data row32 col3">300,000</td>
+<td id="T_ade69_row32_col4" class="data row32 col4">50,000</td>
+<td id="T_ade69_row32_col5" class="data row32 col5"></td>
+<td id="T_ade69_row32_col6" class="data row32 col6">Used reported total (matches offenders + arrestees)</td>
 </tr>
 <tr class="even">
-<td id="T_0dd3c_level0_row33" class="row_heading level0 row33" data-quarto-table-cell-role="th">33</td>
-<td id="T_0dd3c_row33_col0" class="data row33 col0">North Dakota</td>
-<td id="T_0dd3c_row33_col1" class="data row33 col1"></td>
-<td id="T_0dd3c_row33_col2" class="data row33 col2"></td>
-<td id="T_0dd3c_row33_col3" class="data row33 col3"></td>
-<td id="T_0dd3c_row33_col4" class="data row33 col4"></td>
-<td id="T_0dd3c_row33_col5" class="data row33 col5"></td>
-<td id="T_0dd3c_row33_col6" class="data row33 col6"></td>
+<td id="T_ade69_level0_row33" class="row_heading level0 row33" data-quarto-table-cell-role="th">33</td>
+<td id="T_ade69_row33_col0" class="data row33 col0">North Dakota</td>
+<td id="T_ade69_row33_col1" class="data row33 col1"></td>
+<td id="T_ade69_row33_col2" class="data row33 col2"></td>
+<td id="T_ade69_row33_col3" class="data row33 col3"></td>
+<td id="T_ade69_row33_col4" class="data row33 col4"></td>
+<td id="T_ade69_row33_col5" class="data row33 col5"></td>
+<td id="T_ade69_row33_col6" class="data row33 col6"></td>
 </tr>
 <tr class="odd">
-<td id="T_0dd3c_level0_row34" class="row_heading level0 row34" data-quarto-table-cell-role="th">34</td>
-<td id="T_0dd3c_row34_col0" class="data row34 col0">Ohio</td>
-<td id="T_0dd3c_row34_col1" class="data row34 col1"></td>
-<td id="T_0dd3c_row34_col2" class="data row34 col2"></td>
-<td id="T_0dd3c_row34_col3" class="data row34 col3"></td>
-<td id="T_0dd3c_row34_col4" class="data row34 col4"></td>
-<td id="T_0dd3c_row34_col5" class="data row34 col5"></td>
-<td id="T_0dd3c_row34_col6" class="data row34 col6"></td>
+<td id="T_ade69_level0_row34" class="row_heading level0 row34" data-quarto-table-cell-role="th">34</td>
+<td id="T_ade69_row34_col0" class="data row34 col0">Ohio</td>
+<td id="T_ade69_row34_col1" class="data row34 col1"></td>
+<td id="T_ade69_row34_col2" class="data row34 col2"></td>
+<td id="T_ade69_row34_col3" class="data row34 col3"></td>
+<td id="T_ade69_row34_col4" class="data row34 col4"></td>
+<td id="T_ade69_row34_col5" class="data row34 col5"></td>
+<td id="T_ade69_row34_col6" class="data row34 col6"></td>
 </tr>
 <tr class="even">
-<td id="T_0dd3c_level0_row35" class="row_heading level0 row35" data-quarto-table-cell-role="th">35</td>
-<td id="T_0dd3c_row35_col0" class="data row35 col0">Oklahoma</td>
-<td id="T_0dd3c_row35_col1" class="data row35 col1"></td>
-<td id="T_0dd3c_row35_col2" class="data row35 col2"></td>
-<td id="T_0dd3c_row35_col3" class="data row35 col3"></td>
-<td id="T_0dd3c_row35_col4" class="data row35 col4"></td>
-<td id="T_0dd3c_row35_col5" class="data row35 col5"></td>
-<td id="T_0dd3c_row35_col6" class="data row35 col6"></td>
+<td id="T_ade69_level0_row35" class="row_heading level0 row35" data-quarto-table-cell-role="th">35</td>
+<td id="T_ade69_row35_col0" class="data row35 col0">Oklahoma</td>
+<td id="T_ade69_row35_col1" class="data row35 col1"></td>
+<td id="T_ade69_row35_col2" class="data row35 col2"></td>
+<td id="T_ade69_row35_col3" class="data row35 col3"></td>
+<td id="T_ade69_row35_col4" class="data row35 col4"></td>
+<td id="T_ade69_row35_col5" class="data row35 col5"></td>
+<td id="T_ade69_row35_col6" class="data row35 col6"></td>
 </tr>
 <tr class="odd">
-<td id="T_0dd3c_level0_row36" class="row_heading level0 row36" data-quarto-table-cell-role="th">36</td>
-<td id="T_0dd3c_row36_col0" class="data row36 col0">Oregon</td>
-<td id="T_0dd3c_row36_col1" class="data row36 col1"></td>
-<td id="T_0dd3c_row36_col2" class="data row36 col2"></td>
-<td id="T_0dd3c_row36_col3" class="data row36 col3"></td>
-<td id="T_0dd3c_row36_col4" class="data row36 col4">0</td>
-<td id="T_0dd3c_row36_col5" class="data row36 col5"></td>
-<td id="T_0dd3c_row36_col6" class="data row36 col6"></td>
+<td id="T_ade69_level0_row36" class="row_heading level0 row36" data-quarto-table-cell-role="th">36</td>
+<td id="T_ade69_row36_col0" class="data row36 col0">Oregon</td>
+<td id="T_ade69_row36_col1" class="data row36 col1"></td>
+<td id="T_ade69_row36_col2" class="data row36 col2"></td>
+<td id="T_ade69_row36_col3" class="data row36 col3"></td>
+<td id="T_ade69_row36_col4" class="data row36 col4">0</td>
+<td id="T_ade69_row36_col5" class="data row36 col5"></td>
+<td id="T_ade69_row36_col6" class="data row36 col6"></td>
 </tr>
 <tr class="even">
-<td id="T_0dd3c_level0_row37" class="row_heading level0 row37" data-quarto-table-cell-role="th">37</td>
-<td id="T_0dd3c_row37_col0" class="data row37 col0">Pennsylvania</td>
-<td id="T_0dd3c_row37_col1" class="data row37 col1"></td>
-<td id="T_0dd3c_row37_col2" class="data row37 col2"></td>
-<td id="T_0dd3c_row37_col3" class="data row37 col3"></td>
-<td id="T_0dd3c_row37_col4" class="data row37 col4">0</td>
-<td id="T_0dd3c_row37_col5" class="data row37 col5"></td>
-<td id="T_0dd3c_row37_col6" class="data row37 col6"></td>
+<td id="T_ade69_level0_row37" class="row_heading level0 row37" data-quarto-table-cell-role="th">37</td>
+<td id="T_ade69_row37_col0" class="data row37 col0">Pennsylvania</td>
+<td id="T_ade69_row37_col1" class="data row37 col1"></td>
+<td id="T_ade69_row37_col2" class="data row37 col2"></td>
+<td id="T_ade69_row37_col3" class="data row37 col3"></td>
+<td id="T_ade69_row37_col4" class="data row37 col4">0</td>
+<td id="T_ade69_row37_col5" class="data row37 col5"></td>
+<td id="T_ade69_row37_col6" class="data row37 col6"></td>
 </tr>
 <tr class="odd">
-<td id="T_0dd3c_level0_row38" class="row_heading level0 row38" data-quarto-table-cell-role="th">38</td>
-<td id="T_0dd3c_row38_col0" class="data row38 col0">Rhode Island</td>
-<td id="T_0dd3c_row38_col1" class="data row38 col1">27,818</td>
-<td id="T_0dd3c_row38_col2" class="data row38 col2">27,818</td>
-<td id="T_0dd3c_row38_col3" class="data row38 col3">27,334</td>
-<td id="T_0dd3c_row38_col4" class="data row38 col4">484</td>
-<td id="T_0dd3c_row38_col5" class="data row38 col5">1,798</td>
-<td id="T_0dd3c_row38_col6" class="data row38 col6">Used reported total (matches offenders + arrestees)</td>
+<td id="T_ade69_level0_row38" class="row_heading level0 row38" data-quarto-table-cell-role="th">38</td>
+<td id="T_ade69_row38_col0" class="data row38 col0">Rhode Island</td>
+<td id="T_ade69_row38_col1" class="data row38 col1">27,818</td>
+<td id="T_ade69_row38_col2" class="data row38 col2">27,818</td>
+<td id="T_ade69_row38_col3" class="data row38 col3">27,334</td>
+<td id="T_ade69_row38_col4" class="data row38 col4">484</td>
+<td id="T_ade69_row38_col5" class="data row38 col5">1,798</td>
+<td id="T_ade69_row38_col6" class="data row38 col6">Used reported total (matches offenders + arrestees)</td>
 </tr>
 <tr class="even">
-<td id="T_0dd3c_level0_row39" class="row_heading level0 row39" data-quarto-table-cell-role="th">39</td>
-<td id="T_0dd3c_row39_col0" class="data row39 col0">South Carolina</td>
-<td id="T_0dd3c_row39_col1" class="data row39 col1">175,629</td>
-<td id="T_0dd3c_row39_col2" class="data row39 col2">175,629</td>
-<td id="T_0dd3c_row39_col3" class="data row39 col3"></td>
-<td id="T_0dd3c_row39_col4" class="data row39 col4"></td>
-<td id="T_0dd3c_row39_col5" class="data row39 col5">11,127</td>
-<td id="T_0dd3c_row39_col6" class="data row39 col6">Total only reported (forensic reported separately)</td>
+<td id="T_ade69_level0_row39" class="row_heading level0 row39" data-quarto-table-cell-role="th">39</td>
+<td id="T_ade69_row39_col0" class="data row39 col0">South Carolina</td>
+<td id="T_ade69_row39_col1" class="data row39 col1">175,629</td>
+<td id="T_ade69_row39_col2" class="data row39 col2">175,629</td>
+<td id="T_ade69_row39_col3" class="data row39 col3"></td>
+<td id="T_ade69_row39_col4" class="data row39 col4"></td>
+<td id="T_ade69_row39_col5" class="data row39 col5">11,127</td>
+<td id="T_ade69_row39_col6" class="data row39 col6">Total only reported (forensic reported separately)</td>
 </tr>
 <tr class="odd">
-<td id="T_0dd3c_level0_row40" class="row_heading level0 row40" data-quarto-table-cell-role="th">40</td>
-<td id="T_0dd3c_row40_col0" class="data row40 col0">South Dakota</td>
-<td id="T_0dd3c_row40_col1" class="data row40 col1">56,200</td>
-<td id="T_0dd3c_row40_col2" class="data row40 col2">56,200</td>
-<td id="T_0dd3c_row40_col3" class="data row40 col3"></td>
-<td id="T_0dd3c_row40_col4" class="data row40 col4"></td>
-<td id="T_0dd3c_row40_col5" class="data row40 col5"></td>
-<td id="T_0dd3c_row40_col6" class="data row40 col6">Total only reported (no breakdown available)</td>
+<td id="T_ade69_level0_row40" class="row_heading level0 row40" data-quarto-table-cell-role="th">40</td>
+<td id="T_ade69_row40_col0" class="data row40 col0">South Dakota</td>
+<td id="T_ade69_row40_col1" class="data row40 col1">56,200</td>
+<td id="T_ade69_row40_col2" class="data row40 col2">56,200</td>
+<td id="T_ade69_row40_col3" class="data row40 col3"></td>
+<td id="T_ade69_row40_col4" class="data row40 col4"></td>
+<td id="T_ade69_row40_col5" class="data row40 col5"></td>
+<td id="T_ade69_row40_col6" class="data row40 col6">Total only reported (no breakdown available)</td>
 </tr>
 <tr class="even">
-<td id="T_0dd3c_level0_row41" class="row_heading level0 row41" data-quarto-table-cell-role="th">41</td>
-<td id="T_0dd3c_row41_col0" class="data row41 col0">Tennessee</td>
-<td id="T_0dd3c_row41_col1" class="data row41 col1">518,614</td>
-<td id="T_0dd3c_row41_col2" class="data row41 col2">518,614</td>
-<td id="T_0dd3c_row41_col3" class="data row41 col3">292,045</td>
-<td id="T_0dd3c_row41_col4" class="data row41 col4">226,569</td>
-<td id="T_0dd3c_row41_col5" class="data row41 col5"></td>
-<td id="T_0dd3c_row41_col6" class="data row41 col6">Used reported total (matches offenders + arrestees)</td>
+<td id="T_ade69_level0_row41" class="row_heading level0 row41" data-quarto-table-cell-role="th">41</td>
+<td id="T_ade69_row41_col0" class="data row41 col0">Tennessee</td>
+<td id="T_ade69_row41_col1" class="data row41 col1">518,614</td>
+<td id="T_ade69_row41_col2" class="data row41 col2">518,614</td>
+<td id="T_ade69_row41_col3" class="data row41 col3">292,045</td>
+<td id="T_ade69_row41_col4" class="data row41 col4">226,569</td>
+<td id="T_ade69_row41_col5" class="data row41 col5"></td>
+<td id="T_ade69_row41_col6" class="data row41 col6">Used reported total (matches offenders + arrestees)</td>
 </tr>
 <tr class="odd">
-<td id="T_0dd3c_level0_row42" class="row_heading level0 row42" data-quarto-table-cell-role="th">42</td>
-<td id="T_0dd3c_row42_col0" class="data row42 col0">Texas</td>
-<td id="T_0dd3c_row42_col1" class="data row42 col1">1,308,774</td>
-<td id="T_0dd3c_row42_col2" class="data row42 col2">1,308,774</td>
-<td id="T_0dd3c_row42_col3" class="data row42 col3">1,308,774</td>
-<td id="T_0dd3c_row42_col4" class="data row42 col4"></td>
-<td id="T_0dd3c_row42_col5" class="data row42 col5"></td>
-<td id="T_0dd3c_row42_col6" class="data row42 col6">Used reported total (matches offenders only)</td>
+<td id="T_ade69_level0_row42" class="row_heading level0 row42" data-quarto-table-cell-role="th">42</td>
+<td id="T_ade69_row42_col0" class="data row42 col0">Texas</td>
+<td id="T_ade69_row42_col1" class="data row42 col1">1,308,774</td>
+<td id="T_ade69_row42_col2" class="data row42 col2">1,308,774</td>
+<td id="T_ade69_row42_col3" class="data row42 col3">1,308,774</td>
+<td id="T_ade69_row42_col4" class="data row42 col4"></td>
+<td id="T_ade69_row42_col5" class="data row42 col5"></td>
+<td id="T_ade69_row42_col6" class="data row42 col6">Used reported total (matches offenders only)</td>
 </tr>
 <tr class="even">
-<td id="T_0dd3c_level0_row43" class="row_heading level0 row43" data-quarto-table-cell-role="th">43</td>
-<td id="T_0dd3c_row43_col0" class="data row43 col0">Utah</td>
-<td id="T_0dd3c_row43_col1" class="data row43 col1"></td>
-<td id="T_0dd3c_row43_col2" class="data row43 col2"></td>
-<td id="T_0dd3c_row43_col3" class="data row43 col3"></td>
-<td id="T_0dd3c_row43_col4" class="data row43 col4"></td>
-<td id="T_0dd3c_row43_col5" class="data row43 col5"></td>
-<td id="T_0dd3c_row43_col6" class="data row43 col6"></td>
+<td id="T_ade69_level0_row43" class="row_heading level0 row43" data-quarto-table-cell-role="th">43</td>
+<td id="T_ade69_row43_col0" class="data row43 col0">Utah</td>
+<td id="T_ade69_row43_col1" class="data row43 col1"></td>
+<td id="T_ade69_row43_col2" class="data row43 col2"></td>
+<td id="T_ade69_row43_col3" class="data row43 col3"></td>
+<td id="T_ade69_row43_col4" class="data row43 col4"></td>
+<td id="T_ade69_row43_col5" class="data row43 col5"></td>
+<td id="T_ade69_row43_col6" class="data row43 col6"></td>
 </tr>
 <tr class="odd">
-<td id="T_0dd3c_level0_row44" class="row_heading level0 row44" data-quarto-table-cell-role="th">44</td>
-<td id="T_0dd3c_row44_col0" class="data row44 col0">Vermont</td>
-<td id="T_0dd3c_row44_col1" class="data row44 col1"></td>
-<td id="T_0dd3c_row44_col2" class="data row44 col2"></td>
-<td id="T_0dd3c_row44_col3" class="data row44 col3"></td>
-<td id="T_0dd3c_row44_col4" class="data row44 col4">0</td>
-<td id="T_0dd3c_row44_col5" class="data row44 col5"></td>
-<td id="T_0dd3c_row44_col6" class="data row44 col6"></td>
+<td id="T_ade69_level0_row44" class="row_heading level0 row44" data-quarto-table-cell-role="th">44</td>
+<td id="T_ade69_row44_col0" class="data row44 col0">Vermont</td>
+<td id="T_ade69_row44_col1" class="data row44 col1"></td>
+<td id="T_ade69_row44_col2" class="data row44 col2"></td>
+<td id="T_ade69_row44_col3" class="data row44 col3"></td>
+<td id="T_ade69_row44_col4" class="data row44 col4">0</td>
+<td id="T_ade69_row44_col5" class="data row44 col5"></td>
+<td id="T_ade69_row44_col6" class="data row44 col6"></td>
 </tr>
 <tr class="even">
-<td id="T_0dd3c_level0_row45" class="row_heading level0 row45" data-quarto-table-cell-role="th">45</td>
-<td id="T_0dd3c_row45_col0" class="data row45 col0">Virginia</td>
-<td id="T_0dd3c_row45_col1" class="data row45 col1">520,131</td>
-<td id="T_0dd3c_row45_col2" class="data row45 col2">520,131</td>
-<td id="T_0dd3c_row45_col3" class="data row45 col3"></td>
-<td id="T_0dd3c_row45_col4" class="data row45 col4"></td>
-<td id="T_0dd3c_row45_col5" class="data row45 col5"></td>
-<td id="T_0dd3c_row45_col6" class="data row45 col6">Total only reported (no breakdown available)</td>
+<td id="T_ade69_level0_row45" class="row_heading level0 row45" data-quarto-table-cell-role="th">45</td>
+<td id="T_ade69_row45_col0" class="data row45 col0">Virginia</td>
+<td id="T_ade69_row45_col1" class="data row45 col1">520,131</td>
+<td id="T_ade69_row45_col2" class="data row45 col2">520,131</td>
+<td id="T_ade69_row45_col3" class="data row45 col3"></td>
+<td id="T_ade69_row45_col4" class="data row45 col4"></td>
+<td id="T_ade69_row45_col5" class="data row45 col5"></td>
+<td id="T_ade69_row45_col6" class="data row45 col6">Total only reported (no breakdown available)</td>
 </tr>
 <tr class="odd">
-<td id="T_0dd3c_level0_row46" class="row_heading level0 row46" data-quarto-table-cell-role="th">46</td>
-<td id="T_0dd3c_row46_col0" class="data row46 col0">Washington</td>
-<td id="T_0dd3c_row46_col1" class="data row46 col1">272,000</td>
-<td id="T_0dd3c_row46_col2" class="data row46 col2">272,000</td>
-<td id="T_0dd3c_row46_col3" class="data row46 col3">272,000</td>
-<td id="T_0dd3c_row46_col4" class="data row46 col4">0</td>
-<td id="T_0dd3c_row46_col5" class="data row46 col5">8,800</td>
-<td id="T_0dd3c_row46_col6" class="data row46 col6">Used reported total (matches offenders only)</td>
+<td id="T_ade69_level0_row46" class="row_heading level0 row46" data-quarto-table-cell-role="th">46</td>
+<td id="T_ade69_row46_col0" class="data row46 col0">Washington</td>
+<td id="T_ade69_row46_col1" class="data row46 col1">272,000</td>
+<td id="T_ade69_row46_col2" class="data row46 col2">272,000</td>
+<td id="T_ade69_row46_col3" class="data row46 col3">272,000</td>
+<td id="T_ade69_row46_col4" class="data row46 col4">0</td>
+<td id="T_ade69_row46_col5" class="data row46 col5">8,800</td>
+<td id="T_ade69_row46_col6" class="data row46 col6">Used reported total (matches offenders only)</td>
 </tr>
 <tr class="even">
-<td id="T_0dd3c_level0_row47" class="row_heading level0 row47" data-quarto-table-cell-role="th">47</td>
-<td id="T_0dd3c_row47_col0" class="data row47 col0">West Virginia</td>
-<td id="T_0dd3c_row47_col1" class="data row47 col1">47,444</td>
-<td id="T_0dd3c_row47_col2" class="data row47 col2">47,444</td>
-<td id="T_0dd3c_row47_col3" class="data row47 col3">47,444</td>
-<td id="T_0dd3c_row47_col4" class="data row47 col4">0</td>
-<td id="T_0dd3c_row47_col5" class="data row47 col5">3,905</td>
-<td id="T_0dd3c_row47_col6" class="data row47 col6">Used reported total (matches offenders only)</td>
+<td id="T_ade69_level0_row47" class="row_heading level0 row47" data-quarto-table-cell-role="th">47</td>
+<td id="T_ade69_row47_col0" class="data row47 col0">West Virginia</td>
+<td id="T_ade69_row47_col1" class="data row47 col1">47,444</td>
+<td id="T_ade69_row47_col2" class="data row47 col2">47,444</td>
+<td id="T_ade69_row47_col3" class="data row47 col3">47,444</td>
+<td id="T_ade69_row47_col4" class="data row47 col4">0</td>
+<td id="T_ade69_row47_col5" class="data row47 col5">3,905</td>
+<td id="T_ade69_row47_col6" class="data row47 col6">Used reported total (matches offenders only)</td>
 </tr>
 <tr class="odd">
-<td id="T_0dd3c_level0_row48" class="row_heading level0 row48" data-quarto-table-cell-role="th">48</td>
-<td id="T_0dd3c_row48_col0" class="data row48 col0">Wisconsin</td>
-<td id="T_0dd3c_row48_col1" class="data row48 col1"></td>
-<td id="T_0dd3c_row48_col2" class="data row48 col2"></td>
-<td id="T_0dd3c_row48_col3" class="data row48 col3"></td>
-<td id="T_0dd3c_row48_col4" class="data row48 col4"></td>
-<td id="T_0dd3c_row48_col5" class="data row48 col5"></td>
-<td id="T_0dd3c_row48_col6" class="data row48 col6"></td>
+<td id="T_ade69_level0_row48" class="row_heading level0 row48" data-quarto-table-cell-role="th">48</td>
+<td id="T_ade69_row48_col0" class="data row48 col0">Wisconsin</td>
+<td id="T_ade69_row48_col1" class="data row48 col1"></td>
+<td id="T_ade69_row48_col2" class="data row48 col2"></td>
+<td id="T_ade69_row48_col3" class="data row48 col3"></td>
+<td id="T_ade69_row48_col4" class="data row48 col4"></td>
+<td id="T_ade69_row48_col5" class="data row48 col5"></td>
+<td id="T_ade69_row48_col6" class="data row48 col6"></td>
 </tr>
 <tr class="even">
-<td id="T_0dd3c_level0_row49" class="row_heading level0 row49" data-quarto-table-cell-role="th">49</td>
-<td id="T_0dd3c_row49_col0" class="data row49 col0">Wyoming</td>
-<td id="T_0dd3c_row49_col1" class="data row49 col1"></td>
-<td id="T_0dd3c_row49_col2" class="data row49 col2"></td>
-<td id="T_0dd3c_row49_col3" class="data row49 col3"></td>
-<td id="T_0dd3c_row49_col4" class="data row49 col4">0</td>
-<td id="T_0dd3c_row49_col5" class="data row49 col5"></td>
-<td id="T_0dd3c_row49_col6" class="data row49 col6"></td>
+<td id="T_ade69_level0_row49" class="row_heading level0 row49" data-quarto-table-cell-role="th">49</td>
+<td id="T_ade69_row49_col0" class="data row49 col0">Wyoming</td>
+<td id="T_ade69_row49_col1" class="data row49 col1"></td>
+<td id="T_ade69_row49_col2" class="data row49 col2"></td>
+<td id="T_ade69_row49_col3" class="data row49 col3"></td>
+<td id="T_ade69_row49_col4" class="data row49 col4">0</td>
+<td id="T_ade69_row49_col5" class="data row49 col5"></td>
+<td id="T_ade69_row49_col6" class="data row49 col6"></td>
 </tr>
 </tbody>
 </table>
@@ -1690,7 +1690,7 @@ Full Enhanced Data with Estimated Totals (All 50 States):</code></pre>
 <section id="export-enhanced-dataset" class="level2">
 <h2 class="anchored" data-anchor-id="export-enhanced-dataset">Export Enhanced Dataset</h2>
 <p>This section exports the enhanced dataset with the new n_total_estimated values and documentation.</p>
-<div id="7dd33771" class="cell" data-execution_count="6">
+<div id="ab81c7a2" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare final dataset with key columns in logical order</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>final_columns <span class="op">=</span> [</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'state'</span>, </span>

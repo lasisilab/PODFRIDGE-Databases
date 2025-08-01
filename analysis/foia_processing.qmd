@@ -131,6 +131,221 @@ For transparency, each state file is processed independently then merged into a 
    * `output/foia/foia_state_metadata.csv` — one row per state summarising coverage and caveats.
      After QC passes, I will freeze `foia_data_clean.csv` to `data/v1.0/foia_state_race_v1.0.csv`.
 
+
+## Helper Functions
+
+The functions below perform each transformation required for harmonizing the state‑level FOIA tables.  
+Every step is documented for transparency and reproducibility.
+
+```{python}
+#| label: helpers
+#| echo: true
+
+import pandas as pd
+from IPython.display import Markdown, display
+
+# Columns retained from every raw table
+COLS_NEEDED = [
+    "state", "offender_type", "variable_category",
+    "variable_detailed", "value", "value_type"
+]
+
+# ------------------------------------------------------------------
+# 1. Ingest and numeric coercion
+# ------------------------------------------------------------------
+def load_state(path):
+    """
+    Read a *_foia_data.csv* file, enforce column order,
+    and convert <1 to 0.5 so that trace counts are retained.
+    Execution halts if non‑numeric values remain.
+    """
+    df = pd.read_csv(path)
+    if "state" not in df.columns:
+        df["state"] = (
+            path.stem.replace("_foia_data", "")
+            .replace("_", " ").title()
+        )
+    df = df[COLS_NEEDED]
+    df["value_source"] = "reported"
+
+    df["value"] = (
+        df["value"].replace({"<1": 0.5})
+        .apply(pd.to_numeric, errors="coerce")
+    )
+    nonnumeric = df[df["value"].isna()]
+    if not nonnumeric.empty:
+        display(Markdown(f"**Non‑numeric rows in {path.name}; please amend**"))
+        display(nonnumeric)
+        raise ValueError("Numeric coercion failure")
+    return df
+
+# ------------------------------------------------------------------
+# 2. Fill missing Male counts and Unknown race counts
+# ------------------------------------------------------------------
+def fill_demographic_gaps(df):
+    """
+    If exactly one gender or the Unknown race category is absent and
+    totals permit a residual, calculate and insert the missing count.
+    """
+    inserts = []
+    for ot in df.offender_type.unique():
+        tot = df.query(
+            "offender_type == @ot and variable_category == 'total' and "
+            "variable_detailed == 'total_profiles' and value_type == 'count'"
+        )
+        if tot.empty:
+            continue
+        total = tot["value"].iat[0]
+
+        # gender residual ----------------------------------------------
+        g = df.query(
+            "offender_type == @ot and variable_category == 'gender' and "
+            "value_type == 'count'"
+        )
+        missing_gender = {"Male", "Female"} - set(g.variable_detailed)
+        if len(g) == 1 and missing_gender:
+            inserts.append({
+                "state"            : df.state.iat[0],
+                "offender_type"    : ot,
+                "variable_category": "gender",
+                "variable_detailed": missing_gender.pop(),
+                "value"            : total - g.value.sum(),
+                "value_type"       : "count",
+                "value_source"     : "calculated"
+            })
+
+        # race residual -----------------------------------------------
+        r = df.query(
+            "offender_type == @ot and variable_category == 'race' and "
+            "value_type == 'count'"
+        )
+        if not r.empty and "Unknown" not in r.variable_detailed.values:
+            gap = total - r.value.sum()
+            if gap > 0:
+                inserts.append({
+                    "state"            : df.state.iat[0],
+                    "offender_type"    : ot,
+                    "variable_category": "race",
+                    "variable_detailed": "Unknown",
+                    "value"            : gap,
+                    "value_type"       : "count",
+                    "value_source"     : "calculated"
+                })
+    if inserts:
+        df = pd.concat([df, pd.DataFrame(inserts)], ignore_index=True)
+    return df
+
+# ------------------------------------------------------------------
+# 3. Construct Combined offender type if absent
+# ------------------------------------------------------------------
+def add_combined(df):
+    """
+    When a state reports Convicted Offender and Arrestee counts but
+    omits Combined, create a Combined block by summing the two.
+    """
+    if "Combined" in df.offender_type.unique():
+        return df
+    required = {"Convicted Offender", "Arrestee"}
+    if not required.issubset(df.offender_type.unique()):
+        return df  # cannot construct
+
+    grp_cols = ["variable_category", "variable_detailed", "value_type"]
+    summed = (
+        df.query("value_type == 'count'")
+        .groupby(grp_cols, as_index=False)["value"].sum()
+    )
+    summed["state"]         = df.state.iat[0]
+    summed["offender_type"] = "Combined"
+    summed["value_source"]  = "calculated"
+    return pd.concat([df, summed], ignore_index=True)
+
+# ------------------------------------------------------------------
+# 4. Derive percentages wherever only counts exist
+# ------------------------------------------------------------------
+def add_percentages(df):
+    """
+    Ensure that every gender and race row has both count and percentage
+    values, derived from the offender‑type total if necessary.
+    """
+    totals = (
+        df.query(
+            "variable_category == 'total' and "
+            "variable_detailed == 'total_profiles' and "
+            "value_type == 'count'"
+        )
+        .set_index("offender_type")["value"]
+        .to_dict()
+    )
+    new_pct_rows = []
+    need_pct = df.query(
+        "value_type == 'count' and variable_category != 'total'"
+    )
+    for _, row in need_pct.iterrows():
+        exists = df[
+            (df.state == row.state) &
+            (df.offender_type == row.offender_type) &
+            (df.variable_category == row.variable_category) &
+            (df.variable_detailed == row.variable_detailed) &
+            (df.value_type == "percentage")
+        ]
+        if not exists.empty:
+            continue
+        pct_value = round(
+            row.value / totals[row.offender_type] * 100, 2
+        )
+        new_pct_rows.append({
+            **row,
+            "value"       : pct_value,
+            "value_type"  : "percentage",
+            "value_source": "calculated"
+        })
+    if new_pct_rows:
+        df = pd.concat([df, pd.DataFrame(new_pct_rows)], ignore_index=True)
+    return df
+
+# ------------------------------------------------------------------
+# 5. Quality‑control utilities
+# ------------------------------------------------------------------
+def counts_consistent(df):
+    """
+    Verifies that demographic counts sum to total_profiles for each
+    offender type and category.
+    """
+    demo_sum = (
+        df.query("value_type == 'count' and variable_category != 'total'")
+        .groupby(["offender_type", "variable_category"])["value"]
+        .sum()
+    )
+    totals = (
+        df.query(
+            "variable_category == 'total' and "
+            "variable_detailed == 'total_profiles' and "
+            "value_type == 'count'"
+        )
+        .set_index("offender_type")["value"]
+    )
+    return all(
+        abs(demo_sum.loc[idx] - totals[idx[0]]) < 1e-6
+        for idx in demo_sum.index
+    )
+
+def percentages_consistent(df):
+    """
+    Verifies that derived or reported percentages sum to 100 ± 0.5 %.
+    """
+    for (ot, cat), grp in df.query(
+        "value_type == 'percentage'"
+    ).groupby(["offender_type", "variable_category"]):
+        if abs(grp.value.sum() - 100) > 0.5:
+            return False
+    return True
+
+
+
+
+
+----
+
 ## Helper Functions
 
 ```{python}

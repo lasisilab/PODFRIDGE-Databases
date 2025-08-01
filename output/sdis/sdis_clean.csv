@@ -1,0 +1,51 @@
+state,n_total_estimated,n_total_reported,n_arrestees,n_offenders,n_forensic,arrestee_collection,fam_search,collection_statute,n_total_estimated_comment,total_method
+Alabama,360000.0,360000.0,,,,yes,unspecified,Ala. Code Sec.36-18-25,Total only reported (no breakdown available),Unknown
+Alaska,79146.0,79146.0,52149.0,26997.0,3866.0,yes,unspecified,AK Stat Sec.44.41.035 (2014),Used reported total (matches offenders + arrestees),Offenders + Arrestees
+Arizona,,,,,,yes,unspecified,AZ Rev Stat Sec.13-610 (2016),,Unknown
+Arkansas,12221.0,12221.0,,,,yes,permitted,AR Code Sec.12-12-1109 & Sec.12-12-1006,Total only reported (no breakdown available),Unknown
+California,3365402.0,3365402.0,,,167053.0,yes,permitted,CA Penal Code Sec.296,Total only reported (forensic reported separately),Unknown
+Colorado,499170.0,499170.0,,,,yes,permitted,CO Rev Stat Sec.16-23-103 (2016),Total only reported (no breakdown available),Unknown
+Connecticut,127940.0,127940.0,,127940.0,23200.0,yes,unspecified,CT Gen Stat Sec.54-102g (2012),Used reported total (matches offenders only),Offenders only
+Delaware,,,0.0,,,no,unspecified,29 DE Code Sec.4713 (2017),,Unknown
+Florida,1713890.0,1713890.0,,,,yes,permitted,FL Stat Sec.943.325 (2016),Total only reported (no breakdown available),Unknown
+Georgia,347145.0,347145.0,,324864.0,22281.0,yes,unspecified,GA Code Sec.35-3-160 (2014),Total with discrepancy (calculation unclear),Unknown
+Hawaii,,,0.0,,,no,unspecified,"HI Rev Stat Sec.844D-31, 39 (2011)",,Unknown
+Idaho,39000.0,39000.0,0.0,39000.0,,no,unspecified,ID Code Sec.19-5506 (2016),Used reported total (matches offenders only),Offenders only
+Illinois,689297.0,689297.0,,689297.0,69927.0,yes,unspecified,730 ILCS Sec.5/5-4-3 (2013),Used reported total (matches offenders only),Offenders only
+Indiana,449000.0,449000.0,144000.0,304000.0,22400.0,yes,unspecified,IN Code Sec.10-13-6-10 (2017),Total with discrepancy (calculation unclear),Unknown
+Iowa,,,0.0,,,no,unspecified,IA Code Sec.81.2 (2016),,Unknown
+Kansas,,,,,,yes,unspecified,KS Stat Sec.21-2511 (2013),,Unknown
+Kentucky,,,0.0,,,no,unspecified,KY Rev Stat Sec.17.170 (1996),,Unknown
+Louisiana,699618.0,699618.0,,,,yes,unspecified,LA Rev Stat Sec.15:609 (2011),Total only reported (no breakdown available),Unknown
+Maine,,,0.0,,,no,unspecified,25 ME Rev Stat Sec.1574 (2017),,Unknown
+Maryland,147803.0,,5525.0,142278.0,,yes,prohibited,MD Public Safety Code Sec.2-504 (2009),Calculated from offenders + arrestees (no total reported),Unknown
+Massachusetts,,,0.0,,,no,unspecified,MA Code ch.22E Sec.3 (2006),,Unknown
+Michigan,,,,,,yes,permitted,Mich. Comp. Laws Sec.750.250m (2006),,Unknown
+Minnesota,180000.0,180000.0,,180000.0,,yes,unspecified,MN Stat Sec.299C.105 (2016),Used reported total (matches offenders only),Offenders only
+Mississippi,118000.0,118000.0,,,,yes,unspecified,MS Code Sec.47-5-183 (2013),Total only reported (no breakdown available),Unknown
+Missouri,400000.0,400000.0,,386000.0,,yes,unspecified,MO Rev Stat Sec.650.055 (2011),Total with discrepancy (calculation unclear),Unknown
+Montana,32284.0,32284.0,0.0,32284.0,878.0,no,permitted,MT Code Sec.44-6-103 (2017),Used reported total (matches offenders only),Offenders only
+Nebraska,,,0.0,,,no,unspecified,NE Code Sec.29-4106 (2017),,Unknown
+Nevada,245000.0,245000.0,,,,yes,unspecified,NV Rev Stat Sec.176.09123 (2013),Total only reported (no breakdown available),Unknown
+New Hampshire,,,0.0,,,no,unspecified,NH Rev Stat Sec.651-C:2 (2015),,Unknown
+New Jersey,32696.0,32696.0,,,,yes,unspecified,NJ Rev Stat Sec.53:1-20.20 (2016),Total only reported (no breakdown available),Unknown
+New Mexico,,,,,,yes,unspecified,NM Stat Sec.29-16-6 (1996); Sec.29-3-10 (2016),,Unknown
+New York,,,0.0,,,no,permitted,NY Exec L Sec.995-C (2014),,Unknown
+North Carolina,350000.0,350000.0,50000.0,300000.0,,yes,unspecified,NC Gen Stat Sec.15A-266.4 (2013),Used reported total (matches offenders + arrestees),Offenders + Arrestees
+North Dakota,,,,,,yes,unspecified,ND Century Code Sec.31-13-03 (2013),,Unknown
+Ohio,,,,,,yes,unspecified,Ohio Rev Code Sec.2901.07 (2015),,Unknown
+Oklahoma,,,,,,yes,unspecified,OK Stat Sec.74-150.27a (2015),,Unknown
+Oregon,,,0.0,,,no,unspecified,OR Rev Stat Sec.137.076 (2011),,Unknown
+Pennsylvania,,,0.0,,,no,unspecified,44 PA Cons Stat Sec.2316 (2017),,Unknown
+Rhode Island,27818.0,27818.0,484.0,27334.0,1798.0,yes,unspecified,RI Gen L Sec.12-1.5-8 (2014),Used reported total (matches offenders + arrestees),Offenders + Arrestees
+South Carolina,175629.0,175629.0,,,11127.0,yes,unspecified,SC Code Sec.23-3-620 (2012),Total only reported (forensic reported separately),Unknown
+South Dakota,56200.0,56200.0,,,,yes,unspecified,SD Codified L Sec.23-5A-6; Sec.23-5A-5.2 (2013),Total only reported (no breakdown available),Unknown
+Tennessee,518614.0,518614.0,226569.0,292045.0,,yes,unspecified,TN Code Sec.40-35-321 (2010),Used reported total (matches offenders + arrestees),Offenders + Arrestees
+Texas,1308774.0,1308774.0,,1308774.0,,yes,permitted,TX Gov’t Code Sec.411.1471,Used reported total (matches offenders only),Offenders only
+Utah,,,,,,yes,permitted,UT Code Sec.53-10-404 (2006),,Unknown
+Vermont,,,0.0,,,no,unspecified,20 V.S.A. Sec.1932 (2017),,Unknown
+Virginia,520131.0,520131.0,,,,yes,permitted,VA Code Sec.19.2-310.2 (2006),Total only reported (no breakdown available),Unknown
+Washington,272000.0,272000.0,0.0,272000.0,8800.0,no,unspecified,WA Rev Code Sec.43.43.754 (2005),Used reported total (matches offenders only),Offenders only
+West Virginia,47444.0,47444.0,0.0,47444.0,3905.0,no,unspecified,WV Code Sec.15-2B-6 (2012),Used reported total (matches offenders only),Offenders only
+Wisconsin,,,,,,yes,permitted,WI Code Sec.973.047 (2011),,Unknown
+Wyoming,,,0.0,,,no,permitted,WY Stat Sec.7-19-403 (1997),,Unknown
