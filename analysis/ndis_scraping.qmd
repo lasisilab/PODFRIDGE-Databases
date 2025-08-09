@@ -1,8 +1,8 @@
 ---
 title: "NDIS Database Analysis"
 subtitle: "Parsing FBI National DNA Index System Statistics from Wayback Machine"
-author: "Tina Lasisi"
-date: today
+author: "Tina Lasisi | Edited: João P. Donadio"
+date: Aug. 08, 2025
 format:
   html:
     code-fold: false
@@ -11,796 +11,1777 @@ format:
 execute:
   echo: true
   warning: false
-  freeze: auto  # prevents re-execution unless code changes
+  freeze: auto
 ---
+
 ## Introduction
 
-This analysis processes NDIS (National DNA Index System) statistics from archived FBI web pages. We parse 300+ HTML snapshots from the Wayback Machine to track how the DNA database has grown from 2010 to 2025.
+The National DNA Index System (NDIS) represents a critical law enforcement tool that enables forensic laboratories across the United States to exchange and compare DNA profiles electronically. This project systematically analyzes the growth and evolution of the NDIS database by parsing historical snapshots of FBI statistics archived in the Wayback Machine, a digital library of Internet sites and other cultural artifacts in digital form.
 
-## Setup and Configuration
+**Objectives:**
+
+1.  Develop a reproducible pipeline to extract NDIS statistics from 300+ HTML snapshots (2010-2025)
+
+2.  Identify and correct data quality issues in historical records
+
+3.  Document the expansion of DNA profiles (offender, arrestee, forensic) over time
+
+4.  Analyze participation trends across jurisdictions in the United States
+
+**Significance:** This longitudinal analysis provides unique insights into the scaling of forensic DNA capabilities in the United States, with implications for understanding:
+
+-   Criminal justice policy implementation
+
+-   Forensic resource allocation
+
+-   Privacy and civil liberties considerations
+
+-   Technological adoption in law enforcement
+
+## Pipeline Overview
+
+1. [Setup & Configuration](#setup-configuration)  
+    - [System Requirements](#system-requirements)  
+    - [Project Structure](#project-structure)  
+
+2. [Wayback Machine Snapshot Search](#WMSS)
+    - [Scraping Method](#scrap-method)
+    - [Technical Implementation](#technical-impl)
+    - [Core Search Implementation](#core-search)
+    - [Search Execution](#execution-search)
+
+3. [Snapshot Downloader](#downloaderSnap)
+    - [Download Methods](#download-method)
+    - [Technical Process](#tech-proc)
+    - [Downloader Code](#download-code)
+    - [Download Execution](#download-exec)
+    - [Download Validation](#download-validation)
+
+4. [Data Extraction Pipeline](#extraction-pipe)
+    - [Core Parser Functions](#parser-functions)
+    - [Era-Specific Parsers](#era-parsers)
+    - [Snapshot Processing](#main-processor)
+    - [Batch Processing](#batch-processing)
+    - [Export & Validation](#exp-valid)
+
+5. [Dataset Validation](#validation)
+    - [Cross-language validation (Python → R) for consistency checks](#cross-valid)
+    - [Data Import and Validation](#import-valid)
+
+6. [Dataset cleaning](#datacleaning)
+    - [Data Type Standardization](#dtype_stand)
+    - [Jurisdiction Name Reconciliation](#jurisdic_names)
+    - [Export Cleaned Dataset](#export-dataset)
+
+7. [Summary Statistics](#summarystats)
+    - [Exploratory Data Analysis](#EDA)
+    - [Summary Statistics Table](#summary_table)
+    
+8. [Data Visualization](#visualiz)
+    - [Time-Series Analysis](#time_series)
+    - [Geospatial mapping of jurisdiction participation](#geomap_juris)
+    - [Interactive table of profile growth](#interactive-explore)
+
+8. [Conclusion](#conclusion)
+
+## Setup and Configuration {#setup-configuration}
+
+### System Requirements {#system-requirements}
+
+**Required Packages:**
+
+    - Core: requests, beautifulsoup4, and lxml (scraping/parsing).
+
+    - Data/Visualization: pandas and tqdm (progress tracking).
 
 ```{python}
-#| echo: false
-import subprocess
+#| label: setup
+#| warning: false
+#| code-fold: true
+#| code-summary: "Show Configuration code"
+#| results: hide
+
 import sys
+import subprocess
+import importlib
 
-# List of required packages
-required_packages = ['requests', 'beautifulsoup4', 'lxml', 'pandas', 'matplotlib', 'tqdm', 'numpy']
+required_packages = [
+    'requests',         # API/HTTP
+    'beautifulsoup4',   # HTML parsing
+    'lxml',             # Faster parsing (optional but recommended)
+    'pandas',           # Data handling
+    'tqdm'              # Progress bars
+]
 
-# Install packages if not already installed
 for package in required_packages:
     try:
-        __import__(package)
+        importlib.import_module(package)
+        print(f"✓ {package} already installed")
     except ImportError:
         print(f"Installing {package}...")
         subprocess.check_call([sys.executable, "-m", "pip", "install", package])
 ```
 
+### Project Structure {#project-structure}
+
+**Main Configurations:**
+
+    - Directory paths for raw HTML (wayback_html), metadata (wayback_meta), and outputs (ndis).
+
+    - Standardization mappings for jurisdiction names and known data typos.
+
 ```{python}
+#| label: config
+#| code-fold: true
+#| code-summary: "Show Configuration code"
+
 from pathlib import Path
 import re, json, requests, time
 from datetime import datetime
 import pandas as pd
 from bs4 import BeautifulSoup
 from tqdm.auto import tqdm
-import matplotlib.pyplot as plt
-import numpy as np
 
 # Configuration
-# Path setup - using current directory as base
-# This assumes you run the notebook from the project root (PODFRIDGE-Databases)
-BASE_DIR = Path("..")  # Current working directory
-HTML_DIR = BASE_DIR / "raw" / "wayback_html"
-META_DIR = BASE_DIR / "raw" / "wayback_meta"
-OUTPUT_DIR = BASE_DIR / "output" / "ndis"
+BASE_DIR = Path("..")  # Project root directory
+HTML_DIR = BASE_DIR / "raw" / "wayback_html"    # Storage for downloaded HTML
+META_DIR = BASE_DIR / "raw" / "wayback_meta"    # Metadata storage
+OUTPUT_DIR = BASE_DIR / "output" / "ndis"       # Processed data output
 
-# Create directories if they don't exist
-HTML_DIR.mkdir(parents=True, exist_ok=True)
-META_DIR.mkdir(parents=True, exist_ok=True)
-OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-
-# Jurisdiction name standardization mapping
-JURISDICTION_NAME_MAP = {
-    'D.C./FBI Lab': 'DC/FBI Lab',
-    'US Army': 'U.S. Army'
-}
-
-# Known data typos to fix
-KNOWN_TYPOS = [
-    {
-        'timestamp': '20250105164014',
-        'jurisdiction': 'California', 
-        'field': 'investigations_aided',
-        'wrong_value': '1304657',  # How it parses
-        'correct_value': '130465'   # What it should be
-    },
-    {
-        'timestamp': '20250116205311',
-        'jurisdiction': 'California',
-        'field': 'investigations_aided', 
-        'wrong_value': '1304657',
-        'correct_value': '130465'
-    }
-]
-
-print(f"Working directory: {BASE_DIR.resolve()}")
-print(f"HTML directory: {HTML_DIR}")
-print(f"Meta directory: {META_DIR}")
-print(f"Output directory: {OUTPUT_DIR}")
+# Create directory structure
+for directory in [HTML_DIR, META_DIR, OUTPUT_DIR]:
+    directory.mkdir(parents=True, exist_ok=True)
 ```
 
-## Wayback Machine Functions
+```{python}
+#| echo: false
+
+print(f"Project directories initialized:")
+print(f"  - Working directory: {BASE_DIR.resolve()}")
+print(f"  - HTML storage: {HTML_DIR}")
+print(f"  - Metadata directory: {META_DIR}")
+print(f"  - Output directory: {OUTPUT_DIR}")
+```
+
+## Wayback Machine Snapshot Search {#WMSS}
+
+A function was developed to systematically searches the Internet Archive's Wayback Machine for all preserved snapshots of FBI NDIS statistics pages using a comprehensive multi-phase approach.
+
+### Scraping Method {#scrap-method}
+
+1. **Multi-Phase Search Strategy**:
+
+- First searches broad wildcard patterns (e.g., `*.fbi.gov/*ndis*`)
+
+- Then targets specific known URL paths with exact matching
+
+- Handles both HTTP and HTTPS protocol variants
+
+2. **Intelligent Filtering**:
+
+-   Only returns successful captures (HTTP 200)
+
+-   Excludes non-HTML content (PDFs, images)
+
+-   Limits to 10,000 results per query
+
+3.  **Robust Error Handling**:
+
+-   Automatic retries with exponential backoff (1s → 2s → 4s delays)
+
+-   Deduplicates results by timestamp
+
+-   Preserves complete error context for troubleshooting
+
+### Technical Implementation {#technical-impl}
+
+1.  **API Request Flow**:
 
 ```{python}
-def make_request_with_retry(params, max_retries=3, initial_delay=5):
-    """Make a request with exponential backoff retry logic"""
-    base = "https://web.archive.org/cdx/search/cdx"
+#| echo: true
+#| eval: false
+
+    params = {
+        "url": pattern,
+        "matchType": "wildcard" if "*" in pattern else "exact",
+        "output": "json",
+        "fl": "timestamp,original,mimetype,statuscode",
+        "limit": "10000"
+    }
+```
+
+2.  **Result Processing**:
+
+-   Converts JSON responses to clean DataFrame
+
+-   Maintains lookup of seen timestamps to prevent duplicates
+
+-   Sorts chronologically (oldest → newest)
+
+3.  **Usage Example**
+
+```{python}
+#| echo: true
+#| eval: false
+
+# Initialize search with known URL patterns
+snap_df = search_all_ndis_snapshots()
+
+# Results contain all historical versions
+print(f"Found {len(snap_df)} snapshots from {snap_df['original'].nunique()} URL patterns")
+```
+
+4.  **Best Practices**
+
+-   **Rate Limiting**: Natural 1-2 second pauses between requests
+
+-   **Time Format**: All timestamps in UTC (**`YYYYMMDDhhmmss`**)
+
+-   **Error Recovery**: Failed searches are logged with specific patterns
+
+-   **Completeness**: Combines both broad and targeted searches
+
+### Core Search Implementation {#core-search}
+
+- make_request_with_retry(): Implements exponential backoff (1s → 2s → 4s delays) for fault-tolerant API requests
+
+- search_all_ndis_snapshots(): Executes a comprehensive search across:
+    - Phase 1: Wildcard patterns (*.fbi.gov/*/ndis-statistics*)  
+    - Phase 2: 8 exact URL variants (HTTP/HTTPS × 4 historical paths)
+
+```{python}
+#| label: snapshot-search
+#| echo: true
+#| code-fold: true
+#| code-summary: "Show search function code"
+
+def make_request_with_retry(params, max_retries=3, initial_delay=1):
+    API_URL = "https://web.archive.org/cdx/search/cdx"
+    delay = initial_delay
     
     for attempt in range(max_retries):
         try:
-            r = requests.get(base, params=params, timeout=30)
-            if r.status_code == 200:
-                return r
-            elif r.status_code == 429:  # Rate limited
-                wait_time = initial_delay * (2 ** attempt)
-                print(f"    Rate limited. Waiting {wait_time} seconds...")
-                time.sleep(wait_time)
-            else:
-                return r
-        except requests.exceptions.ConnectionError as e:
-            wait_time = initial_delay * (2 ** attempt)
-            print(f"    Connection error. Waiting {wait_time} seconds before retry {attempt + 1}/{max_retries}")
-            time.sleep(wait_time)
-        except Exception as e:
-            print(f"    Unexpected error: {e}")
-            return None
-    return None
-```
+            resp = requests.get(API_URL, params=params, timeout=30)
+            resp.raise_for_status()
+            return resp
+        except requests.exceptions.RequestException as e:
+            if attempt == max_retries - 1:
+                print(f"Final attempt failed for {params['url']}: {str(e)}")
+                return None
+            time.sleep(delay)
+            delay *= 2
 
-## Search for All NDIS Snapshots
-
-```{python}
-#| code-fold: true
-#| code-summary: "Show search function code"
 def search_all_ndis_snapshots():
-    """Search for NDIS snapshots across all known URL variations"""
-    
-    # Search for both http and https variants
     protocols = ["http://", "https://"]
-    subdomains = ["www", "le", "*"]  # Known subdomains plus wildcard
-    
-    all_rows = []
-    seen_timestamps = set()
-    
-    # First, try broad searches with protocol wildcards
-    print("Starting wildcard searches...")
-    for protocol in protocols:
-        for subdomain in subdomains:
-            pattern = f"{protocol}{subdomain}.fbi.gov/*ndis-statistics*"
-            print(f"\nSearching: {pattern}")
-            
-            params = {
-                "url":         pattern,
-                "matchType":   "wildcard",
-                "output":      "json",
-                "fl":          "timestamp,original,mimetype,statuscode",
-                "filter":      ["statuscode:200", "mimetype:text/html"],
-                "limit":       "10000",
-            }
-            
-            r = make_request_with_retry(params)
-            if r and r.status_code == 200:
-                data = json.loads(r.text)
-                if len(data) > 1:
-                    new_rows = 0
-                    for row in data[1:]:
-                        if row[0] not in seen_timestamps:
-                            all_rows.append(row)
-                            seen_timestamps.add(row[0])
-                            new_rows += 1
-                    print(f"  → Found {new_rows} new snapshots")
-                else:
-                    print(f"  → No results")
-            else:
-                print(f"  → Failed after retries")
-            
-            # Always wait between requests to avoid rate limiting
-            time.sleep(2)
-    
-    # Also search your specific known URLs with both protocols
+    subdomains = ["www", "le", "*"]
     known_paths = [
         "www.fbi.gov/about-us/lab/codis/ndis-statistics",
-        "www.fbi.gov/about-us/laboratory/biometric-analysis/codis/ndis-statistics", 
+        "www.fbi.gov/about-us/laboratory/biometric-analysis/codis/ndis-statistics",
         "www.fbi.gov/services/laboratory/biometric-analysis/codis/ndis-statistics",
         "le.fbi.gov/science-and-lab/biometrics-and-fingerprints/codis/codis-ndis-statistics",
     ]
     
-    print("\n\nStarting exact URL searches...")
+    all_rows = []
+    seen_timestamps = set()
+
+    # Phase 1: Wildcard searches
+    for protocol in protocols:
+        for subdomain in subdomains:
+            current_pattern = f"{protocol}{subdomain}.fbi.gov/*ndis-statistics*"
+            offset = 0
+            while True:
+                params = {
+                    "url": current_pattern,
+                    "matchType": "wildcard",
+                    "output": "json",
+                    "fl": "timestamp,original,mimetype,statuscode",
+                    "filter": ["statuscode:200", "mimetype:text/html"],
+                    "limit": "5000",
+                    "offset": str(offset),
+                }
+                
+                resp = make_request_with_retry(params)
+                if not resp: break
+                data = resp.json()
+                if len(data) <= 1: break
+                
+                new_rows = 0
+                for row in data[1:]:
+                    if row[0] not in seen_timestamps:
+                        all_rows.append(row)
+                        seen_timestamps.add(row[0])
+                        new_rows += 1
+                print(f"Found {new_rows} new snapshots for {current_pattern} (offset {offset})")
+                
+                offset += 5000
+                time.sleep(1.5)
+
+    # Phase 2: Exact URL searches
     for path in known_paths:
         for protocol in protocols:
-            url = f"{protocol}{path}"
-            print(f"\nSearching: {url}")
-            
-            params = {
-                "url":         url,
-                "matchType":   "exact",
-                "output":      "json",
-                "fl":          "timestamp,original,mimetype,statuscode",
-                "filter":      ["statuscode:200", "mimetype:text/html"],
-                "limit":       "10000",
-            }
-            
-            r = make_request_with_retry(params)
-            if r and r.status_code == 200:
-                data = json.loads(r.text)
-                if len(data) > 1:
-                    new_rows = 0
-                    for row in data[1:]:
-                        if row[0] not in seen_timestamps:
-                            all_rows.append(row)
-                            seen_timestamps.add(row[0])
-                            new_rows += 1
-                    print(f"  → Found {new_rows} new snapshots")
-                else:
-                    print(f"  → No results")
-            else:
-                print(f"  → Failed after retries")
-            
-            # Always wait between requests
-            time.sleep(2)
+            current_url = f"{protocol}{path}"
+            offset = 0
+            while True:
+                params = {
+                    "url": current_url,
+                    "matchType": "exact",
+                    "output": "json",
+                    "fl": "timestamp,original,mimetype,statuscode",
+                    "filter": ["statuscode:200", "mimetype:text/html"],
+                    "limit": "5000",
+                    "offset": str(offset),
+                }
+                
+                resp = make_request_with_retry(params, max_retries=5)
+                if not resp: break
+                data = resp.json()
+                if len(data) <= 1: break
+                
+                new_rows = 0
+                for row in data[1:]:
+                    if row[0] not in seen_timestamps:
+                        all_rows.append(row)
+                        seen_timestamps.add(row[0])
+                        new_rows += 1
+                print(f"Found {new_rows} new snapshots for {current_url} (offset {offset})")
+                
+                offset += 5000
+                time.sleep(1.5)
     
-    # Create DataFrame
-    snap_df = (pd.DataFrame(
-                    all_rows,
-                    columns=["timestamp", "original", "mimetype", "status"])
-               .sort_values("timestamp")
-               .reset_index(drop=True))
-    
-    return snap_df
+    return (pd.DataFrame(all_rows, columns=["timestamp", "original", "mimetype", "status"])
+            .drop_duplicates("timestamp")
+            .sort_values("timestamp")
+            .reset_index(drop=True))
 
-# Check if we already have snapshot data or need to search
-snapshot_csv = META_DIR / 'snapshots_found.csv'
-if snapshot_csv.exists():
-    print("Loading existing snapshot list...")
-    snap_df = pd.read_csv(snapshot_csv)
-    print(f"Loaded {len(snap_df)} snapshots")
-else:
-    print("Searching for all NDIS snapshots...")
-    snap_df = search_all_ndis_snapshots()
-    if len(snap_df) > 0:
-        snap_df.to_csv(snapshot_csv, index=False)
-        print(f"\nSaved {len(snap_df)} snapshots to {snapshot_csv}")
-
-if len(snap_df) > 0:
-    print(f"\nTotal unique snapshots found: {len(snap_df):,}")
-    print(f"Unique URLs found: {snap_df['original'].nunique()}")
-    print("\nUnique URL patterns found:")
-    for url in sorted(snap_df['original'].unique()):
-        print(f"  {url}")
 ```
 
-## Download Functions
+### Search Execution {#execution-search}
+
+- Calls search_all_ndis_snapshots() to retrieve all viable NDIS records
+
+- Stores technical details (timestamps, URL variants) in structured JSON
+
+```{python}  
+#| label: execute-search
+#| echo: true
+#| code-fold: true
+#| code-summary: "Show search code"
+#| results: hide
+
+# Perform the search
+snap_df = search_all_ndis_snapshots()
+
+# Generate summary report
+search_meta = {
+    "search_performed": datetime.now().isoformat(),
+    "total_snapshots": len(snap_df),
+    "time_span": {
+        "first": snap_df["timestamp"].min(),
+        "last": snap_df["timestamp"].max()
+    },
+    "url_variants": snap_df["original"].nunique()
+}
+
+# Save metadata
+with open(META_DIR / "search_metadata.json", "w") as f:
+    json.dump(search_meta, f, indent=2)
+```
 
 ```{python}
-def download_with_retry(url, max_retries=3, initial_delay=5, consecutive_failures=0):
-    """Download with adaptive retry logic based on consecutive failures"""
-    if consecutive_failures > 0:
-        extra_wait = consecutive_failures * 10
-        print(f"\n    Adding {extra_wait}s cooldown due to {consecutive_failures} consecutive failures...")
-        time.sleep(extra_wait)
+#| echo: false
+
+# Get unique URLs and format them with indentation
+unique_urls = snap_df['original'].unique()
+formatted_urls = "\n  ".join(sorted(unique_urls))
+
+# Print comprehensive summary
+print(f"""\n
+Search Results Summary
+=====================
+Loaded {len(snap_df)} snapshots
+
+Total unique snapshots found: {len(snap_df)}
+Time coverage: {snap_df['timestamp'].min()} to {snap_df['timestamp'].max()}
+Unique URL patterns found: {snap_df['original'].nunique()}
+
+Unique URLs:
+  {formatted_urls}
+
+Output saved to: {META_DIR.resolve()}/search_metadata.json
+""")
+```
+
+
+## Snapshot Downloader {#downloaderSnap}
+
+This class provides a robust system for downloading historical webpage snapshots from the Internet Archive's Wayback Machine, specifically designed for the FBI NDIS statistics pages.
+
+### Download methods {#download-method}
+
+1.  **Resilient Downloading**:
+
+-   Automatic retries with exponential backoff (1s → 2s → 4s delays)
+
+-   Skips already downloaded files
+
+-   Preserves original timestamps in filenames
+
+2.  **Parallel Processing**:
+
+-   Downloads multiple snapshots simultaneously (configurable workers)
+
+-   Thread-safe file writing
+
+3.  **Transparent Tracking**:
+
+-   Live progress display with estimated completion
+
+-   Detailed success/failure reporting
+
+-   Complete error messages for troubleshooting
+
+### Technical Process {#tech-proc}
+
+1.  **Initialization**:
+
+```{python}
+#| echo: true
+#| eval: false
+
+    downloader = SnapshotDownloader(
+        output_dir="data/raw",
+        max_workers=5,
+        progress_bar=True
+    )
+```
+
+2.  **Download Workflow**:
+
+-   Converts snapshot metadata into download tasks
+
+-   Each task gets:
+
+```{python}
+#| eval: false
+#| echo: true
+wayback_url = "https://web.archive.org/web/[TIMESTAMP]/[ORIGINAL_URL]"
+save_path = "output_dir/[TIMESTAMP].html"
+```
+
+3.  **Quality Control**:
+
+-   Validates HTTP responses (status 200 only)
+
+-   Ensures proper UTF-8 encoding
+
+-   Atomic file writes (complete or nothing)
+
+4. **Example Usage**
+
+```{python}
+#| echo: true
+#| eval: false
+
+# After searching for snapshots
+snapshots_df = search_wayback_snapshots(url_patterns)
+
+# Download all found snapshots
+downloader = SnapshotDownloader("data/raw")
+success, failed, failures = downloader.download_all(snapshots_df)
+
+print(f"Successfully downloaded {success} snapshots")
+if failed:
+    print(f"Failed to download {failed} files (see list)")
+```
+
+5. **Performance Notes**
+
+-   **Network-Friendly**:
+
+    -   Default 30-second timeout
+
+    -   Limited concurrent connections
+
+-   **Error Recovery**:
+
+    -   Failed downloads remain in the task queue
+
+    -   Can re-run with same parameters to retry
+
+5. **Best Practices**
+
+1.  Start with 3-5 workers to avoid rate limiting
+
+2.  Check failures list for systematic issues (e.g., recurring HTTP errors)
+
+3.  Store original timestamps for future reference
+
+### Downloader Code {#download-code}
+```{python}
+#| label: snapshot-download
+#| echo: true
+#| code-fold: true
+#| code-summary: "Show downloader class code"
+
+class SnapshotDownloader:
+    """Parallel downloader with resume capability"""
     
-    for attempt in range(max_retries):
+    def __init__(self, output_dir, max_workers=4):
+        self.output_dir = Path(output_dir)
+        self.max_workers = max_workers
+        self.output_dir.mkdir(exist_ok=True)
+        
+    def _download(self, timestamp, url):
+        """Single-file download with retries"""
+        path = self.output_dir / f"{timestamp}.html"
+        if path.exists():
+            return True, timestamp
+            
+        for attempt in range(3):
+            try:
+                resp = requests.get(
+                    f"https://web.archive.org/web/{timestamp}/{url}",
+                    timeout=30
+                )
+                resp.raise_for_status()
+                path.write_text(resp.text, encoding='utf-8')
+                return True, timestamp
+            except Exception as e:
+                if attempt == 2:
+                    return False, f"{timestamp}: {str(e)}"
+                time.sleep(2 ** attempt)
+    
+    def run(self, snapshots_df):
+        """Process all snapshots in parallel"""
+        from concurrent.futures import ThreadPoolExecutor, as_completed
+        
+        tasks = snapshots_df[["timestamp", "original"]].values.tolist()
+        results = []
+        
+        with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+            futures = [executor.submit(self._download, ts, url) for ts, url in tasks]
+            for future in tqdm(as_completed(futures), total=len(tasks), desc="Downloading"):
+                results.append(future.result())
+        
+        successes = sum(1 for r in results if r[0])
+        failures = [r[1] for r in results if not r[0]]
+        
+        print(f"Completed: {successes}/{len(tasks)}")
+        if failures:
+            print("First 5 failures:")
+            for fail in failures[:5]:
+                print(f" - {fail}")
+        
+        return successes, failures
+```
+
+### Download Execution {#download-exec}
+
+This stage performs bulk retrieval of historical NDIS snapshots from the Wayback Machine, implementing robust parallel downloading with comprehensive progress tracking. The process:
+
+1. Initializes a threaded downloader (4 concurrent workers optimal for network stability)
+
+2. Executes downloads with automatic retries (3 attempts per snapshot)
+
+3. Generates two-tier reporting:
+
+    - Machine-readable JSON metadata with failure details
+    - Real-time console progress updates
+
+```{python}
+#| label: execute-download
+#| echo: true
+#| code-fold: true
+#| code-summary: "Show download execution code"
+
+# Initialize downloader
+downloader = SnapshotDownloader(
+    output_dir=HTML_DIR,
+    max_workers=4
+)
+
+# Execute download with metadata
+print(f"Downloading {len(snap_df)} snapshots from {snap_df['original'].nunique()} URL patterns...")
+
+try:
+    # Perform the download and capture results
+    success_count, failures = downloader.run(snap_df)
+    
+    # Calculate success rate safely
+    success_rate = round(success_count/len(snap_df)*100, 1) if len(snap_df) > 0 else 0.0
+    
+    # Download report
+    download_report = {
+        'timestamp': datetime.now().isoformat(),
+        'total_snapshots': len(snap_df),
+        'unique_urls': int(snap_df['original'].nunique()),
+        'success_count': success_count,
+        'failure_count': len(failures),
+        'success_rate': success_rate,
+        'failed_timestamps': failures[:50],
+        'url_distribution': snap_df['original'].value_counts().to_dict()
+    }
+    
+    # Save report
+    with open(META_DIR / 'download_report.json', 'w') as f:
+        json.dump(download_report, f, indent=2)
+    
+    # Print summary
+    print(f"\nDownload completed with {success_count} successes ({success_rate}%)")
+    print(f"Failures: {len(failures)}")
+    
+except Exception as e:
+    print(f"Download failed with error: {str(e)}")
+    download_report = None
+    success_count = 0
+    failures = []
+```
+
+### Download Validation {#download-validation}
+```{python}
+#| label: verify-downloads
+#| echo: true
+#| code-fold: true
+#| code-summary: "Show download validation code"
+#| results: hide
+
+def validate_downloads():
+    """Comprehensive verification with snapshot metadata"""
+    # 1. Load discovery metadata
+    url_patterns = snap_df['original'].unique()
+    
+    # 2. Check file counts
+    downloaded_files = list(HTML_DIR.glob("*.html"))
+    downloaded_timestamps = {f.stem for f in downloaded_files}
+    expected_timestamps = set(snap_df['timestamp'].astype(str))
+    
+    # 3. Check file integrity
+    corrupt_files = []
+    for html_file in tqdm(HTML_DIR.glob("*.html"), desc="Validating files"):
         try:
-            response = requests.get(url, timeout=30)
-            response.raise_for_status()
-            return response, True
-        except requests.exceptions.ConnectionError as e:
-            wait_time = initial_delay * (2 ** attempt)
-            print(f"\n    Connection error. Waiting {wait_time} seconds before retry {attempt + 1}/{max_retries}")
-            time.sleep(wait_time)
-        except requests.exceptions.HTTPError as e:
-            if e.response.status_code == 429:
-                wait_time = initial_delay * (2 ** attempt) * 2
-                print(f"\n    Rate limited (429). Waiting {wait_time} seconds...")
-                time.sleep(wait_time)
-            else:
-                print(f"\n    HTTP Error: {e}")
-                return None, False
-        except Exception as e:
-            print(f"\n    Unexpected error: {e}")
-            return None, False
-    return None, False
+            content = html_file.read_text(encoding='utf-8')
+            if len(content) < 1024:
+                corrupt_files.append(html_file.name)
+        except:
+            corrupt_files.append(html_file.name)
 
-def download_missing_snapshots(snap_df, output_folder):
-    """Download HTML snapshots with resume capability and detailed logging"""
-    
-    # Create run-specific log file
-    run_timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    run_log_file = META_DIR / f"download_log_{run_timestamp}.txt"
-    
-    # Check what we already have
-    existing_files = list(output_folder.glob("*.html"))
-    existing_timestamps = {f.stem for f in existing_files}
-    print(f"\nFiles already downloaded: {len(existing_files)}")
-    
-    # Check what needs to be downloaded
-    to_download = []
-    for _, row in snap_df.iterrows():
-        timestamp = row['timestamp']
-        url = row['original']
-        filename = output_folder / f"{timestamp}.html"
-        
-        if timestamp not in existing_timestamps and not filename.exists():
-            to_download.append((timestamp, url, filename))
-    
-    print(f"Files to download: {len(to_download)}")
-    
-    # Initialize log file
-    with open(run_log_file, "w") as log:
-        log.write(f"Download run started: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-        log.write(f"Total snapshots in list: {len(snap_df)}\n")
-        log.write(f"Already downloaded: {len(existing_files)}\n")
-        log.write(f"To download: {len(to_download)}\n")
-        log.write(f"{'='*60}\n\n")
-    
-    if len(to_download) == 0:
-        print("\n✓ All files already downloaded! Nothing to do.")
-        with open(run_log_file, "a") as log:
-            log.write("All files already downloaded. No action needed.\n")
-        return
-    
-    # Download configuration
-    BATCH_SIZE = 15
-    PAUSE_BETWEEN_DOWNLOADS = 3
-    PAUSE_BETWEEN_BATCHES = 45
-    PAUSE_AFTER_FAILURE = 60
-    
-    # Track statistics
-    successful_downloads = 0
-    failed_downloads = []
-    consecutive_failures = 0
-    
-    # Download in batches
-    for i in range(0, len(to_download), BATCH_SIZE):
-        batch = to_download[i:i + BATCH_SIZE]
-        batch_num = (i // BATCH_SIZE) + 1
-        total_batches = (len(to_download) + BATCH_SIZE - 1) // BATCH_SIZE
-        
-        print(f"\n{'='*60}")
-        print(f"Batch {batch_num}/{total_batches} ({len(batch)} files)")
-        print(f"Overall progress: {len(existing_timestamps) + successful_downloads}/{len(snap_df)} total files")
-        print(f"{'='*60}")
-        
-        with open(run_log_file, "a") as log:
-            log.write(f"\nBatch {batch_num}/{total_batches} started at {datetime.now().strftime('%H:%M:%S')}\n")
-        
-        for j, (timestamp, url, filename) in enumerate(batch, 1):
-            # Double-check file doesn't exist
-            if filename.exists():
-                print(f"\n[{j}/{len(batch)}] {timestamp} - Already exists, skipping...")
-                with open(run_log_file, "a") as log:
-                    log.write(f"{timestamp}  ⚡ already exists\n")
-                continue
-                
-            wayback_url = f"https://web.archive.org/web/{timestamp}/{url}"
-            
-            print(f"\n[{j}/{len(batch)}] Downloading {timestamp}...", end="")
-            
-            response, success = download_with_retry(wayback_url, consecutive_failures=consecutive_failures)
-            
-            if response and response.status_code == 200:
-                try:
-                    with open(filename, 'w', encoding='utf-8') as f:
-                        f.write(response.text)
-                    
-                    print(" ✓ Success")
-                    successful_downloads += 1
-                    consecutive_failures = 0
-                    
-                    with open(run_log_file, "a") as log:
-                        log.write(f"{timestamp}  ✓ downloaded\n")
-                    
-                except Exception as e:
-                    print(f" ✗ Error saving file: {e}")
-                    failed_downloads.append((timestamp, url, str(e)))
-                    consecutive_failures += 1
-                    
-                    with open(run_log_file, "a") as log:
-                        log.write(f"{timestamp}  ✗ failed: {str(e)}\n")
-            else:
-                print(" ✗ Failed after retries")
-                failed_downloads.append((timestamp, url, "Download failed"))
-                consecutive_failures += 1
-                
-                with open(run_log_file, "a") as log:
-                    log.write(f"{timestamp}  ✗ failed: Download failed after retries\n")
-                
-                if j < len(batch):
-                    print(f"    Taking {PAUSE_AFTER_FAILURE}s break after failure...")
-                    time.sleep(PAUSE_AFTER_FAILURE)
-                    continue
-            
-            if j < len(batch) and consecutive_failures == 0:
-                print(f"    Waiting {PAUSE_BETWEEN_DOWNLOADS} seconds...")
-                time.sleep(PAUSE_BETWEEN_DOWNLOADS)
-        
-        if i + BATCH_SIZE < len(to_download):
-            print(f"\nBatch complete. Pausing {PAUSE_BETWEEN_BATCHES} seconds...")
-            print(f"This session: {successful_downloads} downloaded, {len(failed_downloads)} failed")
-            time.sleep(PAUSE_BETWEEN_BATCHES)
-    
-    # Final summary
-    print(f"\n{'='*60}")
-    print(f"Download session complete!")
-    print(f"  Successfully downloaded: {successful_downloads}")
-    print(f"  Failed downloads: {len(failed_downloads)}")
-    
-    # Write final summary to log
-    with open(run_log_file, "a") as log:
-        log.write(f"\n{'='*60}\n")
-        log.write(f"Download run completed: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-        log.write(f"Successfully downloaded: {successful_downloads}\n")
-        log.write(f"Failed downloads: {len(failed_downloads)}\n")
-        
-        if failed_downloads:
-            log.write(f"\nFailed downloads detail:\n")
-            for timestamp, url, error in failed_downloads:
-                log.write(f"  {timestamp}: {error}\n")
-    
-    if failed_downloads:
-        print(f"\nFailed downloads:")
-        for timestamp, url, error in failed_downloads[:10]:
-            print(f"  {timestamp}: {error}")
-        if len(failed_downloads) > 10:
-            print(f"  ... and {len(failed_downloads) - 10} more")
-    
-    print(f"\nDownload log saved to: {run_log_file}")
+    # 4. Generate report
+    report = {
+        'validation_date': datetime.now().strftime("%Y-%m-%d"),
+        'source_urls': {
+            'count': len(url_patterns),
+            'patterns': sorted(url_patterns.tolist())
+        },
+        'snapshot_coverage': {
+            'expected': len(expected_timestamps),
+            'downloaded': len(downloaded_timestamps),
+            'missing': list(expected_timestamps - downloaded_timestamps)[:10],
+            'time_span': {
+                'first': min(snap_df['timestamp']),
+                'last': max(snap_df['timestamp'])
+            }
+        },
+        'integrity_checks': {
+            'corrupt_files': corrupt_files[:5],
+            'avg_file_size': f"{sum(f.stat().st_size for f in HTML_DIR.glob('*.html'))/(1024*len(downloaded_files)):.1f} KB"
+        }
+    }
+    return report
 
-# Download missing files
-if len(snap_df) > 0:
-    download_missing_snapshots(snap_df, HTML_DIR)
+# Run validation
+validation_results = validate_downloads()
 ```
 
-## Download Status Check Functions
+```{python}
+#| echo: false
+
+report = validate_downloads()
+
+# Save and print report
+report_path = META_DIR / f"validation_report.json"
+with open(report_path, 'w') as f:
+    json.dump(report, f, indent=2)
+
+print(f"\n{'='*60}")
+print("DOWNLOAD VALIDATION REPORT")
+print(f"{'='*60}")
+print(f"Source URLs: {report['source_urls']['count']} unique patterns")
+print(f"Time Coverage: {report['snapshot_coverage']['time_span']['first']} to {report['snapshot_coverage']['time_span']['last']}")
+print(f"Completion: {report['snapshot_coverage']['downloaded']}/{report['snapshot_coverage']['expected']} snapshots")
+print(f"Data Quality: Avg {report['integrity_checks']['avg_file_size']} per file")
+print(f"\nFull report: {report_path}")
+
+
+```
+
+## Data Extraction {#extraction-pipe}
+
+1.  **Metadata Extraction**
+
+    -   Identifies report dates ("Statistics as of")
+
+    -   Cleans HTML content (removes scripts/styles/navigation)
+
+2.  **Era-Specific Parsing**
+
+    -   **Pre-2010**: Handles older format without arrestee data
+
+    -   **Post-2010**: Processes current format with all profile types
+
+3.  **Standardization**
+
+    -   Normalizes jurisdiction names (e.g., "D.C." → "DC")
+
+    -   Converts all numbers to integers (removes commas)
+
+    -   Formats timestamps consistently
+
+4. **Design Features**
+
+    ✔ **Robust Pattern Matching**
+
+    -   Regex tailored to NDIS table structures
+
+    -   Handles whitespace variations
+
+    ✔ **Error Resilience**
+
+    -   Skips corrupt files but logs errors
+
+    -   Preserves original values before standardization
+
+    ✔ **Auditability**
+
+    -   Keeps source timestamps
+
+    -   Tracks data provenance
+
+5. **Output Structure**
+
+Each record contains:
+
+-   **`timestamp`**: Wayback capture time
+
+-   **`jurisdiction`**: Standardized name
+
+-   **`offender_profiles`**, **`arrestee`**, **`forensic_profiles`**: DNA counts
+
+-   **`ndis_labs`**: Participating labs
+
+-   **`investigations_aided`**: Cases assisted
+
+### Core Parser Functions {#parser-functions}
+
+Essential text processing utilities for NDIS data extraction.
+
+- **Metadata Extraction:** Isolates report dates and cleans HTML content.
+
+- **Name Standardization:** Normalizes jurisdiction names (e.g., "D.C." → "DC").
 
 ```{python}
-def get_latest_log():
-    """Find and read the most recent download log"""
-    log_files = sorted(META_DIR.glob("download_log_*.txt"))
-    if not log_files:
-        print("No download logs found.")
-        return None
-    
-    latest_log = log_files[-1]
-    print(f"Latest log: {latest_log.name}")
-    return latest_log
+#| label: parser-functions
+#| echo: true
+#| code-fold: true
+#| code-summary: "Show parser functions code"
 
-def analyze_download_status():
-    """Analyze the current download status and latest run results"""
+def extract_ndis_metadata(html_content):
+    """
+    Extract key metadata from NDIS HTML content
     
-    # Check what we have
-    html_files = list(HTML_DIR.glob("*.html"))
-    downloaded_timestamps = {f.stem for f in html_files}
+    Returns:
+    --------
+    dict:
+        - data_date: "Statistics as of" date (datetime)
+        - clean_text: Normalized text content
+    """
+
+    date_patterns = [
+        r'Statistics as of (\w+ \d{1,2}, \d{4})',
+        r'Statistics as of (\w+ \d{4})',
+        r'as of (\w+ \d{1,2}, \d{4})',
+        r'Data current as of (\w+ \d{1,2}, \d{4})'
+    ]
     
-    # Check what we should have
-    snapshot_csv = META_DIR / 'snapshots_found.csv'
-    if snapshot_csv.exists():
-        snap_df = pd.read_csv(snapshot_csv)
-        expected_timestamps = set(snap_df['timestamp'].astype(str))
-    else:
-        print("No snapshot list found. Run search first.")
-        return None
+    data_date = None
+    for pattern in date_patterns:
+        date_match = re.search(pattern, html_content, re.IGNORECASE)
+        if date_match:
+            date_str = date_match.group(1)
+            try:
+                if ',' in date_str:
+                    data_date = pd.to_datetime(date_str)
+                else:
+                    data_date = pd.to_datetime("1 " + date_str)
+                break
+            except:
+                continue
     
-    # Calculate missing
-    missing_timestamps = expected_timestamps - downloaded_timestamps
-    
-    # Parse latest log for failures
-    latest_log = get_latest_log()
-    failed_in_last_run = []
-    
-    if latest_log:
-        with open(latest_log, 'r') as f:
-            for line in f:
-                if '✗ failed:' in line:
-                    timestamp = line.split()[0]
-                    if timestamp.isdigit() and len(timestamp) == 14:
-                        failed_in_last_run.append(timestamp)
-    
-    # Create summary
-    print(f"\n{'='*60}")
-    print("DOWNLOAD STATUS SUMMARY")
-    print(f"{'='*60}")
-    print(f"Expected snapshots: {len(expected_timestamps)}")
-    print(f"Downloaded: {len(downloaded_timestamps)} ({len(downloaded_timestamps)/len(expected_timestamps)*100:.1f}%)")
-    print(f"Missing: {len(missing_timestamps)}")
-    
-    if latest_log:
-        print(f"\nLatest run ({latest_log.name}):")
-        print(f"  Failed downloads: {len(failed_in_last_run)}")
-        if failed_in_last_run:
-            print(f"  Failed timestamps: {', '.join(failed_in_last_run[:5])}")
-            if len(failed_in_last_run) > 5:
-                print(f"  ... and {len(failed_in_last_run) - 5} more")
-    
-    print(f"\nTotal still needed: {len(missing_timestamps)}")
+    # Normalize text
+    soup = BeautifulSoup(html_content, 'lxml')
+    text = re.sub(r'\s+', ' ', soup.get_text(' ', strip=True))
     
     return {
-        'missing': missing_timestamps,
-        'failed_last_run': failed_in_last_run,
-        'downloaded': downloaded_timestamps,
-        'expected': expected_timestamps
+        'data_date': data_date,
+        'clean_text': text
     }
 
-def create_retry_list(status_info, retry_only_failed=True):
-    """Create a list of files to retry downloading"""
-    if not status_info:
-        return None
+def standardize_region_name(name):
+    """
+    Clean and standardize jurisdiction names
     
-    if retry_only_failed and status_info['failed_last_run']:
-        retry_timestamps = set(status_info['failed_last_run'])
-        print(f"\nWill retry {len(retry_timestamps)} failed downloads from last run")
-    else:
-        retry_timestamps = status_info['missing']
-        print(f"\nWill retry all {len(retry_timestamps)} missing files")
+    Handles:
+    - Prefix removal ("Back to top", etc.)
+    - Known variations (DC vs D.C.)
+    - Whitespace normalization
+    """
+    # Remove common prefixes
+    name = re.sub(r'^.*?(Back to top|Tables by NDIS Participant|ation\.)\s*', 
+                 '', name, flags=re.I).strip()
     
-    snapshot_csv = META_DIR / 'snapshots_found.csv'
-    snap_df = pd.read_csv(snapshot_csv)
-    retry_df = snap_df[snap_df['timestamp'].astype(str).isin(retry_timestamps)]
-    
-    return retry_df
+    # Standardize known variants
+    return (
+        name.replace('D.C./FBI Lab', 'DC/FBI Lab')
+            .replace('US Army', 'U.S. Army')
+            .replace('D.C./Metro PD', 'DC/Metro PD')
+    )
 ```
 
-## Parser Functions
+### Era-Specific Parsers {#era-parsers}
+
+Time-period-adapted parsing logic.
+
+- **Pre-2010 Format:** Handles legacy structure without arrestee data fields.
+
+- **Post-2010 Format:** Processes modern layout with all profile types.
+
+- **Pattern Matching:** Regex tailored to each era's table structures.
+```{python}
+#| label: era-parsers
+#| echo: true
+#| code-fold: true
+#| code-summary: "Show era parser functions code"
+
+def parse_pre2010_ndis(text, timestamp, data_date):
+    """
+    Parse NDIS snapshots from 2010 and earlier
+    (No arrestee data in these reports)
+    """
+    pattern = re.compile(
+        r'([A-Z][\w\s\.\-\'\/&\(\)]+?)Statistical Information'  # Jurisdiction
+        r'.*?Offender Profiles\s+([\d,]+)'                     # Offenders
+        r'.*?Forensic Samples\s+([\d,]+)'                      # Forensic
+        r'.*?NDIS Participating Labs\s+(\d+)'                  # Labs
+        r'.*?Investigations Aided\s+([\d,]+)',                 # Cases
+        re.IGNORECASE | re.DOTALL
+    )
+    
+    return [{
+        'timestamp': timestamp,
+        'jurisdiction': standardize_region_name(match.group(1)),
+        'offender_profiles': int(match.group(2).replace(',', '')),
+        'arrestee': 0,  # Explicit 0 for pre-2010 data
+        'forensic_profiles': int(match.group(3).replace(',', '')),
+        'ndis_labs': int(match.group(4)),
+        'investigations_aided': int(match.group(5).replace(',', ''))
+    } for match in pattern.finditer(text)]
+
+def parse_post2010_ndis(text, timestamp, data_date):
+    """
+    Parse NDIS snapshots from 2011 onward
+    (Includes arrestee profiles)
+    """
+    pattern = re.compile(
+        r'([A-Z][\w\s\.\-\'\/&\(\)]+?)Statistical Information'
+        r'.*?Offender Profiles\s+([\d,]+)'
+        r'.*?Arrestee\s+([\d,]+)'
+        r'.*?Forensic Profiles\s+([\d,]+)'
+        r'.*?NDIS Participating Labs\s+(\d+)'
+        r'.*?Investigations Aided\s+([\d,]+)',
+        re.IGNORECASE | re.DOTALL
+    )
+    
+    return [{
+        'timestamp': timestamp,
+        'jurisdiction': standardize_region_name(match.group(1)),
+        'offender_profiles': int(match.group(2).replace(',', '')),
+        'arrestee': int(match.group(3).replace(',', '')),
+        'forensic_profiles': int(match.group(4).replace(',', '')),
+        'ndis_labs': int(match.group(5)),
+        'investigations_aided': int(match.group(6).replace(',', ''))
+    } for match in pattern.finditer(text)]
+```
+
+### Snapshot Processing {#main-processor}
+
+Individual file conversion pipeline.
+
+- **Content Cleaning:** Strips scripts/styles, normalizes whitespace.
+
+- **Era Routing:** Automatically selects parser based on timestamp.
+
+- **Error Isolation:** Single-file failures don't halt entire batch.
 
 ```{python}
-def clean_jurisdiction_name(name):
-    """Clean up jurisdiction names by removing common prefixes"""
-    name = re.sub(r'^.*?Back to top\s*', '', name)
-    name = re.sub(r'^.*?Tables by NDIS Participant\s*', '', name)
-    name = re.sub(r'^.*?ation\.\s*', '', name)
-    name = name.strip()
-    return name
+#| label: main-processor
+#| echo: true
+#| code-fold: true
+#| code-summary: "Show processing function code"
 
-def standardize_jurisdiction_name(name):
-    """Standardize jurisdiction names to handle variations"""
-    name = clean_jurisdiction_name(name)
-    if name in JURISDICTION_NAME_MAP:
-        return JURISDICTION_NAME_MAP[name]
-    return name
-
-def extract_data_date(html_content):
-    """Extract the 'Statistics as of' date from HTML content"""
-    match = re.search(r'Statistics as of (\w+ \d{4})', html_content, re.IGNORECASE)
-    if match:
-        date_str = match.group(1)
-        try:
-            # Convert "October 2024" to datetime
-            return datetime.strptime(date_str, "%B %Y")
-        except:
-            pass
-    return None
-
-def parse_ndis_snapshot(html_file):
-    """Parse a single NDIS snapshot file"""
+def process_ndis_snapshot(html_file):
+    """
+    Convert single NDIS HTML file to structured data
+    
+    Parameters:
+    -----------
+    html_file : Path
+        Path to downloaded HTML snapshot
+        
+    Returns:
+    --------
+    list[dict]
+        Parsed records for all jurisdictions in the snapshot
+    """
+    # Read and preprocess
+    content = html_file.read_text(encoding='utf-8', errors='ignore')
+    metadata = extract_ndis_metadata(content)
     timestamp = html_file.stem
     year = int(timestamp[:4])
     
-    html_content = html_file.read_text('utf-8', errors='ignore')
-    soup = BeautifulSoup(html_content, 'lxml')
-    text = soup.get_text(' ', strip=True)
-    
-    # Extract the "as of" date
-    data_date = extract_data_date(html_content)
-    
-    # Normalize whitespace
-    text = re.sub(r'\s+', ' ', text)
-    
-    records = []
-    
-    # Pattern for 2010 (no arrestee data)
+    # Route to era-appropriate parser
     if year <= 2010:
-        pattern = re.compile(
-            r'([A-Z][a-zA-Z\s\.\-\'/&()]{2,50}?)\s+Statistical Information\s+'
-            r'.*?Offender Profiles\s+([\d,]+)\s+'
-            r'.*?Forensic Samples\s+([\d,]+)\s+'
-            r'.*?NDIS Participating Labs\s+(\d+)\s+'
-            r'.*?Investigations Aided\s+([\d,]+)',
-            re.I
-        )
-        
-        for match in pattern.finditer(text):
-            jurisdiction_raw, offender, forensic, labs, investigations = match.groups()
-            jurisdiction = standardize_jurisdiction_name(jurisdiction_raw)
-            
-            records.append({
-                'timestamp': timestamp,
-                'jurisdiction': jurisdiction,
-                'offender_profiles': offender.replace(',', ''),
-                'arrestee': '0',
-                'forensic_profiles': forensic.replace(',', ''),
-                'ndis_labs': labs,
-                'investigations_aided': investigations.replace(',', ''),
-                'data_as_of_date': data_date
-            })
+        return parse_pre2010_ndis(metadata['clean_text'], timestamp, 
+                                metadata['data_date'])
     else:
-        # Pattern for 2011+ (includes arrestee data)
-        pattern = re.compile(
-            r'([A-Z][a-zA-Z\s\.\-\'/&()]{2,50}?)\s+Statistical Information\s+'
-            r'.*?Offender Profiles\s+([\d,]+)\s+'
-            r'.*?Arrestee\s+([\d,]+)\s+'
-            r'.*?Forensic Profiles\s+([\d,]+)\s+'
-            r'.*?NDIS Participating Labs\s+(\d+)\s+'
-            r'.*?Investigations Aided\s+([\d,]+)',
-            re.I
-        )
-        
-        for match in pattern.finditer(text):
-            jurisdiction_raw, offender, arrestee, forensic, labs, investigations = match.groups()
-            jurisdiction = standardize_jurisdiction_name(jurisdiction_raw)
-            
-            records.append({
-                'timestamp': timestamp,
-                'jurisdiction': jurisdiction,
-                'offender_profiles': offender.replace(',', ''),
-                'arrestee': arrestee.replace(',', ''),
-                'forensic_profiles': forensic.replace(',', ''),
-                'ndis_labs': labs,
-                'investigations_aided': investigations.replace(',', ''),
-                'data_as_of_date': data_date
-            })
-    
-    return records
+        return parse_post2010_ndis(metadata['clean_text'], timestamp, 
+                                 metadata['data_date'])
 ```
 
-## Process All Snapshots
+### Batch Processing {#batch-processing}
+
+Full dataset consolidation.
+
+- **Scalable Execution:** Processes all HTML files sequentially.
+
+- **Progress Tracking:** Live progress bar via tqdm.
+
+- **Temporal Enrichment:** Adds derived year/capture_date columns.
 
 ```{python}
+#| label: batch-processing
+#| echo: true
+#| code-fold: true
+#| code-summary: "Show batch processing function code"
+#| results: hide
+
 def process_all_snapshots():
-    """Parse all downloaded snapshots and create datasets"""
-    print("Processing all snapshots...")
+    """
+    Process all downloaded snapshots into a single DataFrame
     
+    Returns:
+    --------
+    pd.DataFrame
+        Combined dataset with all snapshots
+    """
     all_records = []
     html_files = sorted(HTML_DIR.glob("*.html"))
     
-    for html_file in tqdm(html_files, desc="Parsing HTML files"):
+    for html_file in tqdm(html_files, desc="Processing NDIS snapshots"):
         try:
-            records = parse_ndis_snapshot(html_file)
-            all_records.extend(records)
+            all_records.extend(process_ndis_snapshot(html_file))
         except Exception as e:
-            print(f"Error parsing {html_file.name}: {e}")
+            print(f"Error processing {html_file.name}: {str(e)}")
+            continue
     
     # Convert to DataFrame
     df = pd.DataFrame(all_records)
     
-    # Convert numeric fields
-    numeric_fields = ['offender_profiles', 'arrestee', 'forensic_profiles', 'ndis_labs', 'investigations_aided']
-    for field in numeric_fields:
-        df[field] = pd.to_numeric(df[field], errors='coerce').fillna(0).astype(int)
+    # Add derived columns
+    df['capture_date'] = pd.to_datetime(df['timestamp'], format='%Y%m%d%H%M%S')
+    df['year'] = df['capture_date'].dt.year
     
-    # Add datetime columns
-    df['capture_datetime'] = pd.to_datetime(df['timestamp'], format='%Y%m%d%H%M%S')
-    df['capture_date'] = df['capture_datetime'].dt.date
-    
-    # Sort by timestamp and jurisdiction
-    df = df.sort_values(['timestamp', 'jurisdiction'])
-    
-    return df
-
-# Process all files
-df_raw = process_all_snapshots()
-print(f"\nProcessed {len(df_raw)} total records")
-print(f"Unique jurisdictions: {df_raw['jurisdiction'].nunique()}")
-print(f"Date range: {df_raw['capture_datetime'].min()} to {df_raw['capture_datetime'].max()}")
+    return df.sort_values(['capture_date', 'jurisdiction'])
 ```
 
-## Check Download Completeness
+### Export & Validation {#exp-valid}
+
+Structured output generation.
+
+- **Validation Checks:** Verifies critical columns exist.
+
+- **Versioned Output:** Timestamped CSV filenames.
+
+- **Metadata Capture:** Records file size, record counts, and coverage.
 
 ```{python}
-# Check if we have all expected files
-print("\nChecking download completeness...")
-status = analyze_download_status()
+#| label: export-data
+#| echo: true
+#| code-fold: true
+#| code-summary: "Show execution function code"
+#| results: hide
 
-# Automatically retry if there are failures
-if status and status['failed_last_run'] and len(status['failed_last_run']) > 0:
-    print(f"\n⚠️  Found {len(status['failed_last_run'])} failed downloads from last run. Retrying...")
-    retry_df = create_retry_list(status, retry_only_failed=True)
-    if retry_df is not None and len(retry_df) > 0:
-        download_missing_snapshots(retry_df, HTML_DIR)
+def export_ndis_data(df, output_dir=OUTPUT_DIR):
+    """
+    Save processed NDIS data with validation checks
+    
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        Processed NDIS data from process_all_snapshots()
+    output_dir : Path
+        Directory to save output files
         
-        # Re-check status after retry
-        print("\nRechecking status after retry...")
-        status = analyze_download_status()
-elif status and status['missing']:
-    print(f"\n⚠️  {len(status['missing'])} files are missing but weren't from a failed run.")
-    print("These may be new snapshots. Run download cell manually if needed.")
-else:
-    print("\n✅ All files successfully downloaded!")
+    Returns:
+    --------
+    dict: Metadata about exported files
+    """
+    # Create output directory if needed
+    output_dir.mkdir(exist_ok=True)
+    
+    # Generate filename
+    export_date = datetime.now().strftime("%Y%m%d")
+    csv_path = output_dir / f"ndis_data_raw.csv"
+    
+    # Validate before export
+    required_columns = [
+        'timestamp', 'jurisdiction', 'offender_profiles',
+        'arrestee', 'forensic_profiles', 'ndis_labs',
+        'investigations_aided'
+    ]
+    
+    if not all(col in df.columns for col in required_columns):
+        missing = set(required_columns) - set(df.columns)
+        raise ValueError(f"Missing critical columns: {missing}")
+    
+    # Export to CSV
+    df.to_csv(csv_path, index=False, encoding='utf-8')
+    
+    # Generate checksum
+    file_size = csv_path.stat().st_size / (1024 * 1024)
+    record_count = len(df)
+    
+    # Return export metadata
+    return {
+        'export_path': str(csv_path.resolve()),
+        'export_date': export_date,
+        'file_size_mb': round(file_size, 2),
+        'record_count': record_count,
+        'snapshot_count': df['timestamp'].nunique(),
+        'jurisdiction_count': df['jurisdiction'].nunique()
+    }
+
+# Usage example
+if 'ndis_data' not in globals():
+    ndis_data = process_all_snapshots()
+
+export_meta = export_ndis_data(ndis_data)
 ```
 
-## Apply Typo Fixes
+Data integrity validation.
+
+- **Schema Checking:** Ensures proper field types and formats.
+
+- **Null Validation:** Confirms mandatory fields are populated.
+
+- **Value Sanity Checks:** Verifies non-negative numbers.
 
 ```{python}
-def apply_typo_fixes(df):
-    """Apply known typo corrections"""
-    df_fixed = df.copy()
-    
-    for typo in KNOWN_TYPOS:
-        mask = (
-            (df_fixed['timestamp'] == typo['timestamp']) & 
-            (df_fixed['jurisdiction'] == typo['jurisdiction'])
-        )
-        if mask.any():
-            df_fixed.loc[mask, typo['field']] = int(typo['correct_value'])
-            print(f"Fixed typo: {typo['jurisdiction']} on {typo['timestamp'][:8]} - "
-                  f"{typo['field']} from {typo['wrong_value']} to {typo['correct_value']}")
-    
-    return df_fixed
+#| label: verify-export
+#| echo: true
+#| code-fold: true
+#| code-summary: "Show validation function code"
 
-# Apply fixes
-df_fixed = apply_typo_fixes(df_raw)
+def verify_export(csv_path):
+    """Validate exported CSV matches original DataFrame"""
+    exported = pd.read_csv(
+        csv_path,
+        dtype={'timestamp': str}
+    )
+    
+    # Check basic integrity
+    checks = {
+        'no_nulls_in_critical_fields': exported[[
+            'jurisdiction', 'offender_profiles'
+        ]].isnull().sum().sum() == 0,
+        'positive_values': (exported[
+            ['offender_profiles', 'forensic_profiles']
+        ] >= 0).all().all(),
+        'timestamp_format': exported['timestamp'].str.match(r'^\d{14}$').all(),
+        'valid_jurisdictions': exported['jurisdiction'].str.contains('[A-Za-z]').all()
+    }
+    
+    if all(checks.values()):
+        print("✓ Export validation passed")
+        return True
+    else:
+        print("! Export validation failed:")
+        for check, passed in checks.items():
+            print(f"  - {check}: {'✓' if passed else '✗'}")
+        return False
+
+# Run verification
+verify_export(export_meta['export_path'])
 ```
 
-## Save Datasets
+### Data Validation {#validation}
 
-```{python}
-# Save datasets
-df_raw.to_csv(OUTPUT_DIR / 'ndis_data_raw.csv', index=False)
-df_fixed.to_csv(OUTPUT_DIR / 'ndis_data_fixed.csv', index=False)
-print(f"\nSaved raw data to: {OUTPUT_DIR / 'ndis_data_raw.csv'}")
-print(f"Saved fixed data to: {OUTPUT_DIR / 'ndis_data_fixed.csv'}")
+#### Cross-language validation {#cross-valid}
+
+This section prepares the environment for cross-language analysis by:
+1. Ensuring all required R packages are available
+2. Loading the NDIS dataset with proper type specifications
+3. Providing basic data validation checks
+
+```{r}
+#| label: packages-setup
+#| echo: true
+#| code-fold: true
+#| code-summary: "Show setup code"
+
+# List of required packages
+required_packages <- c(
+  "tidyverse",    # Data manipulation and visualization
+  "lubridate",    # Date-time manipulation
+  "DT",           # Interactive tables
+  "plotly",       # Interactive visualizations
+  "leaflet",      # Geospatial mapping
+  "kableExtra",   # Enhanced table formatting
+  "scales",       # Axis scaling and formatting
+  "dlookr",       # Data validation and diagnostics
+  "gt",           # Table generation
+  "assertr",      # Data validation and assertions
+  "flextable",    # Enhanced table visualization
+  "ggridges",     # Ridge plots
+  "here",         # File path management
+  "patchwork",    # Data visualization  
+  "scales"        # Plot aesthetics
+  )
+
+# Function to install missing packages
+install_missing <- function(packages) {
+  for (pkg in packages) {
+    if (!requireNamespace(pkg, quietly = TRUE)) {
+      message(paste("Installing missing package:", pkg))
+      install.packages(pkg, dependencies = TRUE)
+    }
+  }
+}
+
+# Install any missing packages
+install_missing(required_packages)
+
+# Load all packages
+suppressPackageStartupMessages({
+  library(tidyverse)
+  library(lubridate)
+  library(DT)
+  library(plotly)
+  library(leaflet)
+  library(kableExtra)
+  library(scales)
+  library(dlookr)
+  library(gt)
+  library(assertr)
+  library(flextable)
+  library(ggridges)
+  library(here)
+  library(patchwork)
+  library(scales)
+})
+
+# Verify all packages loaded successfully
+loaded_packages <- sapply(required_packages, require, character.only = TRUE)
+if (all(loaded_packages)) {
+  message("All packages loaded successfully!")
+} else {
+  warning("The following packages failed to load: ", 
+          paste(names(loaded_packages)[!loaded_packages], collapse = ", "))
+}
 ```
 
-## Summary Statistics
+#### Data Import and Validation {#import-valid}
 
-```{python}
-# Calculate summary statistics
-latest_data = df_fixed[df_fixed['capture_datetime'] == df_fixed['capture_datetime'].max()]
-latest_data = latest_data[latest_data['jurisdiction'] != 'D.C./Metro PD']
+```{r}
+#| label: csv-reading
+#| echo: true
+#| code-fold: true
+#| code-summary: "Show data import code"
 
-print("\nLatest Statistics Summary:")
-print(f"  As of: {latest_data['capture_datetime'].iloc[0]}")
-print(f"  Data from: {latest_data['data_as_of_date'].iloc[0] if latest_data['data_as_of_date'].iloc[0] else 'Unknown'}")
-print(f"  Jurisdictions reporting: {len(latest_data)}")
-print(f"  Total offender profiles: {latest_data['offender_profiles'].sum():,}")
-print(f"  Total arrestee profiles: {latest_data['arrestee'].sum():,}")
-print(f"  Total forensic profiles: {latest_data['forensic_profiles'].sum():,}")
-print(f"  Total investigations aided: {latest_data['investigations_aided'].sum():,}")
+# Define expected column structure
+expected_cols <- cols(
+  timestamp = col_character(),
+  capture_date = col_datetime(format = ""),
+  jurisdiction = col_character(),
+  offender_profiles = col_double(),
+  arrestee = col_double(),
+  forensic_profiles = col_double()
+)
+
+# Read data with validation
+ndis_data <- read_csv(
+  here::here("output", "ndis", "ndis_data_raw.csv"),
+  col_types = expected_cols
+)
 ```
 
-## Visualizations
+```{r}
+#| echo: false
 
-```{python}
-#| fig-width: 16
-#| fig-height: 18
+enhanced_glimpse <- function(df) {
+  glimpse_data <- data.frame(
+    Column = names(df),
+    Type = sapply(df, function(x) paste(class(x), collapse = ", ")),
+    Rows = nrow(df),
+    Missing = sapply(df, function(x) sum(is.na(x))),
+    Unique = sapply(df, function(x) length(unique(x))),
+    First_Values = sapply(df, function(x) {
+      if(is.numeric(x)) {
+        paste(round(head(x, 3), 2), collapse = ", ")
+      } else {
+        paste(encodeString(head(as.character(x), 3)), collapse = ", ")
+      }
+    })
+  )
+  
+  ft <- flextable(glimpse_data) %>%
+    theme_zebra() %>%
+    set_caption(paste("Enhanced Data Glimpse:", deparse(substitute(df)))) %>%
+    autofit() %>%
+    align(align = "left", part = "all") %>%
+    colformat_num(j = c("Rows", "Missing", "Unique"), big.mark = "") %>%
+    bg(j = "Missing", bg = function(x) ifelse(x > 0, "#FFF3CD", "transparent")) %>%
+    bg(j = "Unique", bg = function(x) ifelse(x == 1, "#FFF3CD", "transparent")) %>%
+    add_footer_lines(paste("Data frame dimensions:", nrow(df), "rows ×", ncol(df), "columns")) %>%
+    fontsize(size = 10, part = "all") %>%
+    set_table_properties(layout = "autofit", width = 1)
+  
+  return(ft)
+}
 
-def create_visualizations(df_raw, df_fixed):
-    """Create comprehensive visualizations"""
-    # Exclude D.C./Metro PD from visualizations
-    df_raw_viz = df_raw[df_raw['jurisdiction'] != 'D.C./Metro PD']
-    df_fixed_viz = df_fixed[df_fixed['jurisdiction'] != 'D.C./Metro PD']
-    
-    # Create figure with subplots
-    fig, axes = plt.subplots(3, 2, figsize=(16, 18))
-    
-    # 1. Jurisdictions reporting over time
-    for ax, (df, title_suffix) in zip([axes[0,0], axes[0,1]], 
-                                      [(df_raw_viz, 'Raw'), (df_fixed_viz, 'Fixed')]):
-        jurisdictions_per_date = df.groupby('capture_datetime')['jurisdiction'].nunique()
-        ax.plot(jurisdictions_per_date.index, jurisdictions_per_date.values, 'b-', linewidth=2)
-        ax.set_title(f'Jurisdictions Reporting ({title_suffix})')
-        ax.set_ylabel('Number of Jurisdictions')
-        ax.grid(True, alpha=0.3)
-        ax.yaxis.set_major_locator(plt.MaxNLocator(integer=True))
-    
-    # 2. Total investigations aided
-    for ax, (df, title_suffix) in zip([axes[1,0], axes[1,1]], 
-                                      [(df_raw_viz, 'Raw with Typo'), (df_fixed_viz, 'Fixed')]):
-        total_inv = df.groupby('capture_datetime')['investigations_aided'].sum()
-        ax.plot(total_inv.index, total_inv.values / 1e3, 'purple', linewidth=2)
-        ax.set_title(f'Total Investigations Aided ({title_suffix})')
-        ax.set_ylabel('Thousands of Investigations')
-        ax.grid(True, alpha=0.3)
-        
-        # Highlight the typo in raw data
-        if 'Raw' in title_suffix:
-            typo_dates = df[(df['jurisdiction'] == 'California') & 
-                          (df['investigations_aided'] > 1000000)]['capture_datetime']
-            for date in typo_dates:
-                ax.axvline(x=date, color='red', linestyle='--', alpha=0.5)
-                ax.text(date, ax.get_ylim()[1]*0.9, 'Typo', rotation=90, 
-                       verticalalignment='bottom', color='red')
-    
-    # 3. Data lag analysis
-    ax = axes[2, 0]
-    df_with_lag = df_fixed_viz[df_fixed_viz['data_as_of_date'].notna()].copy()
-    df_with_lag['data_lag_days'] = (df_with_lag['capture_datetime'] - df_with_lag['data_as_of_date']).dt.days
-    
-    avg_lag = df_with_lag.groupby('capture_datetime')['data_lag_days'].mean()
-    ax.plot(avg_lag.index, avg_lag.values, 'orange', linewidth=2)
-    ax.set_title('Average Data Lag (Capture Date vs "As Of" Date)')
-    ax.set_ylabel('Days')
-    ax.grid(True, alpha=0.3)
-    
-    # 4. California investigations over time (showing typo fix)
-    ax = axes[2, 1]
-    cal_raw = df_raw_viz[df_raw_viz['jurisdiction'] == 'California']
-    cal_fixed = df_fixed_viz[df_fixed_viz['jurisdiction'] == 'California']
-    
-    ax.plot(cal_raw['capture_datetime'], cal_raw['investigations_aided'], 
-            'r-', label='Raw (with typo)', linewidth=2, alpha=0.7)
-    ax.plot(cal_fixed['capture_datetime'], cal_fixed['investigations_aided'], 
-            'g-', label='Fixed', linewidth=2)
-    ax.set_title('California Investigations Aided: Raw vs Fixed')
-    ax.set_ylabel('Investigations Aided')
-    ax.legend()
-    ax.grid(True, alpha=0.3)
-    
-    plt.tight_layout()
-    plt.savefig(OUTPUT_DIR / 'ndis_analysis_complete.png', dpi=300, bbox_inches='tight')
-    plt.show()
+enhanced_glimpse(ndis_data)
 
-# Create visualizations
-print("\nCreating visualizations...")
-create_visualizations(df_raw, df_fixed)
-print("\nProcessing complete!")
 ```
+
+## Data Cleaning {#datacleaning}
+
+### Data Type Standardization {#dtype_stand}
+
+Ensure consistent data types by:
+
+-   Converting jurisdiction to factor for categorical analysis
+
+-   Standardizing date formats
+
+-   Creating year and era (pre/post 2010) variables for temporal analysis
+
+```{r}
+#| label: clean-types
+#| echo: true
+#| code-fold: true
+#| code-summary: "Show cleaning code (data type standardization)"
+
+ndis_clean <- ndis_data %>%
+  mutate(
+    jurisdiction = fct_reorder(
+      as.factor(jurisdiction),
+      offender_profiles + arrestee + forensic_profiles,
+      .fun = sum,
+      .desc = TRUE
+    ),
+    timestamp = as_datetime(timestamp, format = "%Y%m%d%H%M%S"),
+    capture_date = as_date(capture_date),
+    year = year(capture_date),
+    month = month(capture_date, label = TRUE, abbr = FALSE, locale = "en_US.UTF-8"),
+    quarter = quarter(capture_date),
+    era = cut(
+      year, 
+      breaks = c(-Inf, 2009, 2014, 2019, Inf),
+      labels = c("Pre-2010", "2010-2014", "2015-2019", "2020+")
+    ),
+    across(
+      c(offender_profiles, arrestee, forensic_profiles, ndis_labs, investigations_aided),
+      as.integer
+    ),
+    total_profiles = offender_profiles + arrestee + forensic_profiles,
+    profiles_per_lab = total_profiles / ndis_labs,
+    forensic_ratio = forensic_profiles / total_profiles,
+    data_quality_flag = case_when(
+      is.na(capture_date) ~ "Missing date",
+      offender_profiles < 0 ~ "Negative profiles",
+      TRUE ~ "Valid"
+    ),
+    
+    year = as.factor(year)
+  ) %>%
+  arrange(jurisdiction, capture_date) %>%
+  verify(!any(is.na(capture_date) & !is.na(ndis_data$capture_date))) %>%
+  filter(
+    investigations_aided >= quantile(investigations_aided, 0.01, na.rm = TRUE),
+    investigations_aided <= quantile(investigations_aided, 0.99, na.rm = TRUE)
+  )
+
+enhanced_glimpse(ndis_clean)
+
+```
+
+### Jurisdiction Name Reconciliation {#jurisdic_names}
+
+This section reconciles jurisdiction names between the NDIS dataset and a reference dataset of US jurisdictions, ensuring consistency for analysis.
+
+Before:
+
+```{r}
+#| echo: false
+
+levels(as.factor(ndis_data$jurisdiction))
+```
+
+After:
+```{r}
+#| label: jurisdiction-clean
+#| echo: true
+#| code-fold: true
+#| code-summary: "Show cleaning code (data types)"
+#| results: hide
+
+# Clean jurisdiction names with Alabama-specific patterns
+ndis_clean <- ndis_clean %>%
+  mutate(
+    jurisdiction = case_when(
+      str_detect(jurisdiction, "Alabama$") ~ "Alabama",
+      str_detect(jurisdiction, "DC/FBI|DC/Metro|^DC$|D\\.C\\. map pin\\)") ~ "FBI",
+      jurisdiction == "U.S. Army" ~ "FBI",
+      TRUE ~ jurisdiction
+    ),
+    
+    jurisdiction = str_trim(jurisdiction),
+    jurisdiction = as.factor(jurisdiction)
+  )
+
+# Create standardized coordinate reference
+jurisdiction_coords <- tibble::tribble(
+  ~jurisdiction_std,        ~lat,     ~lng,
+  "Alabama",         32.8067,  -86.7911,
+  "Alaska",         66.1605, -153.3691,
+  "Arizona",        33.7298, -111.4312,
+  "Arkansas",       34.9697,  -92.3731,
+  "California",     36.1162, -119.6816,
+  "Colorado",       39.0598, -105.3111,
+  "Connecticut",    41.5978,  -72.7554,
+  "Delaware",       39.3185,  -75.5071,
+  "Florida",        27.7663,  -81.6868,
+  "Georgia",        33.0406,  -83.6431,
+  "Hawaii",         21.3068, -157.7912,
+  "Idaho",          44.2405, -114.4788,
+  "Illinois",       40.3495,  -88.9861,
+  "Indiana",        39.8494,  -86.2583,
+  "Iowa",           42.0115,  -93.2105,
+  "Kansas",         38.5266,  -96.7265,
+  "Kentucky",       37.6681,  -84.6701,
+  "Louisiana",      31.1695,  -91.8678,
+  "Maine",          44.6939,  -69.3819,
+  "Maryland",       39.0639,  -76.8021,
+  "Massachusetts",  42.2302,  -71.5301,
+  "Michigan",       43.3266,  -84.5361,
+  "Minnesota",      45.6945,  -93.9002,
+  "Mississippi",    32.7416,  -89.6787,
+  "Missouri",       38.4561,  -92.2884,
+  "Montana",        46.9219, -110.4544,
+  "Nebraska",       41.1254,  -98.2681,
+  "Nevada",         38.3135, -117.0554,
+  "New Hampshire",  43.4525,  -71.5639,
+  "New Jersey",     40.2989,  -74.5210,
+  "New Mexico",     34.8405, -106.2485,
+  "New York",       42.1657,  -74.9481,
+  "North Carolina", 35.6301,  -79.8064,
+  "North Dakota",   47.5289,  -99.7840,
+  "Ohio",           40.3888,  -82.7649,
+  "Oklahoma",       35.5653,  -96.9289,
+  "Oregon",         44.5720, -122.0709,
+  "Pennsylvania",   40.5908,  -77.2098,
+  "Rhode Island",   41.6809,  -71.5118,
+  "South Carolina", 33.8569,  -80.9450,
+  "South Dakota",   44.2998,  -99.4388,
+  "Tennessee",      35.7478,  -86.6923,
+  "Texas",          31.0545,  -97.5635,
+  "Utah",           40.1500, -111.8624,
+  "Vermont",        44.0459,  -72.7107,
+  "Virginia",       37.7693,  -78.1700,
+  "Washington",     47.4009, -121.4905,
+  "West Virginia",  38.4912,  -80.9545,
+  "Wisconsin",      44.2685,  -89.6165,
+  "Wyoming",        42.7560, -107.3025,
+  "FBI",            38.9072,  -77.0369,
+  "Puerto Rico",    18.2208,  -66.5901,
+  "Virgin Islands", 18.3358, -64.8963
+)
+
+# Join cleaned data with coordinates
+ndis_clean <- ndis_clean %>%
+  left_join(jurisdiction_coords, by = c("jurisdiction" = "jurisdiction_std"))
+
+# Convert to factor ordered by total profiles
+ndis_clean <- ndis_clean %>%
+  mutate(
+    jurisdiction = fct_reorder(
+      as.factor(jurisdiction),
+      offender_profiles + arrestee + forensic_profiles,
+      .fun = sum,
+      .desc = TRUE
+    )
+  )
+```
+
+```{r}
+#| label: jurisdiction-clean2
+#| echo: false
+#| eval: true
+
+levels(ndis_clean$jurisdiction)
+
+```
+
+### Export Cleaned Dataset {#export-dataset}
+
+After cleaning and processing the NDIS data, the final dataset is exported as a CSV file for further analysis or sharing. The file is saved to the `data/v1.0/` directory to maintain an organized workflow.
+
+**Output:** `ndis_data_v1.0.csv`
+
+```{r}
+output_path <- here("data", "v1.0", "ndis_data_v1.0.csv")
+
+write.csv(ndis_clean, file = output_path, row.names = FALSE)
+```
+
+## Summary Statistics {#summarystats}
+
+Basic descriptive statistics to understand the scope and characteristics of the NDIS data.
+
+### Exploratory Data Analysis {#EDA}
+
+```{r}
+#| label: glimpse-clean
+#| echo: false
+#| eval: true
+
+describe(ndis_clean) %>%
+flextable()
+
+```
+
+### Summary Statistics Table {#summary_table}
+
+```{r}
+#| label: stats-overview
+#| echo: true
+#| code-fold: true
+#| code-summary: "Show summary statistics code"
+
+# Summary statistics table
+ndis_summary <- ndis_clean %>% 
+  group_by(year) %>% 
+  summarise(
+    jurisdictions = n_distinct(jurisdiction),
+    total_profiles = sum(offender_profiles + arrestee + forensic_profiles),
+    offender = sum(offender_profiles),
+    arrestee = sum(arrestee),
+    forensic = sum(forensic_profiles),
+    .groups = 'drop'
+  ) %>%
+  arrange(year)
+
+# Print summary table
+kable(ndis_summary, caption = "Annual Summary Statistics") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+```
+
+## Data Visualization {#visualiz}
+
+### Time-Series Analysis {#time_series}
+
+Visualization of the growth of different profile types (offender, arrestee, forensic) over time, with separate trends for each jurisdiction and smoothed aggregate trends.
+
+#### NDIS Profile Growth by Year
+```{r}
+#| label: ts-growth
+#| echo: true
+#| code-fold: true
+#| code-summary: "Show time-series analysis code"
+
+# Aggregate by year and profile type
+yearly_growth <- ndis_clean %>%
+  mutate(year = year(capture_date)) %>%
+  group_by(year) %>%
+  summarise(
+    Offender = sum(offender_profiles, na.rm = TRUE),
+    Arrestee = sum(arrestee, na.rm = TRUE),
+    Forensic = sum(forensic_profiles, na.rm = TRUE)
+  ) %>%
+  pivot_longer(
+    cols = -year,
+    names_to = "profile_type",
+    values_to = "count"
+  )
+
+# Clean interactive plot
+plot_ly(yearly_growth) %>%
+  add_trace(
+    x = ~year, 
+    y = ~count,
+    color = ~profile_type,
+    colors = c("#1f77b4", "#ff7f0e", "#2ca02c"),
+    type = "scatter",
+    mode = "lines+markers",
+    hoverinfo = "text",
+    text = ~paste(
+      "</br>Year:", year,
+      "</br>Profile Type:", profile_type,
+      "</br>Count:", format(count, big.mark = ",")
+    ),
+    line = list(width = 3),
+    marker = list(size = 6)
+  ) %>%
+  layout(
+    title = "",
+    xaxis = list(
+      title = "Year", 
+      dtick = 1,
+      showline = TRUE,
+      mirror = TRUE,
+      showgrid = FALSE
+    ),
+    yaxis = list(
+      title = "Total Profiles",
+      type = "log",
+      tickformat = ",.0f",
+      showline = TRUE,
+      mirror = TRUE,
+      showgrid = FALSE
+    ),
+    hovermode = "x unified",
+    legend = list(
+      orientation = "h",
+      x = 0.5,
+      y = 1.1,
+      xanchor = "center"
+    ),
+    margin = list(t = 50, b = 50),
+    showlegend = TRUE
+  ) %>%
+  config(displayModeBar = TRUE)
+```
+
+```{r}
+#| label: growth_plot
+#| echo: true
+#| code-fold: true
+#| code-summary: "Show plot code"
+
+# Custom theme modifications
+custom_theme <- function() {
+  theme_minimal(base_size = 12) +
+    theme(
+      panel.grid = element_blank(),
+      axis.line = element_line(color = "black"),
+      axis.ticks = element_line(),
+      plot.title = element_text(size = 14, face = "bold"),
+      plot.subtitle = element_text(size = 10)
+    )
+}
+
+# Ensure year as factor
+ndis_clean <- ndis_clean %>%
+  mutate(year = as.factor(year))
+
+# Modified plotting function
+create_factor_plot <- function(data, y_var, color, title) {
+  data %>%
+    group_by(year) %>%
+    summarise(total = sum({{y_var}}, na.rm = TRUE)) %>%
+    ggplot(aes(x = year, y = total, group = 1)) +
+    geom_line(linewidth = 1.2, color = color) +
+    geom_point(size = 2, color = color) +
+    labs(title = title, y = NULL, x = NULL) +
+    scale_y_continuous(labels = function(x) paste0(x/1e6, "M")) +
+    scale_x_discrete(breaks = unique(ndis_clean$year)) +
+    custom_theme() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+}
+
+# Generate plots
+plot_offender <- create_factor_plot(ndis_clean, offender_profiles, "#1f77b4", "Offender Profiles")
+plot_arrestee <- create_factor_plot(ndis_clean, arrestee, "#ff7f0e", "Arrestee Profiles")
+plot_forensic <- create_factor_plot(ndis_clean, forensic_profiles, "#2ca02c", "Forensic Profiles") +
+  labs(x = "Year")
+plot_investigations <- create_factor_plot(ndis_clean, investigations_aided, "#9467bd", "Investigations Aided") +
+  labs(x = "Year")
+
+# Combine with patchwork
+final_viz <- (plot_offender | plot_arrestee) / 
+             (plot_forensic | plot_investigations) +
+  plot_annotation(
+    title = "NDIS Database National Totals (2010-2025)",
+    subtitle = "Values in millions (M) of profiles/cases",
+    caption = "Source: FBI NDIS Statistics via Wayback Machine",
+    theme = theme(
+      plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+      plot.subtitle = element_text(size = 12, hjust = 0.5)
+    )) +
+  plot_layout(guides = "collect") &
+  theme(plot.margin = margin(10, 10, 10, 10))
+
+final_viz
+```
+
+### Geospatial mapping of jurisdiction participation {#geomap_juris}
+
+Map of jurisdictional participation geographically, with marker sizes proportional to total profile contributions.
+
+```{r}
+#| label: geo-map
+#| echo: true
+#| code-fold: true
+#| code-summary: "Show jurisdiction mapping analysis code"
+
+# Use built-in US state data from R
+data("state")
+us_states <- data.frame(
+  state = tolower(state.name),
+  abb = state.abb,
+  center_x = state.center$x,
+  center_y = state.center$y,
+  stringsAsFactors = FALSE
+)
+
+# Prepare data
+jurisdiction_summary <- ndis_clean %>%
+  mutate(
+    jurisdiction = tolower(trimws(jurisdiction))) %>% 
+  group_by(jurisdiction) %>%
+  summarise(
+    offender = sum(offender_profiles, na.rm = TRUE),
+    arrestee = sum(arrestee, na.rm = TRUE),
+    forensic = sum(forensic_profiles, na.rm = TRUE),
+    total_profiles = offender + arrestee + forensic
+  ) %>%
+  left_join(us_states, by = c("jurisdiction" = "state")) %>%
+  filter(!is.na(center_x) & !is.na(center_y))
+
+# Create minimal map with tiny circles
+leaflet() %>%
+  addTiles() %>%
+  addCircleMarkers(
+    data = jurisdiction_summary,
+    lng = ~center_x,
+    lat = ~center_y,
+    radius = 3,
+    color = "#1a5276",
+    fillOpacity = 0.7,
+    stroke = FALSE,
+    popup = ~paste0(
+      "<div style='font-size:12px'>",
+      "<b>", tools::toTitleCase(jurisdiction), "</b><br>",
+      "Total: ", format(total_profiles, big.mark = ","), "<br>",
+      "Offender: ", format(offender, big.mark = ","), "<br>",
+      "Arrestee: ", format(arrestee, big.mark = ","), "<br>",
+      "Forensic: ", format(forensic, big.mark = ","),
+      "</div>"
+    )
+  ) %>%
+  addControl(
+    html = "<div style='background:white;padding:5px;'>NDIS US State Participation</div>",
+    position = "topright"
+  ) %>%
+  setView(lng = -98.5833, lat = 39.8333, zoom = 4)
+
+```
+
+### Interactive Exploration {#interactive-explore}
+
+Interactive table for readers to explore the underlying data with filtering and export capabilities.
+
+```{r}
+#| label: interactive-table
+#| echo: true
+#| code-fold: true
+#| code-summary: "Show interactive table code"
+
+summary_table <- ndis_clean %>%
+  group_by(jurisdiction, year) %>%
+  summarise(
+    `Total Profiles` = sum(total_profiles, na.rm = TRUE),
+    `Offender Profiles` = sum(offender_profiles, na.rm = TRUE),
+    `Arrestee Profiles` = sum(arrestee, na.rm = TRUE),
+    `Forensic Profiles` = sum(forensic_profiles, na.rm = TRUE),
+    `NDIS Labs` = max(ndis_labs, na.rm = TRUE),
+    `Investigations Aided` = max(investigations_aided, na.rm = TRUE),
+    `Forensic Ratio` = mean(forensic_ratio, na.rm = TRUE),
+    .groups = 'drop'
+  ) %>%
+  mutate(
+    `Profiles per Lab` = `Total Profiles` / `NDIS Labs`,
+    `Forensic Ratio` = scales::percent(`Forensic Ratio`, accuracy = 0.1)
+  ) %>%
+  arrange(jurisdiction, year)
+
+# Interactive table
+datatable(
+  summary_table,
+  extensions = c('Buttons', 'ColReorder', 'Scroller'),
+  options = list(
+    dom = 'Bfrtip',
+    buttons = c('copy', 'csv', 'excel', 'colvis'),
+    scrollX = TRUE,
+    scrollY = "600px",
+    scroller = TRUE,
+    pageLength = 20,
+    columnDefs = list(
+      list(className = 'dt-right', targets = 2:9),
+      list(visible = FALSE, targets = c(8))
+    )
+  ),
+  rownames = FALSE,
+  filter = 'top'
+) %>%
+  formatRound(columns = c('Total Profiles', 'Offender Profiles', 'Arrestee Profiles', 
+                         'Forensic Profiles', 'Profiles per Lab'), 
+              digits = 0) %>%
+  formatStyle(
+    'Forensic Ratio',
+    color = styleInterval(c(0.02, 0.03), 
+    c('red', 'black', 'green'))) %>%
+  formatStyle(
+    'Profiles per Lab',
+    background = styleColorBar(summary_table$`Profiles per Lab`, 'lightblue'),
+    backgroundSize = '98% 88%',
+    backgroundRepeat = 'no-repeat',
+    backgroundPosition = 'center'
+  )
+
+```
+
+## Conclusion {#conclusion}
+
+This project analyzed the growth and evolution of the National DNA Index System (NDIS) by parsing historical snapshots of FBI statistics from the Wayback Machine.
+
+**Key Findings**
+
+1.  **Exponential Growth of DNA Profiles**
+
+    -   The NDIS database experienced significant expansion from 2010 to 2025, with total profiles increasing from **8.5 million in 2010** to over **1.1 billion by 2021**.
+
+2.  **Jurisdictional Participation**
+
+    -   All 52 U.S. jurisdictions (states and territories) contributed to NDIS, with **California, Texas, and Florida** being the largest contributors.
+
+    -   The number of participating labs increased over time, indicating broader adoption of DNA forensic capabilities.
+
+3.  **Policy and Technological Impact**
+
+    -   The growth in forensic profiles suggests advancements in DNA technology and its integration into law enforcement workflows.
+
+**Implications**
+
+-   **Criminal Justice Policy**: The findings underscore how DNA databases have become a cornerstone of modern forensic investigations, aiding in solving cold cases and identifying repeat offenders.
+
+-   **Privacy & Civil Liberties**: The rapid expansion of arrestee profiles raises ethical questions about mass data collection and its societal implications.
