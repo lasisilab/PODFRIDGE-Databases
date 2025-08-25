@@ -1,0 +1,78 @@
+---
+title: "About PODFRIDGE-Databases"
+---
+
+## Project Overview
+
+PODFRIDGE-Databases is an open-source research initiative focused on forensic DNA database systems in the United States. Our mission is to increase transparency and accessibility of DNA database information through systematic data collection, analysis, and public documentation.
+
+## Research Objectives
+
+1. **Document Historical Growth**: Track the expansion of the National DNA Index System (NDIS) from 2001-2025 using archived data from the FBI website
+2. **Analyze State Variations**: Examine differences in state DNA database policies, practices, and legal frameworks
+3. **Investigate Demographic Patterns**: Process and standardize demographic data from FOIA responses to study racial disparities
+4. **Ensure Reproducibility**: Create transparent, documented pipelines for forensic data research
+
+## Data Sources
+
+### Primary Data Collections
+
+- **Wayback Machine Archives**: Historical snapshots of FBI NDIS statistics (2001-2025)
+- **FOIA Responses**: Demographic data from 7 states (CA, FL, IN, ME, NV, SD, TX)
+- **State Statutes**: Legal frameworks governing DNA collection and database management
+- **Government Reports**: Official publications and statistical reports
+
+### Methodology
+
+Our approach emphasizes:
+
+- **Transparency**: All data processing steps are documented and reproducible
+- **Quality Control**: Multiple validation checks for data integrity
+- **Standardization**: Consistent formatting across heterogeneous data sources
+- **Ethical Considerations**: Responsible handling of sensitive criminal justice data
+
+## Project Structure
+
+PODFRIDGE-Databases/
+
+├── data/ # Frozen datasets
+
+├── raw/ # Raw data files
+
+├── output/ # Analysis outputs and visualizations
+
+├── analysis/ # Processing pipelines and analysis code
+
+├── archive/ # Documentation and research papers
+
+└── _site/ # Quarto website files
+
+## Team
+
+**Tina Lasisi** - Principal Investigator  
+*Assistant Professor at the University of Michigan Anthropology*
+
+**João P. Donadio** - Editor & Technical Advisor  
+*Data Scientist & Research Collaborator*
+
+## Acknowledgments
+
+We acknowledge the Internet Archive's Wayback Machine for preserving historical web content that makes this research possible. The third part of this project builds upon foundational work by Professor Erin Murphy (NYU Law) and builds on the FOIA research conducted in 2018. 
+
+## Citation
+
+If you use this research or data in your work, please cite:
+
+Lasisi, T., & Donadio, J.P. (2025). PODFRIDGE-Databases: Forensic DNA Database Analysis Platform. [https://github.com/tinalasisi/PODFRIDGE-Databases](https://github.com/tinalasisi/PODFRIDGE-Databases)
+
+## License
+
+This project is released under the MIT License. All data and code are available for research and educational purposes with proper attribution.
+
+## Contact
+
+For questions about this research or to collaborate:
+
+- Email: 
+
+- GitHub: [https://github.com/tinalasisi/PODFRIDGE-Databases](https://github.com/tinalasisi/PODFRIDGE-Databases)
