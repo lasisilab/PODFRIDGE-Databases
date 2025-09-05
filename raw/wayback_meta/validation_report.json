@@ -1,0 +1,29 @@
+{
+  "validation_date": "2025-08-08",
+  "source_urls": {
+    "count": 8,
+    "patterns": [
+      "http://www.fbi.gov/about-us/lab/codis/ndis-statistics",
+      "http://www.fbi.gov/about-us/lab/codis/ndis-statistics/",
+      "http://www.fbi.gov:80/about-us/lab/codis/ndis-statistics",
+      "http://www.fbi.gov:80/about-us/lab/codis/ndis-statistics/",
+      "https://le.fbi.gov/science-and-lab/biometrics-and-fingerprints/codis/codis-ndis-statistics",
+      "https://www.fbi.gov/services/laboratory/biometric-analysis/codis/ndis-statistics",
+      "https://www.fbi.gov/services/laboratory/biometric-analysis/codis/ndis-statistics/",
+      "https://www.fbi.gov/services/laboratory/biometric-analysis/codis/ndis-statistics//"
+    ]
+  },
+  "snapshot_coverage": {
+    "expected": 317,
+    "downloaded": 317,
+    "missing": [],
+    "time_span": {
+      "first": "20101014043819",
+      "last": "20250629171550"
+    }
+  },
+  "integrity_checks": {
+    "corrupt_files": [],
+    "avg_file_size": "124.4 KB"
+  }
+}

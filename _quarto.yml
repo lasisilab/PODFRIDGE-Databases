@@ -2,20 +2,23 @@ project:
   type: website
 
 website:
-  title: "PODFRIDGE‑Databases"
+  title: "PODFRIDGE-Databases"
   navbar:
     left:
-      - href: site/index.qmd   # was index.qmd
+      - href: index.html
         text: Home
-      - href: site/about.qmd   # was about.qmd
+      - href: about.html
         text: About
       - text: Analyses
         menu:
-          - href: analysis/ndis_scraping.qmd
+          - href: analysis/ndis_scraping.html
             text: NDIS analysis
-          - href: analysis/foia_processing.qmd
+          - href: analysis/sdis_summary.html
+            text: SDIS summary
+          - href: analysis/foia_processing.html
             text: FOIA processing
-
+          - href: analysis/appendix_analysis.html
+            text: Appendix racial analysis
 format:
   html:
     theme:
