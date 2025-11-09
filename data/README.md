@@ -7,9 +7,9 @@ This folder contains four primary datasets documenting U.S. forensic DNA databas
 | Dataset | Rows | Time Coverage | Spatial Coverage | Source |
 |---------|------|---------------|------------------|--------|
 | `NDIS_time_series.csv` | 9,442 | 2001-2025 | 54 jurisdictions | FBI CODIS-NDIS Statistics (Wayback Machine Internet Archive) |
-| `SDIS_cross_section.csv` | 50 | ? | 50 states | ? |
-| `FOIA_demographics.csv` | 202 | ? | 7 states | Murphy & Tong (2020) |
-| `Annual_DNA_Collection.csv` | 50 | ? | 50 states | Murphy & Tong (2020) Appendix |
+| `SDIS_cross_section.csv` | 50 | 1997-2017 | 50 states | Web Searches |
+| `FOIA_demographics.csv` | 202 | 2018 | 7 states | Murphy & Tong (2020) |
+| `Annual_DNA_Collection.csv` | 50 | 1997-2017 | 50 states | Murphy & Tong (2020) Appendix |
 
 ---
 
