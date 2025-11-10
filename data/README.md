@@ -125,11 +125,6 @@ data/
 - Not all states have SDIS-level statistics
 - Where totals are "estimated", see `n_total_estimated_comment` for methodology
 
-**Recommended Use:**
-- Cross-state policy comparisons
-- Database size comparisons
-- Identifying states with detailed public reporting
-
 ---
 
 ## 3. FOIA_demographics.csv
@@ -162,11 +157,6 @@ data/
 - Some values are calculated from provided data (see `value_source`)
 - Years of data collection vary by state
 - This data represents demographic composition at time of FOIA response, not current
-
-**Recommended Use:**
-- Demographic disparity analysis
-- Comparison with general population demographics
-- Understanding variation in state reporting practices
 
 ---
 
@@ -221,12 +211,6 @@ data/
 - Collection rates represent annual additions, not total database size
 - Racial/ethnic categories may not align perfectly across states due to reporting differences
 
-**Recommended Use:**
-- Comparative analysis of DNA collection rates across states and demographics
-- Disparate impact analysis
-- Policy framework comparisons
-- Must account for varying data quality and estimation methods by state
 
-
-**Last updated:** 2025-11-09
+**Last updated:** 2025-11-10
 **Zenodo DOI:** [10.5281/zenodo.17215677](https://doi.org/10.5281/zenodo.17215677)
