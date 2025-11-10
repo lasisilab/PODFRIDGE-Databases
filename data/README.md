@@ -4,19 +4,50 @@ This folder contains four primary datasets documenting U.S. forensic DNA databas
 
 ---
 
+## Directory Tree
+
+```text
+data/
+├── annual_dna_collection/
+│   ├── final/
+│   ├── intermediate/
+│   └── raw/
+├── foia/
+│   ├── final/
+│   ├── intermediate/
+│   └── raw/
+│       ├── foia_html/
+│       └── foia_pdfs/
+├── ndis/
+│   ├── final/
+│   ├── intermediate/
+│   └── raw/
+│       ├── ndis_metadata/
+│       └── ndis_snapshots/
+├── ndis_crossref/
+├── sdis/
+│   ├── final/
+│   └── raw/
+└── versioned_data/
+    └── 20251110T035752Z/
+```
+
+
+---
+
 ## Subfolder Descriptions
 
 - `ndis/`: Contains raw and intermediate data files related to the National DNA Index System (NDIS), including archived FBI webpages and extracted statistics used to build the time series dataset.
 
 - `sdis/`: Includes raw data and notes from state DNA index systems (SDIS) collected through web searches, legislative databases, and state government sources.
 
-- `ndis_crossref/`: Holds cross-referencing files for NDIS data, such as jurisdiction name standardizations and mappings between various data sources.
+- `ndis_crossref/`: Contains cross-referencing files for NDIS data based on an FBI brochure that lists the numbers for the size of the NDIS database by year (as a national total) and also a table of various journal articles published between 2012 and 2024 serving as timestamps by other authors for the size of the NDIS database at various points in time.
 
-- `annual_dna_collection/`: Houses data and metadata from Murphy & Tong (2020) Appendix, detailing annual DNA profile collection estimates by race for all 50 states. Users should cite *Murphy, E., & Tong, J. (2020). The racial composition of forensic DNA databases. California Law Review.* when utilizing this data.
+- `annual_dna_collection/`: Houses data (incl original Appendix pdfs) and metadata from Murphy & Tong (2020) Appendix, detailing annual DNA profile collection estimates by race for all 50 states. Users should cite *Murphy, E., & Tong, J. (2020). The racial composition of forensic DNA databases. California Law Review.* when utilizing this data.
 
-- `foia/`: Contains data obtained via FOIA requests and analyzed in Murphy & Tong (2020), documenting demographic composition and policy information from seven states. Users should cite *Murphy, E., & Tong, J. (2020). The racial composition of forensic DNA databases. California Law Review.* when using these files.
+- `foia/`: Contains data obtained via FOIA requests (pdfs of letters sent and received) and analyzed in Murphy & Tong (2020), documenting demographic composition and policy information from seven states. Users should cite *Murphy, E., & Tong, J. (2020). The racial composition of forensic DNA databases. California Law Review.* when using these files.
 
-- `versioned_data/`: Contains the finalized, versioned datasets ready for analysis, including cleaned and processed files like `NDIS_time_series.csv` and `SDIS_cross_section.csv`.
+- `versioned_data/`: Contains the finalized, versioned datasets ready for analysis. Datasets are stored within a timestamped subfolder (e.g., `20251110T035752Z`) to ensure reproducibility and traceability. Provenance of each dataset can be traced from raw to processed by following the analysis scripts in the `analysis/` folder described in our GitHub repository: https://github.com/lasisilab/PODFRIDGE-Databases
 
 
 ## Finalized Dataset Overview (`versioned_data/`)
@@ -27,6 +58,7 @@ This folder contains four primary datasets documenting U.S. forensic DNA databas
 | `SDIS_cross_section.csv` | 50 | 1997-2017 | 50 states | Web Searches |
 | `FOIA_demographics.csv` | 202 | 2018 | 7 states | Murphy & Tong (2020) |
 | `Annual_DNA_Collection.csv` | 50 | 1997-2017 | 50 states | Murphy & Tong (2020) Appendix |
+
 
 ---
 
