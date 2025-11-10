@@ -11,6 +11,10 @@ website:
   title: "PODFRIDGE-Databases"
   site-url: https://tinalasisi.github.io/PODFRIDGE-Databases
   navbar:
+    right:
+      - icon: github
+        href: https://github.com/tinalasisi/PODFRIDGE-Databases
+        text: Source
     left:
       - href: index.html
         text: Home
