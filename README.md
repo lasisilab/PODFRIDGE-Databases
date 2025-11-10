@@ -16,6 +16,10 @@ This dataset is described in:
 
 ## Getting Started
 
+If you just want to get a quick overview of the data and analyses, you can view the rendered website hosted on GitHub Pages: https://tinalasisi.github.io/PODFRIDGE-Databases/
+
+If you want to run the code locally or contribute, follow the setup instructions below.
+
 ### Prerequisites
 - **R** ≥ 4.0 ([Download](https://cran.r-project.org/))
 - **Python** ≥ 3.13 ([Download](https://www.python.org/downloads/))
@@ -108,14 +112,14 @@ Documents the methodology and data sources used in Murphy & Tong (2020) for calc
 
 [View Methodology →](https://tinalasisi.github.io/PODFRIDGE-Databases/qmd_root/appendix_analysis.html)
 
-## Repository Structure (key paths)
+## Repository Structure 
 
 - `analysis/` – Quarto notebooks (NDIS, SDIS, FOIA, methodology, version freeze)
 - `data/raw/` – Raw inputs (Wayback HTML snapshots, FOIA PDFs, etc.)
 - `data/intermediate/` – Staging outputs produced during processing
 - `data/final/` – Latest cleaned datasets for each component
 - `data/versioned_data/` – Snapshots created via `analysis/version_freeze.qmd`
-- `setup/` – Bootstrap scripts (`setup.sh`, `install.R`, Python requirements)
+- `setup/` – Setup scripts to run code (`setup.sh`, `install.R`, Python requirements)
 - `docs/` – Rendered website for GitHub Pages
 
 ## Authors
