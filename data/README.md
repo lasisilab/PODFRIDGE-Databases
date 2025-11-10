@@ -53,7 +53,7 @@ This folder contains four primary datasets documenting U.S. forensic DNA databas
 **Description:** Cross-sectional snapshot of state DNA index system (SDIS) statistics and policies as of 2025.
 
 **Source:** State government websites, department of justice sites, legislative databases  
-**Temporal Coverage:** ? 
+**Temporal Coverage:** 2018 (FOIA responses received)
 **Spatial Coverage:** 50 U.S. states  
 
 ### Column Definitions
@@ -92,7 +92,7 @@ This folder contains four primary datasets documenting U.S. forensic DNA databas
 **Description:** Demographic composition (race/gender) of state DNA databases from FOIA responses documented in Murphy & Tong (2020).
 
 **Source:** Murphy & Tong (2020) - FOIA responses from state agencies  
-**Temporal Coverage:** ?
+**Temporal Coverage:** Statutes from 1996-2017, arrest sources from 2009-2016
 **Spatial Coverage:** 7 states (California, Florida, Louisiana, Maryland, North Carolina, South Carolina, Wisconsin)  
 
 ### Column Definitions
