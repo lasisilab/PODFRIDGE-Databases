@@ -1486,4 +1486,4 @@ if __name__ == "__main__":
         print("No data extracted - check HTML files and parsing logic")
 ```
 
-[View Analyses →](../docs/analysis/ndis_analysis.html)
+[View Analyses →](ndis_analysis.qmd)

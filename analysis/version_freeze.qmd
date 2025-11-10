@@ -1,0 +1,229 @@
+---
+title: "Processed Data Version Freeze"
+author: "Tina Lasisi"
+date: today
+format:
+  html:
+    code-fold: true
+    toc: true
+    toc-depth: 2
+---
+
+This notebook snapshots every dataset stored under `data/*/final` into a versioned
+release located in `data/processed_data/`. By default a new `v1.0` directory is
+created the first time this notebook runs. Subsequent executions can bump the
+major version (`v2.0`, `v3.0`, …) or the minor version (`v1.1`, `v1.2`, …) by
+changing the `version_bump` parameter.
+
+## Version Configuration
+
+Update the variables in the following chunk before running the freeze. Leave
+`version_label` as `NA` to let the notebook compute the next version
+automatically. Otherwise, set it explicitly (e.g., `"v2.1"`). Use
+`version_note` to document what changed in this release; it will be embedded in
+the README for the new version.
+
+```{r}
+#| label: version-settings
+#| echo: true
+
+version_label <- NA_character_   # e.g., "v2.0" to override; NA = auto
+auto_bump <- "major"             # used only when version_label is NA
+version_message <- "Initial processed-data freeze capturing all final datasets."
+version_note <- "Highlights: Initial release of FOIA, SDIS, and NDIS final datasets."
+```
+
+## Setup
+
+```{r}
+#| label: setup
+#| echo: true
+
+library(tidyverse)
+library(fs)
+library(glue)
+library(lubridate)
+library(here)
+
+data_root <- here("data")
+processed_root <- here("data", "processed_data")
+fs::dir_create(processed_root)
+```
+
+## Determine Version Target
+
+```{r}
+#| label: determine-version
+version_regex <- "^v(\\d+)\\.(\\d+)$"
+existing_paths <- fs::dir_ls(processed_root, type = "directory", recurse = FALSE)
+
+version_df <- tibble(
+  path = existing_paths,
+  name = basename(existing_paths)
+) %>%
+  filter(str_detect(name, version_regex)) %>%
+  mutate(
+    major = as.integer(str_match(name, version_regex)[, 2]),
+    minor = as.integer(str_match(name, version_regex)[, 3])
+  )
+
+auto_bump <- tolower(auto_bump)
+valid_bumps <- c("major", "minor")
+use_auto <- is.na(version_label) || version_label == ""
+
+if (use_auto) {
+  if (!auto_bump %in% valid_bumps) {
+    stop("auto_bump must be 'major' or 'minor' when version_label is NA.")
+  }
+  if (nrow(version_df) == 0) {
+    target_major <- 1L
+    target_minor <- 0L
+  } else {
+    latest <- version_df %>%
+      arrange(desc(major), desc(minor)) %>%
+      slice(1)
+    if (auto_bump == "major") {
+      target_major <- latest$major + 1L
+      target_minor <- 0L
+    } else {
+      target_major <- latest$major
+      target_minor <- latest$minor + 1L
+    }
+  }
+  target_version <- sprintf("v%d.%d", target_major, target_minor)
+  version_label_used <- auto_bump
+} else {
+  if (!str_detect(version_label, version_regex)) {
+    stop("version_label must follow the pattern v#.# (e.g., v2.0).")
+  }
+  target_version <- version_label
+  version_label_used <- "manual"
+}
+
+target_dir <- fs::path(processed_root, target_version)
+fs::dir_create(target_dir)
+
+freeze_timestamp <- now(tzone = "UTC")
+
+glue("Creating processed data release: {target_version} at {target_dir}") %>% message()
+glue("Version bump type: {version_label_used}") %>% message()
+```
+
+## Collect Final Datasets
+
+```{r}
+#| label: collect-datasets
+#| echo: true
+
+top_level_dirs <- fs::dir_ls(data_root, type = "directory", recurse = FALSE)
+dataset_dirs <- top_level_dirs[basename(top_level_dirs) != "processed_data"]
+
+final_info <- purrr::map_dfr(dataset_dirs, function(ds_dir) {
+  final_dir <- fs::path(ds_dir, "final")
+  if (fs::dir_exists(final_dir)) {
+    tibble(
+      dataset = basename(ds_dir),
+      source_final = final_dir
+    )
+  } else {
+    NULL
+  }
+})
+
+if (nrow(final_info) == 0) {
+  stop("No datasets with a `final/` directory were found under data/.")
+}
+
+glue("Identified {nrow(final_info)} dataset(s) with final outputs.") %>% message()
+final_info
+```
+
+## Copy Final Files into Version Folder
+
+```{r}
+#| label: copy-files
+#| echo: true
+
+copy_results <- final_info %>%
+  mutate(
+    target_dataset_dir = fs::path(target_dir, dataset),
+    files_copied = purrr::map2(source_final, target_dataset_dir, function(src, dest) {
+      fs::dir_create(dest)
+      files <- fs::dir_ls(src, recurse = TRUE, type = "file")
+      if (length(files)) {
+        purrr::walk(files, function(file_path) {
+          relative <- fs::path_rel(file_path, start = src)
+          dest_file <- fs::path(dest, relative)
+          fs::dir_create(fs::path_dir(dest_file))
+          fs::file_copy(file_path, dest_file, overwrite = TRUE)
+        })
+      }
+      rel_paths <- fs::path_rel(fs::path(dest, fs::path_rel(files, start = src)), start = target_dir)
+      rel_paths
+    })
+  )
+
+copy_results %>%
+  transmute(
+    dataset,
+    files = purrr::map_int(files_copied, length)
+  )
+```
+
+## Generate README
+
+```{r}
+#| label: create-readme
+#| echo: true
+
+readme_path <- fs::path(target_dir, "README.md")
+
+readme_lines <- c(
+  "# Processed Data Release",
+  "",
+  glue("- Version: {target_version}"),
+  glue("- Frozen on: {format(freeze_timestamp, '%Y-%m-%d %H:%M:%S %Z')}"),
+  glue("- Version origin: {version_label_used}"),
+  glue("- Summary: {version_message}"),
+  glue("- Notes: {version_note}"),
+  ""
+)
+
+for (i in seq_len(nrow(copy_results))) {
+  dataset_name <- copy_results$dataset[i]
+  source_rel <- fs::path_rel(copy_results$source_final[i], start = data_root)
+  files <- copy_results$files_copied[[i]]
+  readme_lines <- c(
+    readme_lines,
+    glue("## {dataset_name}"),
+    "",
+    glue("- Source directory: `data/{source_rel}`"),
+    glue("- Snapshot directory: `processed_data/{target_version}/{dataset_name}`"),
+    "",
+    "### Files"
+  )
+  if (length(files) == 0) {
+    readme_lines <- c(readme_lines, "- (no files found in final directory)")
+  } else {
+    readme_lines <- c(readme_lines, paste0("- ", files))
+  }
+  readme_lines <- c(readme_lines, "")
+}
+
+writeLines(readme_lines, readme_path)
+glue("README written to {readme_path}") %>% message()
+```
+
+## Summary
+
+```{r}
+#| label: summary
+#| echo: true
+
+copy_results %>%
+  transmute(
+    dataset,
+    files_copied = purrr::map_int(files_copied, length),
+    snapshot_dir = fs::path(target_version, dataset)
+  )
+```

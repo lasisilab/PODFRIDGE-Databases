@@ -3595,15 +3595,9 @@ metadata_output_path <- here(metadata_dir, "foia_state_metadata.csv")
 write_csv(foia_state_metadata, metadata_output_path)
 cat(paste("✓ Saved state metadata to:", metadata_output_path, "\n"))
 
-# Create final frozen version (v1.0)
-frozen_dir <- here("data", "v1.0")
-dir.create(frozen_dir, recursive = TRUE, showWarnings = FALSE)
-
-frozen_path <- here(frozen_dir, "FOIA_demographics.csv")
-write_csv(foia_combined, frozen_path)
-cat(paste("✓ Created frozen version 1.0 at:", frozen_path, "\n"))
-
-cat("\n✅ All processing complete! The data is now ready for analysis.\n")
+# No additional copies are written to shared version folders here; use
+# analysis/version_freeze.qmd when a full processed-data release is needed.
+cat("\n✅ All processing complete! Final files written to data/foia/.\n")
 ```
 
 # Conclusions

@@ -17,7 +17,8 @@ required_packages <- c(
   "rmarkdown",
   "quarto",
   "systemfonts",  # Required by flextable
-  "flextable"
+  "flextable",
+  "qualpalr"
 )
 
 # Install missing packages
