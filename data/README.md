@@ -47,7 +47,7 @@ data/
 
 - `foia/`: Contains data obtained via FOIA requests (pdfs of letters sent and received) and analyzed in Murphy & Tong (2020), documenting demographic composition and policy information from seven states. Users should cite *Murphy, E., & Tong, J. (2020). The racial composition of forensic DNA databases. California Law Review.* when using these files.
 
-- `versioned_data/`: Contains the finalized, versioned datasets ready for analysis. Datasets are stored within a timestamped subfolder (e.g., `20251110T035752Z`) to ensure reproducibility and traceability. Provenance of each dataset can be traced from raw to processed by following the analysis scripts in the `analysis/` folder described in our GitHub repository: https://github.com/lasisilab/PODFRIDGE-Databases
+- `versioned_data/`: Contains the finalized, versioned datasets ready for analysis. Datasets are stored within a timestamped subfolder (e.g., `20251110T164132Z`) to ensure reproducibility and traceability. Provenance of each dataset can be traced from raw to processed by following the analysis scripts in the `analysis/` folder described in our GitHub repository: https://github.com/lasisilab/PODFRIDGE-Databases
 
 
 ## Finalized Dataset Overview (`versioned_data/`)
