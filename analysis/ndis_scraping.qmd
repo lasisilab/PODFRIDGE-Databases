@@ -29,7 +29,7 @@ This project focuses on systematically compiling the growth and evolution of NDI
 
 # Methodology
 
-![Project step-by-step](../figures/ndis/methodology.png)
+![Project step-by-step](../output/figures/ndis/methodology.png)
 
 ## Setup and Configuration {#setup-configuration}
 
@@ -190,7 +190,7 @@ Over the years, the NDIS statistics webpage has evolved considerably in both str
 Early versions (2001–2007) displayed state-level statistics through individual HTML pages (e.g., ne.htm for Nebraska), accessible via a clickable U.S. map interface. From 2008 onward, the FBI consolidated all states and agencies into unified pages, simplifying data retrieval and standardizing presentation formats.
 This evolution reflects ongoing modernization of the FBI’s online data systems, transitioning from fragmented, state-specific sources to more cohesive and accessible datasets.
 
-![Website Formats](../figures/ndis/snapshots/snapshots_years.png)
+![Website Formats](../output/figures/ndis/snapshots/snapshots_years.png)
 
 #### Pre-2007 (Clickmap Era)
 
@@ -1486,4 +1486,4 @@ if __name__ == "__main__":
         print("No data extracted - check HTML files and parsing logic")
 ```
 
-[View Analyses →](ndis_analysis.qmd)
+[View Analyses →](../docs/analysis/ndis_analysis.html)
