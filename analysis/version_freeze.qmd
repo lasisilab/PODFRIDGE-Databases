@@ -25,8 +25,8 @@ Update the description fields if you want to add extra context to the release.
 #| label: version-settings
 #| echo: true
 
-version_message <- "Processed-data freeze capturing all final datasets."
-version_note <- "Highlights: Add release-specific notes here."
+version_message <- "Processed-data freeze capturing all final datasets." #version message, short overview
+version_note <- "Highlights: Initial data versioning." #update version note as needed with details
 ```
 
 ## Setup

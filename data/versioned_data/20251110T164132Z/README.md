@@ -1,11 +1,11 @@
 # Processed Data Release
 
-- Version: 20251110T035752Z
-- Frozen on: 2025-11-10 03:57:52 UTC
+- Version: 20251110T164132Z
+- Frozen on: 2025-11-10 16:41:32 UTC
 - Summary: Processed-data freeze capturing all final datasets.
-- Notes: Highlights: Add release-specific notes here.
+- Notes: Highlights: Initial data versioning.
 
-All files listed below now live in `data/versioned_data/20251110T035752Z/`.
+All files listed below now live in `data/versioned_data/20251110T164132Z/`.
 
 ## Source Files
 

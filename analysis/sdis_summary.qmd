@@ -1271,7 +1271,8 @@ final_columns <- c(
   'n_forensic',
   'arrestee_collection',
   'fam_search',
-  'collection_statute'
+  'collection_statute',
+  'database_source_year'
 )
 
 # Select columns that exist in the dataset

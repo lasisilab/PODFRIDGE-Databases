@@ -94,10 +94,10 @@ data/
 
 ## 2. SDIS_cross_section.csv
 
-**Description:** Cross-sectional snapshot of state DNA index system (SDIS) statistics and policies as of 2025.
+**Description:** Cross-sectional snapshot of state DNA index system (SDIS) statistics based on web searches of state government websites, legislative databases, and department of justice sites, and policies on arrestee collection and familial searching based on Appendix B of Murphy & Tong (2020) and additional web searches for current familial searching policies.
 
 **Source:** State government websites, department of justice sites, legislative databases  
-**Temporal Coverage:** 2018 (FOIA responses received)
+**Temporal Coverage:** Statutes (relevant for `arrestee_collection` and `fam_search`) from 1996-2017, database sources from 2013-2025
 **Spatial Coverage:** 50 U.S. states  
 
 ### Column Definitions
@@ -115,6 +115,7 @@ data/
 | `arrestee_collection` | character | Whether state collects DNA from arrestees | "yes", "no", "unspecified" | Based on statute review |
 | `fam_search` | character | Familial search policy | "permitted", "prohibited", "unspecified" | Based on statute/policy review |
 | `collection_statute` | character | Primary DNA collection statute citation | Legal citation format | State code reference |
+| `database_source_year` | integer | Year of the most recent SDIS statistics | YYYY | Pulled from FOIA responses or public reports |
 
 **Missing Data Patterns:**
 - `n_total_estimated` may differ from `n_total_reported` when subtotals are summed
@@ -136,7 +137,7 @@ data/
 **Description:** Demographic composition (race/gender) of state DNA databases from FOIA responses documented in Murphy & Tong (2020).
 
 **Source:** Murphy & Tong (2020) - FOIA responses from state agencies  
-**Temporal Coverage:** Statutes from 1996-2017, arrest sources from 2009-2016
+**Temporal Coverage:** 
 **Spatial Coverage:** 7 states (California, Florida, Indiana, Maine, Nevada, South Dakota, Texas)  
 
 ### Column Definitions
@@ -174,7 +175,7 @@ data/
 **Description:** Annual DNA profile collection estimates by race, combined with policy metadata, as compiled by Murphy & Tong (2020).
 
 **Source:** Murphy & Tong (2020) Appendix - derived from FOIA responses, 2010 Census data, and state reports
-**Temporal Coverage:** ?
+**Temporal Coverage:** Statutes (legal framework) from 1996-2017, arrest sources from 2009-2016
 **Spatial Coverage:** All 50 U.S. states  
 
 ### Column Definitions
