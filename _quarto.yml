@@ -9,11 +9,11 @@ execute:
     
 website:
   title: "PODFRIDGE-Databases"
-  site-url: https://tinalasisi.github.io/PODFRIDGE-Databases
+  site-url: https://lasisilab.github.io/PODFRIDGE-Databases
   navbar:
     right:
       - icon: github
-        href: https://github.com/tinalasisi/PODFRIDGE-Databases
+        href: https://github.com/lasisilab/PODFRIDGE-Databases
         text: Source
     left:
       - href: index.html
