@@ -137,7 +137,7 @@ data/
 
 **Source:** Murphy & Tong (2020) - FOIA responses from state agencies  
 **Temporal Coverage:** Statutes from 1996-2017, arrest sources from 2009-2016
-**Spatial Coverage:** 7 states (California, Florida, Louisiana, Maryland, North Carolina, South Carolina, Wisconsin)  
+**Spatial Coverage:** 7 states (California, Florida, Indiana, Maine, Nevada, South Dakota, Texas)  
 
 ### Column Definitions
 
