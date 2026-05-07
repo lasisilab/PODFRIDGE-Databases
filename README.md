@@ -78,9 +78,9 @@ Reconstructs the growth of the FBI's National DNA Index System using archived sn
 - **Metrics:** Offender profiles, arrestee profiles, forensic profiles, participating laboratories, investigations aided
 - **Methods:** Web scraping, HTML parsing, temporal validation, outlier detection
 
-[View NDIS Scraping Methodology →](https://lasisilab.github.io/PODFRIDGE-Databases/qmd_root/ndis_scraping.html)
+[View NDIS Scraping Methodology →](https://lasisilab.github.io/PODFRIDGE-Databases/ndis_scraping.html)
 
-[View NDIS Analysis →](https://lasisilab.github.io/PODFRIDGE-Databases/qmd_root/ndis_analysis.html)
+[View NDIS Analysis →](https://lasisilab.github.io/PODFRIDGE-Databases/ndis_analysis.html)
 
 ### 2. SDIS Cross-Sectional Summary (2025)
 Compiles current state-level DNA database statistics and policy information across all 50 states and Washington D.C.
@@ -90,7 +90,7 @@ Compiles current state-level DNA database statistics and policy information acro
 - **Content:** Profile counts by type (where available), arrestee collection policies, familial search authorization, statutory citations
 - **Methods:** Systematic web searches, policy documentation, legal statute review
 
-[View SDIS Analysis →](https://lasisilab.github.io/PODFRIDGE-Databases/qmd_root/sdis_summary.html)
+[View SDIS Analysis →](https://lasisilab.github.io/PODFRIDGE-Databases/sdis_summary.html)
 
 ### 3. FOIA Demographic Data Processing
 Standardizes demographic composition data from state DNA databases obtained through public records requests documented in Murphy & Tong (2020).
@@ -100,7 +100,7 @@ Standardizes demographic composition data from state DNA databases obtained thro
 - **Content:** Racial and gender composition by profile type (offender/arrestee/forensic)
 - **Methods:** OCR processing, data standardization, quality validation
 
-[View FOIA Analysis →](https://lasisilab.github.io/PODFRIDGE-Databases/qmd_root/foia_processing.html)
+[View FOIA Analysis →](https://lasisilab.github.io/PODFRIDGE-Databases/foia_processing.html)
 
 ### 4. Annual DNA Collection Methodology
 Documents the methodology and data sources used in Murphy & Tong (2020) for calculating annual DNA collection rates by race.
@@ -110,7 +110,7 @@ Documents the methodology and data sources used in Murphy & Tong (2020) for calc
 - **Content:** Annual collection estimates, Census demographics, calculated collection rates by race
 - **Methods:** Data provenance tracking, methodology documentation
 
-[View Methodology →](https://lasisilab.github.io/PODFRIDGE-Databases/qmd_root/appendix_analysis.html)
+[View Methodology →](https://lasisilab.github.io/PODFRIDGE-Databases/appendix_analysis.html)
 
 ## Repository Structure 
 
@@ -131,7 +131,7 @@ Documents the methodology and data sources used in Murphy & Tong (2020) for calc
 - **João Pedro Donadio** ([`@DonadioJP`](https://github.com/DonadioJP))
 - **Sam Muller**
 - **Jenna Wilson**
-- **Tina Lasisi** ([`@lasisilab`](https://github.com/lasisilab))
+- **Tina Lasisi** ([`@lasisilab`](https://github.com/lasisilab)) ([`@tinalasisi`](https://github.com/tinalasisi))
 
 ## Technical Details
 
